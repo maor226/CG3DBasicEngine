@@ -179,6 +179,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     if (no_nav)             window_flags |= ImGuiWindowFlags_NoNav;
     if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
     if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+    
     ImGui::Begin(
         "Viewer", p_open,
         window_flags
@@ -189,10 +190,81 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     ImGui::End();
     no_move = true;
     no_resize = true;
+    
     ImGui::Begin(
         "Viewer", p_open,
         window_flags
     );
+
+  // Mesh
+  if (ImGui::CollapsingHeader("Layers", ImGuiTreeNodeFlags_DefaultOpen))
+  {
+    float w = ImGui::GetContentRegionAvailWidth();
+    float p = ImGui::GetStyle().FramePadding.x;
+    if (ImGui::Button("Add##Layers", ImVec2((w-p), 0)))
+    {
+      //   int savedIndx = viewer->selected_data_index;
+      //  // viewer->selected_data_index = viewer->parents.size();
+      //  // viewer->AddShape(viewer->xCylinder,-1,viewer->TRIANGLES);
+      //   viewer->open_dialog_load_mesh();
+      // if (viewer->data_list.size() > viewer->parents.size())
+      // {
+          
+      //     viewer->parents.push_back(-1);
+      //     viewer->SetShapeViewport(viewer->selected_data_index, 0);
+      //     viewer->SetShapeShader(viewer->selected_data_index, 2);
+      //     viewer->SetShapeMaterial(viewer->selected_data_index,0);
+      //     //viewer->data_list.back()->set_visible(false, 1);
+      //     //viewer->data_list.back()->set_visible(true, 2);
+      //     viewer->data_list.back()->UnHide();
+      //     viewer->data_list.back()->show_faces = 3;
+      //     viewer->data()->mode = viewer->TRIANGLES;
+      //     viewer->selected_data_index = savedIndx;
+      // }
+
+      // ToDo make add layers 
+      //   viewer->open_dialog_add_layer();
+
+    }
+    // ImGui::SameLine(0, p);
+    if (ImGui::Button("Hide##Layers", ImVec2((w-p), 0)))
+    {
+     //todo add to code in viewer.h and viewer.cpp
+     // viewer->open_dialog_hide_layer();
+
+    }
+    if (ImGui::Button("Unhide##Layers", ImVec2((w-p), 0)))
+    {
+     //todo add to code in viewer.h and viewer.cpp
+     // viewer->open_dialog_unhide_layer();
+
+    }
+  }
+
+  //metirial 
+  if (ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_DefaultOpen))
+  {
+    float w = ImGui::GetContentRegionAvailWidth();
+    float p = ImGui::GetStyle().FramePadding.x;
+    if (ImGui::Button("Add##Materials", ImVec2((w-p), 0)))
+    {
+       // viewer->open_dialog_hide_layer();
+    }
+    if (ImGui::Button("Change##Materials", ImVec2((w-p), 0)))
+    {}
+  }
+  //metirial 
+  if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+  {
+    float w = ImGui::GetContentRegionAvailWidth();
+    float p = ImGui::GetStyle().FramePadding.x;
+    if (ImGui::Button("Add##Camera", ImVec2((w-p), 0)))
+    {
+       // viewer->open_dialog_hide_layer();
+    }
+    if (ImGui::Button("Change Camera##Camera", ImVec2((w-p), 0)))
+    {}
+  }
 
   // Mesh
   if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
