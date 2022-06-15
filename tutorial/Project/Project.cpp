@@ -42,17 +42,17 @@ void Project::Init()
 	AddMaterial(texIDs + 2, slots + 2, 1);
 
 	
-	AddShape(Cube, -2, TRIANGLES);
+	AddShape(Cube, -2, TRIANGLES,1);
 	AddShape(zCylinder, -1, TRIANGLES);
-	AddShape(zCylinder, 1, TRIANGLES);
-	AddShape(zCylinder, 2, TRIANGLES);
+	AddShape(yCylinder, 1, TRIANGLES);
+	AddShape(xCylinder, 2, TRIANGLES);
 	AddShape(Axis, -1, LINES);
 	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
 	
 	SetShapeShader(1, 2);
-	SetShapeShader(2, 2);
-	SetShapeShader(3, 2);
-	SetShapeShader(4, 2);
+	SetShapeShader(2, 3);
+	SetShapeShader(3, 3);
+	SetShapeShader(4, 3);
 
 
 	SetShapeMaterial(1, 0);
@@ -99,7 +99,7 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniformMat4f("Proj", Proj);
 	s->SetUniformMat4f("View", View);
 	s->SetUniformMat4f("Model", Model);
-	s->SetUniform4f("coeffs",1,1,1,1);
+	s->SetUniform4f("coeffs",5,-1,3,1);
 	if (data_list[shapeIndx]->GetMaterial() >= 0 && !materials.empty())
 	{
 		// materials[shapes[pickedShape]->GetMaterial()]->Bind(textures);

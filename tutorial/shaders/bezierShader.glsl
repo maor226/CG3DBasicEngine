@@ -8,7 +8,7 @@ in vec3 normal0;
 in vec3 color0;
 in vec3 position0;
 
-uniform vec4[COEFF_SIZE] coeffs;
+uniform vec4 coeffs;
 
 uniform vec4 lightColor;
 uniform sampler2D sampler1;
@@ -21,23 +21,23 @@ vec3 bezier(vec3 A, vec3 B, vec3 C, vec3 D, float t) {
   vec3 F = mix(B, C, t);
   vec3 G = mix(C, D, t);
 
-  vec3 H = mix(E, F, t);
+  vec3 M = mix(E, F, t);
   vec3 I = mix(F, G, t);
 
-  vec3 P = mix(H, I, t);
+  vec3 P = mix(M, I, t);
 
   return P;
 }
 
 float f(float x, int idx) {
-    return dot(coeffs[idx] , vec4(x*x*x, x*x, x, 1));
+    return dot(coeffs , vec4(x*x*x, x*x, x, 1));
 }
 
 
 void main()
 {
-    if(IN_RANGE(f(position0.x) , position0.y))
-	    Color = vec4(1,0,0,1) // texture2D(sampler1, texCoord0)* vec4(color0,1.0); //you must have gl_FragColor
+    if(IN_RANGE(f(position0.s,0) , position0.t))
+	    Color = vec4(0.9059, 0.2784, 0.9882, 1.0); // texture2D(sampler1, texCoord0)* vec4(color0,1.0); //you must have gl_FragColor
     else 
-        Color = vec4(0,0,0,1)
+      Color = vec4(0,0,0,1);
 }
