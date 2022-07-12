@@ -133,12 +133,45 @@ void Project::WhenTranslate()
 }
 
 void Project::Animate() {
+	int t,dt,segment; //todo make global
     if(isActive)
 	{
-		if(selected_data_index > 0 )
-			data()->MyRotate(Eigen::Vector3d(0, 1, 0), 0.01);
+		int maxSegmentNum;//=((Bezier1D*)data_list[currIndx])->GetSegmentsNum();
+		
+		t+=dt;
+
+		if(t>1 && segment< maxSegmentNum -1){
+			segment ++;
+			t=dt;
+		}
+		else if(t>1){
+			segment = 0 ;
+			t = 1;
+			dt = -dt;
+		}
+		else if(t<0 &&segment <maxSegmentNum-1){
+			segment++;
+			t=1;
+		}
+		else if (t<0){
+			segment=0;
+			t=0;
+			dt=-dt;
+		}
+
+		// if(dt<0)
+		// 	data_list[last]->MyTranslate(((Bezier1D*)data_list[curIndx])->GetVelosity(segment,1-t,dt),1); //todo getVelosity === שיפוע
+		// else
+		// 	data_list[last]->MyTranslate(((Bezier1D*)data_list[curIndx])->GetVelosity(segment,t,dt),1);
+
+	}
+	else{
+		t=0;
+		segment =0;
+		dt = std::abs(dt);
 	}
 }
+
 
 void Project::ScaleAllShapes(float amt,int viewportIndx)
 {
