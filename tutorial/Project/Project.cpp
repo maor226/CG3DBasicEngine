@@ -15,16 +15,32 @@ static void printMat(const Eigen::Matrix4d& mat)
 
 Project::Project()
 {
+
 }
 
 //Project::Project(float angle ,float relationWH, float near, float far) : Scene(angle,relationWH,near,far)
 //{ 	
 //}
 
+
+
 void Project::Init()
 {		
 	unsigned int texIDs[3] = { 0 , 1, 2};
 	unsigned int slots[3] = { 0 , 1, 2 };
+	bez_points[0] = Eigen::Vector2f(-0.9, 0);
+	bez_points[1] = Eigen::Vector2f(-0.8, 0.3);
+	bez_points[2] = Eigen::Vector2f(-0.6, 0.4);
+	bez_points[3] = Eigen::Vector2f(0, 0.5);
+	bez_points[4] = Eigen::Vector2f(0.6, 0.4);
+	bez_points[5] = Eigen::Vector2f(0.8, 0.3);
+	bez_points[6] = Eigen::Vector2f(0.9, 0);
+
+	for(int i = 0 ; i < NUM_POL ; i++) {
+		for(double t = 0 ; t < 1 ; t += 0.01) {
+			//AddShape(bezier_line, 0, LINES,1);
+		}
+	}
 	
 	AddShader("shaders/pickingShader");
 	// AddShader("shaders/cubemapShader");
