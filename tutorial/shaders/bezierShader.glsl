@@ -62,8 +62,5 @@ int try_plot() {
 
 void main()
 {
-    if(IN_RANGE(f(position0.x) , position0.y))
-	    Color = vec4(1,0,0,1) // texture2D(sampler1, texCoord0)* vec4(color0,1.0); //you must have gl_FragColor
-    else 
-        Color = vec4(0,0,0,1)
+        Color = vec4(0.7137, 0.149, 0.149, 1.0)
 }

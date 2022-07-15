@@ -566,7 +566,7 @@ IGL_INLINE bool
       data()->show_overlay = 0;
       data()->hide = false;
       if(type == Axis){
-          data()->is_visible = 0;
+        //   data()->is_visible = 0;
           data()->show_faces = 0;
           data()->show_lines = 0;
           data()->show_overlay = 0xFF;
@@ -575,10 +575,10 @@ IGL_INLINE bool
         //   data()->add_edges((Eigen::RowVector3d::UnitZ()*4),-(Eigen::RowVector3d::UnitZ()*4),Eigen::RowVector3d(0,0,1));
         //   data()->add_edges((Eigen::RowVector3d(1,0,1)*4),-(Eigen::RowVector3d(0,1,0)*4),Eigen::RowVector3d(1/2,1/2,1/2));
 
-        for (float t = 0; t < 1; t += 0.001) {
-            float p = t + 0.001;
-            data()->add_edges(Eigen::RowVector3d(t,(t*(1+t*(1+t))),0),Eigen::RowVector3d(p,(p*(1+p*(1+p))),0),Eigen::RowVector3d(1/2,1/2,1/2));
-        }
+        // for (float t = 0; t < 1; t += 0.001) {
+        //     float p = t + 0.001; //p is the point after t
+        //     data()->add_edges(Eigen::RowVector3d(t,(t*(1+t*(1+t))),0),Eigen::RowVector3d(p,(p*(1+p*(1+p))),0),Eigen::RowVector3d(1/2,1/2,1/2));
+        // }
       }
 
       this->parents.emplace_back(parent);

@@ -36,11 +36,8 @@ void Project::Init()
 	bez_points[5] = Eigen::Vector2f(0.8, 0.3);
 	bez_points[6] = Eigen::Vector2f(0.9, 0);
 
-	for(int i = 0 ; i < NUM_POL ; i++) {
-		for(double t = 0 ; t < 1 ; t += 0.01) {
-			//AddShape(bezier_line, 0, LINES,1);
-		}
-	}
+	
+
 	
 	AddShader("shaders/pickingShader");
 	// AddShader("shaders/cubemapShader");
@@ -58,45 +55,56 @@ void Project::Init()
 	AddMaterial(texIDs + 2, slots + 2, 1);
 
 	
+
+
 	AddShape(Cube, -2, TRIANGLES);
-	AddShape(zCylinder, -1, TRIANGLES);
-	AddShape(zCylinder, 1, TRIANGLES);
-	AddShape(zCylinder, 2, TRIANGLES);
-	AddShape(Axis, -1, LINES);
+	SetShapeMaterial(0, 1);
+	SetShapeStatic(0);
+
+	// AddShape(zCylinder, -1, TRIANGLES);
+	// AddShape(zCylinder, 1, TRIANGLES);
+	// AddShape(zCylinder, 2, TRIANGLES);
+
+	AddShape(Axis, -1, TRIANGLES);
+	SetShapeShader(1, 1);
+	selected_data_index = 1;
+	SetShapeStatic(0);
+	//SetShapeMaterial(1, 0);
+
+
+	
 	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
 	
-	SetShapeShader(1, 2);
-	SetShapeShader(2, 2);
-	SetShapeShader(3, 2);
-	SetShapeShader(4, 2);
+	// SetShapeShader(1, 2);
+	// SetShapeShader(2, 2);
+	// SetShapeShader(3, 2);
+	// SetShapeShader(4, 2);
 
 
-	SetShapeMaterial(1, 0);
-	SetShapeMaterial(2, 0);	
-	SetShapeMaterial(3, 0);	
-	SetShapeMaterial(4, 0);
-
-	SetShapeMaterial(0, 1);
+	// SetShapeMaterial(1, 0);
+	// SetShapeMaterial(2, 0);	
+	// SetShapeMaterial(3, 0);	
+	// SetShapeMaterial(4, 0);
 
 
-	selected_data_index = 0;
-	float cylinderLen = 1.6f;
-	float s = 60;
-	ShapeTransformation(scaleAll, s,0);
-	selected_data_index = 1;
-	data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
-	ShapeTransformation(zTranslate, cylinderLen / 2.0, 1);
+
+	// selected_data_index = 0;
+	// float cylinderLen = 1.6f;
+	// float s = 60;
+	// ShapeTransformation(scaleAll, s,0);
+	// selected_data_index = 1;
+	// data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
+	// ShapeTransformation(zTranslate, cylinderLen / 2.0, 1);
 	
-	selected_data_index = 2;
-	ShapeTransformation(zTranslate, cylinderLen , 1);
-	data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
+	// selected_data_index = 2;
+	// ShapeTransformation(zTranslate, cylinderLen , 1);
+	// data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
 	
-	selected_data_index = 3;
-	ShapeTransformation(zTranslate, cylinderLen, 1);
-	data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
+	// selected_data_index = 3;
+	// ShapeTransformation(zTranslate, cylinderLen, 1);
+	// data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
 
-	selected_data_index = 0;
-	SetShapeStatic(0);
+
 
 
 	//SetShapeViewport(6, 1);
@@ -116,6 +124,17 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniformMat4f("View", View);
 	s->SetUniformMat4f("Model", Model);
 	s->SetUniform4f("coeffs",1,1,1,1);
+	if(data_list[shapeIndx]->type == Axis){
+		data_list[shapeIndx]->clear();
+		for (float t = 0; t < 1; t += 0.001) {
+				float p = t + 0.001; //p is the point after t
+				float y_bez_t = bezier(t,bez_points[0][1],bez_points[1][1], bez_points[2][1], bez_points[3][1]);
+				float y_bez_p = bezier(p,bez_points[0][1],bez_points[1][1], bez_points[2][1], bez_points[3][1]); 
+				float x_bez_t = bezier(t,bez_points[0][0],bez_points[1][0], bez_points[2][0], bez_points[3][0]);
+				float x_bez_p = bezier(p,bez_points[0][0],bez_points[1][0], bez_points[2][0], bez_points[3][0]); 
+				data_list[shapeIndx]->add_edges(Eigen::RowVector3d(x_bez_t,y_bez_t,0),Eigen::RowVector3d(x_bez_p,y_bez_p,0),Eigen::RowVector3d(1/2,1/2,1/2));
+		}
+	}
 	if (data_list[shapeIndx]->GetMaterial() >= 0 && !materials.empty())
 	{
 		// materials[shapes[pickedShape]->GetMaterial()]->Bind(textures);
@@ -149,6 +168,7 @@ void Project::WhenTranslate()
 }
 
 void Project::Animate() {
+	//bez_points[0][1] += 0.1;
     if(isActive)
 	{
 		if(selected_data_index > 0 )
@@ -170,4 +190,5 @@ void Project::ScaleAllShapes(float amt,int viewportIndx)
 Project::~Project(void)
 {
 }
+
 
