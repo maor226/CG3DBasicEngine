@@ -1,18 +1,15 @@
 #version 330
 
 #define COEFF_SIZE 20
-#define NUM_POINTS 13
-#define NUM_POLS (NUM_POINTS - 1)/3
-#define epsilon 0.05
-
-#define IN_RANGE(x0,x1,x2) (x0 > x1 && x0 < x2)
+#define epsilon 0.1
+#define IN_RANGE(x0,x1) (x0-coeffs.x<x1+epsilon && x0>x1-epsilon)
+#define IN_CERCEL(x,y)  (x*x+y*y < coeffs.z * coeffs.z)
 in vec2 texCoord0;
 in vec3 normal0;
 in vec3 color0;
 in vec3 position0;
 
-uniform vec4[COEFF_SIZE] coeffs;
-uniform vec3[NUM_POINTS] bez_points;
+uniform vec4 coeffs;
 
 uniform vec4 lightColor;
 uniform sampler2D sampler1;
@@ -25,42 +22,24 @@ vec3 bezier(vec3 A, vec3 B, vec3 C, vec3 D, float t) {
   vec3 F = mix(B, C, t);
   vec3 G = mix(C, D, t);
 
-  vec3 H = mix(E, F, t);
+  vec3 M = mix(E, F, t);
   vec3 I = mix(F, G, t);
 
-  vec3 P = mix(H, I, t);
+  vec3 P = mix(M, I, t);
 
   return P;
 }
 
 float f(float x, int idx) {
-    return dot(coeffs[idx] , vec4(x*x*x, x*x, x, 1));
+    return dot(coeffs , vec4(x*x*x, x*x, x, 1));
 }
 
-float smoothstep(x, edge0, edge1) {
-  genType t;  /* Or genDType t; */
-  t = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0);
-  return t * t * (3.0 - 2.0 * t);
-}
-
-int try_plot() {
-  float x = position0.x
-  for(int i = 0 ; i < NUM_POLS ; i++){
-    float start_x = bez_points[i*3].x, end_x = bez_points[(i+1)*3].x;
-
-    if(!IN_RANGE(x, start_x, end_x))
-      continue;
-    
-    float t = (x - start_x)/(end_x - start_x);
-    vec3 bez_t = bezier(bez_points[i], bez_points[i + 1], bez_points[i + 2], bez_points[i + 3], t);
-    float y_val = bez_t.y;
-    if(smoothstep(position0.y, y_val - epsilon, y_val) - smoothstep(position0.y, y_val, y_val + epsilon))
-      return vec4()
-  }
-  return -1;
-}
 
 void main()
 {
-        Color = vec4(0.7137, 0.149, 0.149, 1.0)
+    // if(IN_CERCEL(position0.x, position0.y))
+    if((position0.x-coeffs.x)(position0.x-coeffs.x) + (position0.y-coeffs.y)(position0.y-coeffs.y) < coeffs.z*coeffs.z)
+	    Color = vec4(0.9059, 0.2784, 0.9882, 1.0); // texture2D(sampler1, texCoord0)* vec4(color0,1.0); //you must have gl_FragColor
+    else 
+      discard;
 }

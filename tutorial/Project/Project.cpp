@@ -28,13 +28,13 @@ void Project::Init()
 {		
 	unsigned int texIDs[3] = { 0 , 1, 2};
 	unsigned int slots[3] = { 0 , 1, 2 };
-	bez_points[0] = Eigen::Vector2f(-0.9, 0);
-	bez_points[1] = Eigen::Vector2f(-0.8, 0.3);
-	bez_points[2] = Eigen::Vector2f(-0.6, 0.4);
-	bez_points[3] = Eigen::Vector2f(0, 0.5);
-	bez_points[4] = Eigen::Vector2f(0.6, 0.4);
-	bez_points[5] = Eigen::Vector2f(0.8, 0.3);
-	bez_points[6] = Eigen::Vector2f(0.9, 0);
+	bez_points[0] = Eigen::Vector4f(-4, 0, 0, 0);
+	bez_points[1] = Eigen::Vector4f(-2, 1.75, 0, 0);
+	bez_points[2] = Eigen::Vector4f(-1, 3, 0, 0);
+	bez_points[3] = Eigen::Vector4f(0, 4, 0, 0);
+	bez_points[4] = Eigen::Vector4f(1, 3, 0, 0);
+	bez_points[5] = Eigen::Vector4f(2, 1.75, 0, 0);
+	bez_points[6] = Eigen::Vector4f(4, 0, 0, 0);
 
 	
 
@@ -66,10 +66,18 @@ void Project::Init()
 	// AddShape(zCylinder, 2, TRIANGLES);
 
 	AddShape(Axis, -1, TRIANGLES);
-	SetShapeShader(1, 1);
+	SetShapeShader(1, 0);
 	selected_data_index = 1;
-	SetShapeStatic(0);
+	ShapeTransformation(scaleAll, 0, 0);
+	SetShapeStatic(1);
 	//SetShapeMaterial(1, 0);
+	AddShape(Plane, -1, TRIANGLES);
+	SetShapeShader(2,1);
+	SetShapeMaterial(2,1);
+	selected_data_index = 2;
+	ShapeTransformation(scaleAll, 60, 0);
+	SetShapeStatic(2);
+
 
 
 	
@@ -88,7 +96,7 @@ void Project::Init()
 
 
 
-	// selected_data_index = 0;
+	selected_data_index = 0;
 	// float cylinderLen = 1.6f;
 	// float s = 60;
 	// ShapeTransformation(scaleAll, s,0);
@@ -124,6 +132,10 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniformMat4f("View", View);
 	s->SetUniformMat4f("Model", Model);
 	s->SetUniform4f("coeffs",1,1,1,1);
+	s->SetUniform1i("POINTS_NUM", POINTS_NUM);
+	s->SetUniform4fv("bez_points", &bez_points[0], POINTS_NUM);
+
+
 	if(data_list[shapeIndx]->type == Axis){
 		data_list[shapeIndx]->clear();
 		for (float t = 0; t < 1; t += 0.001) {
@@ -132,6 +144,14 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 				float y_bez_p = bezier(p,bez_points[0][1],bez_points[1][1], bez_points[2][1], bez_points[3][1]); 
 				float x_bez_t = bezier(t,bez_points[0][0],bez_points[1][0], bez_points[2][0], bez_points[3][0]);
 				float x_bez_p = bezier(p,bez_points[0][0],bez_points[1][0], bez_points[2][0], bez_points[3][0]); 
+				data_list[shapeIndx]->add_edges(Eigen::RowVector3d(x_bez_t,y_bez_t,0),Eigen::RowVector3d(x_bez_p,y_bez_p,0),Eigen::RowVector3d(1/2,1/2,1/2));
+		}
+		for (float t = 0; t < 1; t += 0.001) {
+				float p = t + 0.001; //p is the point after t
+				float y_bez_t = bezier(t,bez_points[3][1],bez_points[4][1], bez_points[5][1], bez_points[6][1]);
+				float y_bez_p = bezier(p,bez_points[3][1],bez_points[4][1], bez_points[5][1], bez_points[6][1]); 
+				float x_bez_t = bezier(t,bez_points[3][0],bez_points[4][0], bez_points[5][0], bez_points[6][0]);
+				float x_bez_p = bezier(p,bez_points[3][0],bez_points[4][0], bez_points[5][0], bez_points[6][0]); 
 				data_list[shapeIndx]->add_edges(Eigen::RowVector3d(x_bez_t,y_bez_t,0),Eigen::RowVector3d(x_bez_p,y_bez_p,0),Eigen::RowVector3d(1/2,1/2,1/2));
 		}
 	}
