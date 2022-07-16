@@ -210,3 +210,12 @@ Project::~Project(void)
 {
 }
 
+
+int Project::IsPicked(int x, int y){
+	return pickedPoint;
+}
+void Project::UnPicked(){
+	pickedPoint = -1;
+	isPicked = false;
+}
+

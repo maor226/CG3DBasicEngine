@@ -5,7 +5,8 @@ class Project : public igl::opengl::glfw::Viewer
 {
 	
 public:
-	
+	int pickedPoint=-1;
+	bool isPicked = false; 
 	Project();
 //	Project(float angle,float relationWH,float near, float far);
 	void Init();
@@ -15,6 +16,9 @@ public:
 	void Animate() override;
 	void ScaleAllShapes(float amt, int viewportIndx);
 	float GetVelosity(int segment, float t, float dt);
+	int IsPicked(int x, int y);
+	void UnPicked();
+	
 	
 	~Project(void);
 };
