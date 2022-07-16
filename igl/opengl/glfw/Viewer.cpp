@@ -527,35 +527,34 @@ IGL_INLINE bool
     {
       switch(type){
 // Axis, Plane, Cube, Octahedron, Tethrahedron, LineCopy, MeshCopy
-          case Plane:
-              this->load_mesh_from_file("./data/plane.obj");
-              break;
-          case Cube:
-           this->load_mesh_from_file("./data/cube.obj");
-           break;
-         case Axis:
-              this->load_mesh_from_file("./data/cube.obj");
-              break;
-          case Octahedron:
-              this->load_mesh_from_file("./data/octahedron.obj");
-              break;
-          case Tethrahedron:
-              this->load_mesh_from_file("./data/Tetrahedron.obj");
-              break;
-          case Sphere:
-              this->load_mesh_from_file("./data/sphere.obj");
-              break;
-          case xCylinder:
-              this->load_mesh_from_file("./data/xcylinder.obj");
-              break;
-          case yCylinder:
-              this->load_mesh_from_file("./data/ycylinder.obj");
-              break;
-          case zCylinder:
-              this->load_mesh_from_file("./data/zcylinder.obj");
-              break;
-          default:
-              break;
+        case Plane:
+            this->load_mesh_from_file("./data/plane.obj");
+            break;
+        case Cube:
+        case Axis:
+            this->load_mesh_from_file("./data/cube.obj");
+            break;
+        case Octahedron:
+            this->load_mesh_from_file("./data/octahedron.obj");
+            break;
+        case Tethrahedron:
+            this->load_mesh_from_file("./data/Tetrahedron.obj");
+            break;
+        case Sphere:
+            this->load_mesh_from_file("./data/sphere.obj");
+            break;
+        case Bezier_Line:
+        case xCylinder:
+            this->load_mesh_from_file("./data/xcylinder.obj");
+            break;
+        case yCylinder:
+            this->load_mesh_from_file("./data/ycylinder.obj");
+            break;
+        case zCylinder:
+            this->load_mesh_from_file("./data/zcylinder.obj");
+            break;
+        default:
+            break;
 
       }
       data()->type = type;
@@ -567,13 +566,19 @@ IGL_INLINE bool
       data()->show_overlay = 0;
       data()->hide = false;
       if(type == Axis){
-         // data()->is_visible = 0;
+        //   data()->is_visible = 0;
           data()->show_faces = 0;
           data()->show_lines = 0;
           data()->show_overlay = 0xFF;
-          data()->add_edges((Eigen::RowVector3d::UnitX()*4),-(Eigen::RowVector3d::UnitX()*4),Eigen::RowVector3d(1,0,0));
-          data()->add_edges((Eigen::RowVector3d::UnitY()*4),-(Eigen::RowVector3d::UnitY()*4),Eigen::RowVector3d(0,1,0));
-          data()->add_edges((Eigen::RowVector3d::UnitZ()*4),-(Eigen::RowVector3d::UnitZ()*4),Eigen::RowVector3d(0,0,1));
+        //   data()->add_edges((Eigen::RowVector3d::UnitX()*4),-(Eigen::RowVector3d::UnitX()*4),Eigen::RowVector3d(1,0,0));
+        //   data()->add_edges((Eigen::RowVector3d::UnitY()*4),-(Eigen::RowVector3d::UnitY()*4),Eigen::RowVector3d(0,1,0));
+        //   data()->add_edges((Eigen::RowVector3d::UnitZ()*4),-(Eigen::RowVector3d::UnitZ()*4),Eigen::RowVector3d(0,0,1));
+        //   data()->add_edges((Eigen::RowVector3d(1,0,1)*4),-(Eigen::RowVector3d(0,1,0)*4),Eigen::RowVector3d(1/2,1/2,1/2));
+
+        // for (float t = 0; t < 1; t += 0.001) {
+        //     float p = t + 0.001; //p is the point after t
+        //     data()->add_edges(Eigen::RowVector3d(t,(t*(1+t*(1+t))),0),Eigen::RowVector3d(p,(p*(1+p*(1+p))),0),Eigen::RowVector3d(1/2,1/2,1/2));
+        // }
       }
 
       this->parents.emplace_back(parent);

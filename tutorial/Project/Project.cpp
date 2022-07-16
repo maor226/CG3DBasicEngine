@@ -15,16 +15,29 @@ static void printMat(const Eigen::Matrix4d& mat)
 
 Project::Project()
 {
+
 }
 
 //Project::Project(float angle ,float relationWH, float near, float far) : Scene(angle,relationWH,near,far)
 //{ 	
 //}
 
+
+
 void Project::Init()
 {		
 	unsigned int texIDs[3] = { 0 , 1, 2};
 	unsigned int slots[3] = { 0 , 1, 2 };
+	bez_points[0] = Eigen::Vector2f(-0.9, 0);
+	bez_points[1] = Eigen::Vector2f(-0.8, 0.3);
+	bez_points[2] = Eigen::Vector2f(-0.6, 0.4);
+	bez_points[3] = Eigen::Vector2f(0, 0.5);
+	bez_points[4] = Eigen::Vector2f(0.6, 0.4);
+	bez_points[5] = Eigen::Vector2f(0.8, 0.3);
+	bez_points[6] = Eigen::Vector2f(0.9, 0);
+
+	
+
 	
 	AddShader("shaders/pickingShader");
 	// AddShader("shaders/cubemapShader");
@@ -77,13 +90,14 @@ void Project::Init()
 	data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
 	ShapeTransformation(zTranslate, cylinderLen / 2.0, 1);
 	
-	selected_data_index = 2;
-	ShapeTransformation(zTranslate, cylinderLen , 1);
-	data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
+	// selected_data_index = 2;
+	// ShapeTransformation(zTranslate, cylinderLen , 1);
+	// data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
 	
-	selected_data_index = 3;
-	ShapeTransformation(zTranslate, cylinderLen, 1);
-	data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
+	// selected_data_index = 3;
+	// ShapeTransformation(zTranslate, cylinderLen, 1);
+	// data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
+
 
 	selected_data_index = 0;
 	SetShapeStatic(0);
@@ -109,6 +123,17 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniformMat4f("View", View);
 	s->SetUniformMat4f("Model", Model);
 	s->SetUniform4f("coeffs",3,2,2,1);
+	if(data_list[shapeIndx]->type == Axis){
+		data_list[shapeIndx]->clear();
+		for (float t = 0; t < 1; t += 0.001) {
+				float p = t + 0.001; //p is the point after t
+				float y_bez_t = bezier(t,bez_points[0][1],bez_points[1][1], bez_points[2][1], bez_points[3][1]);
+				float y_bez_p = bezier(p,bez_points[0][1],bez_points[1][1], bez_points[2][1], bez_points[3][1]); 
+				float x_bez_t = bezier(t,bez_points[0][0],bez_points[1][0], bez_points[2][0], bez_points[3][0]);
+				float x_bez_p = bezier(p,bez_points[0][0],bez_points[1][0], bez_points[2][0], bez_points[3][0]); 
+				data_list[shapeIndx]->add_edges(Eigen::RowVector3d(x_bez_t,y_bez_t,0),Eigen::RowVector3d(x_bez_p,y_bez_p,0),Eigen::RowVector3d(1/2,1/2,1/2));
+		}
+	}
 	if (data_list[shapeIndx]->GetMaterial() >= 0 && !materials.empty())
 	{
 		// materials[shapes[pickedShape]->GetMaterial()]->Bind(textures);
@@ -151,6 +176,7 @@ void Project::WhenTranslate()
 
 void Project::Animate() {
 	int t=0,dt=0,segment=0; //todo make global
+	//bez_points[0][1] += 0.1;
     if(isActive)
 	{
 		int maxSegmentNum = 2;//=((Bezier1D*)data_list[currIndx])->GetSegmentsNum();
