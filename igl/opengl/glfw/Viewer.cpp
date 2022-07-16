@@ -531,6 +531,8 @@ IGL_INLINE bool
               this->load_mesh_from_file("./data/plane.obj");
               break;
           case Cube:
+           this->load_mesh_from_file("./data/cube.obj");
+           break;
          case Axis:
               this->load_mesh_from_file("./data/cube.obj");
               break;

@@ -14,6 +14,7 @@ public:
 	void WhenTranslate();
 	void Animate() override;
 	void ScaleAllShapes(float amt, int viewportIndx);
+	float GetVelosity(int segment, float t, float dt);
 	
 	~Project(void);
 };

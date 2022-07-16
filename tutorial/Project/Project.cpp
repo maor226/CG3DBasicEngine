@@ -47,19 +47,22 @@ void Project::Init()
 	AddShape(yCylinder, 1, TRIANGLES);
 	AddShape(xCylinder, 2, TRIANGLES);
 	AddShape(Axis, -1, LINES);
+	AddShape(Plane,1,TRIANGLES);
 	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
 	
-	SetShapeShader(1, 2);
+	SetShapeShader(0, 1);
+	SetShapeShader(1, 3);
 	SetShapeShader(2, 3);
 	SetShapeShader(3, 3);
 	SetShapeShader(4, 3);
+	SetShapeShader(5,1);
 
 
 	SetShapeMaterial(1, 0);
 	SetShapeMaterial(2, 0);	
 	SetShapeMaterial(3, 0);	
 	SetShapeMaterial(4, 0);
-
+	SetShapeMaterial(5, 1);
 	SetShapeMaterial(0, 1);
 
 
@@ -67,6 +70,9 @@ void Project::Init()
 	float cylinderLen = 1.6f;
 	float s = 60;
 	ShapeTransformation(scaleAll, s,0);
+	selected_data_index = 5;
+	ShapeTransformation(scaleAll, s,0);
+
 	selected_data_index = 1;
 	data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
 	ShapeTransformation(zTranslate, cylinderLen / 2.0, 1);
@@ -81,6 +87,9 @@ void Project::Init()
 
 	selected_data_index = 0;
 	SetShapeStatic(0);
+	selected_data_index = 5;
+	SetShapeStatic(5);
+	
 
 
 	//SetShapeViewport(6, 1);
@@ -99,7 +108,7 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniformMat4f("Proj", Proj);
 	s->SetUniformMat4f("View", View);
 	s->SetUniformMat4f("Model", Model);
-	s->SetUniform4f("coeffs",5,-1,3,1);
+	s->SetUniform4f("coeffs",3,2,2,1);
 	if (data_list[shapeIndx]->GetMaterial() >= 0 && !materials.empty())
 	{
 		// materials[shapes[pickedShape]->GetMaterial()]->Bind(textures);
@@ -110,7 +119,15 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	else
 		s->SetUniform4f("lightColor", 4/100.0f, 60 / 100.0f, 99 / 100.0f, 0.5f);
 	//textures[0]->Bind(0);
-
+	
+	// if(data_list[shapeIndx]->type == Axis){
+	// 	igl::opengl::ViewerData * data  = data_list[shapeIndx];
+	// 	for (float t =0 ; t<=1 ;t+=0.001)
+	// 	{
+	// 		float p = t+=0.001;
+	// 		data ->set_edges(Eigen::RowVector3d(t,(t*(1+t*(1+t))),0),Eigen::RowVector3d(p,(p*(1+p*(1+p))),0),Eigen::RowVector3d(1/2,1/2,1/2));
+	// 	}
+	// }
 	
 	
 
@@ -133,14 +150,14 @@ void Project::WhenTranslate()
 }
 
 void Project::Animate() {
-	int t,dt,segment; //todo make global
+	int t=0,dt=0,segment=0; //todo make global
     if(isActive)
 	{
-		int maxSegmentNum;//=((Bezier1D*)data_list[currIndx])->GetSegmentsNum();
+		int maxSegmentNum = 2;//=((Bezier1D*)data_list[currIndx])->GetSegmentsNum();
 		
 		t+=dt;
 
-		if(t>1 && segment< maxSegmentNum -1){
+		if(t>1 && segment < maxSegmentNum ){
 			segment ++;
 			t=dt;
 		}
@@ -149,7 +166,7 @@ void Project::Animate() {
 			t = 1;
 			dt = -dt;
 		}
-		else if(t<0 &&segment <maxSegmentNum-1){
+		else if(t<0 &&segment <maxSegmentNum){
 			segment++;
 			t=1;
 		}
@@ -170,6 +187,11 @@ void Project::Animate() {
 		segment =0;
 		dt = std::abs(dt);
 	}
+}
+
+float Project::GetVelosity(int segment, float t, float dt){
+
+	return 0.0;
 }
 
 

@@ -2,7 +2,7 @@
 
 #define COEFF_SIZE 20
 #define epsilon 0.1
-#define IN_RANGE(x0,x1) (x0<x1+epsilon && x0>x1-epsilon)
+#define IN_CERCEL(x,y)  (pow(x-coeffs.x,2)+pow(y-coeffs.y,2) < pow(coeffs.z,2))
 in vec2 texCoord0;
 in vec3 normal0;
 in vec3 color0;
@@ -36,8 +36,7 @@ float f(float x, int idx) {
 
 void main()
 {
-    if(IN_RANGE(f(position0.s,0) , position0.t))
+    if(IN_CERCEL(position0.x, position0.y))
 	    Color = vec4(0.9059, 0.2784, 0.9882, 1.0); // texture2D(sampler1, texCoord0)* vec4(color0,1.0); //you must have gl_FragColor
-    else 
-      Color = vec4(0,0,0,1);
+    
 }

@@ -3,6 +3,10 @@
         "vector": "cpp",
         "list": "cpp",
         "complex": "cpp",
-        "system_error": "cpp"
+        "system_error": "cpp",
+        "array": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp",
+        "alignedvector3": "cpp"
     }
 }
