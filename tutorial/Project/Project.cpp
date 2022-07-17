@@ -28,13 +28,13 @@ void Project::Init()
 {	float x = 0.5528;
 	unsigned int texIDs[3] = { 0 , 1, 2};
 	unsigned int slots[3] = { 0 , 1, 2 };
-	bez_points[0] = Eigen::Vector4f(-1, 0, 0, 0);
+	bez_points[0] = Eigen::Vector4f(-4, 0, 0, 0);
 	bez_points[1] = Eigen::Vector4f(-1, x, 0, 0);
 	bez_points[2] = Eigen::Vector4f(-x, 1, 0, 0);
-	bez_points[3] = Eigen::Vector4f(0, 1, 0, 0);
+	bez_points[3] = Eigen::Vector4f(0, 4, 0, 0);
 	bez_points[4] = Eigen::Vector4f(x, 1, 0, 0);
 	bez_points[5] = Eigen::Vector4f(1, x, 0, 0);
-	bez_points[6] = Eigen::Vector4f(1, 0, 0, 0);
+	bez_points[6] = Eigen::Vector4f(4, 0, 0, 0);
 
 	
 
@@ -65,13 +65,13 @@ void Project::Init()
 	// AddShape(zCylinder, 1, TRIANGLES);
 	// AddShape(zCylinder, 2, TRIANGLES);
 
-	AddShape(Axis, -1, TRIANGLES);
+	AddShape(Axis, -1, TRIANGLES,1);
 	SetShapeShader(1, 0);
 	selected_data_index = 1;
 	ShapeTransformation(scaleAll, 0, 0);
 	SetShapeStatic(1);
 	//SetShapeMaterial(1, 0);
-	AddShape(Plane, -1, TRIANGLES);
+	AddShape(Plane, -1, TRIANGLES,1);
 	SetShapeShader(2,1);
 	SetShapeMaterial(2,1);
 	selected_data_index = 2;
@@ -83,33 +83,33 @@ void Project::Init()
 	
 	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
 	
-	SetShapeShader(0, 1);
-	SetShapeShader(1, 3);
-	SetShapeShader(2, 3);
-	SetShapeShader(3, 3);
-	SetShapeShader(4, 3);
-	SetShapeShader(5,1);
+	// SetShapeShader(0, 1);
+	// SetShapeShader(1, 3);
+	// SetShapeShader(2, 3);
+	// SetShapeShader(3, 3);
+	// SetShapeShader(4, 3);
+	// SetShapeShader(5, 1);
 
 
-	SetShapeMaterial(1, 0);
-	SetShapeMaterial(2, 0);	
-	SetShapeMaterial(3, 0);	
-	SetShapeMaterial(4, 0);
-	SetShapeMaterial(5, 1);
-	SetShapeMaterial(0, 1);
+	// SetShapeMaterial(1, 0);
+	// SetShapeMaterial(2, 0);	
+	// SetShapeMaterial(3, 0);	
+	// SetShapeMaterial(4, 0);
+	// SetShapeMaterial(5, 1);
+	// SetShapeMaterial(0, 1);
 
 
-	selected_data_index = 0;
-	float cylinderLen = 1.6f;
-	float s = 60;
-	ShapeTransformation(scaleAll, s,0);
-	selected_data_index = 5;
-	ShapeTransformation(scaleAll, s,0);
+	// selected_data_index = 0;
+	// float cylinderLen = 1.6f;
+	// float s = 60;
+	// ShapeTransformation(scaleAll, s,0);
+	// selected_data_index = 5;
+	// ShapeTransformation(scaleAll, s,0);
 
-	selected_data_index = 1;
-	data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
-	ShapeTransformation(zTranslate, cylinderLen / 2.0, 1);
-	selected_data_index = 0;
+	// selected_data_index = 1;
+	// data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
+	// ShapeTransformation(zTranslate, cylinderLen / 2.0, 1);
+	// selected_data_index = 0;
 	// float cylinderLen = 1.6f;
 	// float s = 60;
 	// ShapeTransformation(scaleAll, s,0);
@@ -125,15 +125,60 @@ void Project::Init()
 	// data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
 
 
-	selected_data_index = 0;
-	SetShapeStatic(0);
-	selected_data_index = 5;
-	SetShapeStatic(5);
+	// selected_data_index = 0;
+	// SetShapeStatic(0);
+	// selected_data_index = 5;
+	// SetShapeStatic(5);
 	
 
 
 	//SetShapeViewport(6, 1);
-//	ReadPixel(); //uncomment when you are reading from the z-buffer
+	//	ReadPixel(); //uncomment when you are reading from the z-buffer
+	drawBezier(1);
+}
+void Project::drawBezier(int shapeIndx){
+	data_list[shapeIndx]->clear();
+	drawSection(shapeIndx,bez_points[0],bez_points[1], bez_points[2], bez_points[3]);
+	drawSection(shapeIndx,bez_points[3],bez_points[4], bez_points[5], bez_points[6]);
+	// float y_bez_t = bezier(0,bez_points[0][1],bez_points[1][1], bez_points[2][1], bez_points[3][1]);
+	// float x_bez_t = bezier(0,bez_points[0][0],bez_points[1][0], bez_points[2][0], bez_points[3][0]);
+	// 	for (float t = 0; t < 1; t += 0.001) {
+	// 			float p = t + 0.001; //p is the point after t
+	// 			float y_bez_p = bezier(p,bez_points[0][1],bez_points[1][1], bez_points[2][1], bez_points[3][1]); 
+	// 			float x_bez_p = bezier(p,bez_points[0][0],bez_points[1][0], bez_points[2][0], bez_points[3][0]); 
+	// 			data_list[shapeIndx]->add_edges(Eigen::RowVector3d(x_bez_t,y_bez_t,0),Eigen::RowVector3d(x_bez_p,y_bez_p,0),Eigen::RowVector3d(1/2,1/2,1/2));
+	// 			y_bez_t = y_bez_p;
+	// 			x_bez_t = x_bez_p;
+	// 	} 
+	// 	y_bez_t = bezier(0,bez_points[3][1],bez_points[4][1], bez_points[5][1], bez_points[6][1]);
+	// 	x_bez_t = bezier(0,bez_points[3][0],bez_points[4][0], bez_points[5][0], bez_points[6][0]);
+	// 	for (float t = 0; t < 1; t += 0.001) {
+	// 			float p = t + 0.001; //p is the point after t
+	// 			float y_bez_p = bezier(p,bez_points[3][1],bez_points[4][1], bez_points[5][1], bez_points[6][1]); 
+	// 			float x_bez_p = bezier(p,bez_points[3][0],bez_points[4][0], bez_points[5][0], bez_points[6][0]); 
+	// 			data_list[shapeIndx]->add_edges(Eigen::RowVector3d(x_bez_t,y_bez_t,0),Eigen::RowVector3d(x_bez_p,y_bez_p,0),Eigen::RowVector3d(1/2,1/2,1/2));
+	// 			y_bez_t = y_bez_p;
+	// 			x_bez_t = x_bez_p;
+	// 	}
+}
+
+void Project::drawSection(int shapeIndx ,Eigen::Vector4f p1,Eigen::Vector4f p2,Eigen::Vector4f p3,Eigen::Vector4f p4){
+	auto shape = data_list[shapeIndx];
+	float y_bez_t = bezier(0,p1[1],p2[1],p3[1],p4[1]);
+	float x_bez_t = bezier(0,p1[0],p2[0],p3[0],p4[0]);
+	Eigen::RowVector3d vec_t = Eigen::RowVector3d(x_bez_t,y_bez_t,0);
+	Eigen::RowVector3d vec_p, helf_vec = Eigen::RowVector3d(1/2,1/2,1/2);
+	float p, y_bez_p, x_bez_p;
+	for (float t = 0; t < 0.995; t += 0.005) {
+			p = t + 0.005; //p is the point after t
+		 	y_bez_p = bezier(p,p1[1],p2[1],p3[1],p4[1]); 
+		 	x_bez_p = bezier(p,p1[0],p2[0],p3[0],p4[0]); 
+			vec_p = Eigen::RowVector3d(x_bez_p,y_bez_p,0);
+			shape->add_edges(vec_t,vec_p,helf_vec);
+			vec_t = vec_p;
+			y_bez_t = y_bez_p;
+			x_bez_t = x_bez_p;
+	} 
 }
 
 void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx)
@@ -153,24 +198,8 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniform4fv("bez_points", &bez_points[0], POINTS_NUM);
 
 
-	if(data_list[shapeIndx]->type == Axis){
-		data_list[shapeIndx]->clear();
-		for (float t = 0; t < 1; t += 0.001) {
-				float p = t + 0.001; //p is the point after t
-				float y_bez_t = bezier(t,bez_points[0][1],bez_points[1][1], bez_points[2][1], bez_points[3][1]);
-				float y_bez_p = bezier(p,bez_points[0][1],bez_points[1][1], bez_points[2][1], bez_points[3][1]); 
-				float x_bez_t = bezier(t,bez_points[0][0],bez_points[1][0], bez_points[2][0], bez_points[3][0]);
-				float x_bez_p = bezier(p,bez_points[0][0],bez_points[1][0], bez_points[2][0], bez_points[3][0]); 
-				data_list[shapeIndx]->add_edges(Eigen::RowVector3d(x_bez_t,y_bez_t,0),Eigen::RowVector3d(x_bez_p,y_bez_p,0),Eigen::RowVector3d(1/2,1/2,1/2));
-		}
-		for (float t = 0; t < 1; t += 0.001) {
-				float p = t + 0.001; //p is the point after t
-				float y_bez_t = bezier(t,bez_points[3][1],bez_points[4][1], bez_points[5][1], bez_points[6][1]);
-				float y_bez_p = bezier(p,bez_points[3][1],bez_points[4][1], bez_points[5][1], bez_points[6][1]); 
-				float x_bez_t = bezier(t,bez_points[3][0],bez_points[4][0], bez_points[5][0], bez_points[6][0]);
-				float x_bez_p = bezier(p,bez_points[3][0],bez_points[4][0], bez_points[5][0], bez_points[6][0]); 
-				data_list[shapeIndx]->add_edges(Eigen::RowVector3d(x_bez_t,y_bez_t,0),Eigen::RowVector3d(x_bez_p,y_bez_p,0),Eigen::RowVector3d(1/2,1/2,1/2));
-		}
+	if(isPicked&&data_list[shapeIndx]->type == Axis){
+		drawBezier(shapeIndx);
 	}
 	if (data_list[shapeIndx]->GetMaterial() >= 0 && !materials.empty())
 	{
@@ -276,11 +305,15 @@ Project::~Project(void)
 }
 
 
-int Project::IsPicked(int x, int y){
+int Project::IsPicked(float x, float y){
+	x = (x-1200)/100;
+	y=(y-400)/-100;
+	std::cout << "piced" << x << "," << y << std::endl;
 	pickedPoint = -1;
 	isPicked = false;
 	for(int i= 0 ; i<POINTS_NUM ; i ++){
 		if(pow(x-bez_points[i][0],2) +pow(y-bez_points[i][1],2)<Radius*Radius){
+			std::cout << "found " << i  << std::endl;
 			isPicked =true;
 			pickedPoint = i;
 			break;
@@ -290,12 +323,18 @@ int Project::IsPicked(int x, int y){
 }
 
 void Project::UnPicked(){
+		std::cout << "unpiced" << std::endl;
+
 	pickedPoint = -1;
 	isPicked = false;
 }
 
-void Project::SetPicked(int x,int y){
+void Project::SetPicked(float x,float y){
 	if(isPicked){
+		x = (x-1200)/100;
+		y=(y-400)/-100;
+		std::cout << "setpoints" << pickedPoint<<":"<< x << "," << y << std::endl;
+
 		bez_points[pickedPoint][0]=x;
 		bez_points[pickedPoint][1]=y;
 	}

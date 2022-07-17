@@ -1,8 +1,5 @@
 #version 330
 
-#define COEFF_SIZE 20
-#define epsilon 0.1
-#define IN_RANGE(x0,x1) (x0-coeffs.x<x1+epsilon && x0>x1-epsilon)
 #define IN_CERCEL(x,y)  (x*x+y*y < coeffs.z * coeffs.z)
 in vec2 texCoord0;
 in vec3 normal0;
@@ -38,7 +35,7 @@ float f(float x, int idx) {
 }
 float distanceFromPoinSqr(vec3 position, vec4 point)
 {
-  return (position.s - point.x)(position.s-point.x) + (position.t-point.y)(position.t-point.y);
+  return (position.s - point.x)*(position.s-point.x) + (position.t-point.y)*(position.t-point.y);
 }
 
 
@@ -49,7 +46,7 @@ void main()
     // if(IN_CERCEL(pos.x, pos.y))
     for(int i = 0; i< POINTS_NUM; i++){
         if(distanceFromPoinSqr(position0, bez_points[i]*2.4) < 0.04){
-	        x = 1;
+         x = 1;
         }
     }
     if(x == 1)
