@@ -25,16 +25,16 @@ Project::Project()
 
 
 void Project::Init()
-{		
+{	float x = 0.5528;
 	unsigned int texIDs[3] = { 0 , 1, 2};
 	unsigned int slots[3] = { 0 , 1, 2 };
-	bez_points[0] = Eigen::Vector4f(-4, 0, 0, 0);
-	bez_points[1] = Eigen::Vector4f(-2, 1.75, 0, 0);
-	bez_points[2] = Eigen::Vector4f(-1, 3, 0, 0);
-	bez_points[3] = Eigen::Vector4f(0, 4, 0, 0);
-	bez_points[4] = Eigen::Vector4f(1, 3, 0, 0);
-	bez_points[5] = Eigen::Vector4f(2, 1.75, 0, 0);
-	bez_points[6] = Eigen::Vector4f(4, 0, 0, 0);
+	bez_points[0] = Eigen::Vector4f(-1, 0, 0, 0);
+	bez_points[1] = Eigen::Vector4f(-1, x, 0, 0);
+	bez_points[2] = Eigen::Vector4f(-x, 1, 0, 0);
+	bez_points[3] = Eigen::Vector4f(0, 1, 0, 0);
+	bez_points[4] = Eigen::Vector4f(x, 1, 0, 0);
+	bez_points[5] = Eigen::Vector4f(1, x, 0, 0);
+	bez_points[6] = Eigen::Vector4f(1, 0, 0, 0);
 
 	
 
