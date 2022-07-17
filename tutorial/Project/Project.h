@@ -10,6 +10,8 @@ class Project : public igl::opengl::glfw::Viewer
 {
 private:
 	Eigen::Vector4f bez_points[POINTS_NUM];
+	float t=0, dt=0.01;
+	int segment=0;
 	
 public:
 	int pickedPoint=-1;
@@ -22,7 +24,7 @@ public:
 	void WhenTranslate();
 	void Animate() override;
 	void ScaleAllShapes(float amt, int viewportIndx);
-	float GetVelosity(int segment, float t, float dt);
+	Eigen::Vector3d GetVelosity(int segment, float t, float dt);
 	int IsPicked(float x, float y);
 	void UnPicked();
 	void SetPicked(float x,float y);
