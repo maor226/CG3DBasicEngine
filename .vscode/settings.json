@@ -8,6 +8,7 @@
         "xstring": "cpp",
         "xutility": "cpp",
         "alignedvector3": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "xlocale": "cpp"
     }
 }

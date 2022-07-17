@@ -234,14 +234,32 @@ void Project::ScaleAllShapes(float amt,int viewportIndx)
 
 Project::~Project(void)
 {
+	
 }
 
 
 int Project::IsPicked(int x, int y){
+	pickedPoint = -1;
+	isPicked = false;
+	for(int i= 0 ; i<POINTS_NUM ; i ++){
+		if(pow(x-bez_points[i][0],2) +pow(y-bez_points[i][1],2)<Radius*Radius){
+			isPicked =true;
+			pickedPoint = i;
+			break;
+		}
+	}
 	return pickedPoint;
 }
+
 void Project::UnPicked(){
 	pickedPoint = -1;
 	isPicked = false;
+}
+
+void Project::SetPicked(int x,int y){
+	if(isPicked){
+		bez_points[pickedPoint][0]=x;
+		bez_points[pickedPoint][1]=y;
+	}
 }
 

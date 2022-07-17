@@ -15,7 +15,7 @@
 			
 			glfwGetCursorPos(window, &x2, &y2);
 			rndr->UpdatePress(x2, y2);
-			if (rndr->Picking((int)x2, (int)y2))
+			if (rndr->Picking((int)x2, (int)y2)&& scn->IsPicked((int)x2,(int)y2)>=0)
 			{
 				rndr->UpdatePosition(x2, y2);
 				if(button == GLFW_MOUSE_BUTTON_LEFT)
@@ -23,6 +23,7 @@
 			}
 			else
 			{
+				scn->UnPicked();
 				rndr->UnPick(2);
 			}
 		
@@ -73,6 +74,13 @@
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE && rndr->IsPicked() && rndr->IsMany())
 					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 
+		}
+		else if(rndr->CheckViewport(xpos,ypos,1)){
+			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+			{
+				scn->SetPicked((int)xpos,(int)ypos);
+			}
+			
 		}
 	}
 
