@@ -33,8 +33,8 @@ void Project::Init()
 	bez_points[2] = Eigen::Vector4f(-x, 1, 0, 0);
 	bez_points[3] = Eigen::Vector4f(0, 4, 0, 0);
 	bez_points[4] = Eigen::Vector4f(x, 1, 0, 0);
-	bez_points[5] = Eigen::Vector4f(1, x, 0, 0);
-	bez_points[6] = Eigen::Vector4f(4, 0, 0, 0);
+	bez_points[5] = Eigen::Vector4f(1, -x, 0, 0);
+	bez_points[6] = Eigen::Vector4f(-4, 0, 0, 0);
 
 	
 
@@ -46,7 +46,7 @@ void Project::Init()
 	AddShader("shaders/basicShader");
 	
 	AddTexture("textures/plane.png",2);
-	AddTexture("textures/cubemaps/Daylight Box_", 3);
+	AddTexture("textures/cubemaps/kisspng-skybox-texture-mapping-panorama-5b2a44a372ea72.7553873615294967394707.png", 0);
 	AddTexture("textures/grass.bmp", 2);
 	//AddTexture("../res/textures/Cat_bump.jpg", 2);
 
@@ -77,6 +77,13 @@ void Project::Init()
 	selected_data_index = 2;
 	ShapeTransformation(scaleAll, 60, 0);
 	SetShapeStatic(2);
+	// AddShape(Plane, -1, TRIANGLES); //background;
+	// SetShapeShader(3, 3);
+	// SetShapeMaterial(3, 1);
+	// SetShapeStatic(3);
+	AddShape(Sphere, -1, TRIANGLES, 0);
+	SetShapeShader(3,3);
+	SetShapeMaterial(3,2);
 
 
 
@@ -140,26 +147,6 @@ void Project::drawBezier(int shapeIndx){
 	data_list[shapeIndx]->clear();
 	drawSection(shapeIndx,bez_points[0],bez_points[1], bez_points[2], bez_points[3]);
 	drawSection(shapeIndx,bez_points[3],bez_points[4], bez_points[5], bez_points[6]);
-	// float y_bez_t = bezier(0,bez_points[0][1],bez_points[1][1], bez_points[2][1], bez_points[3][1]);
-	// float x_bez_t = bezier(0,bez_points[0][0],bez_points[1][0], bez_points[2][0], bez_points[3][0]);
-	// 	for (float t = 0; t < 1; t += 0.001) {
-	// 			float p = t + 0.001; //p is the point after t
-	// 			float y_bez_p = bezier(p,bez_points[0][1],bez_points[1][1], bez_points[2][1], bez_points[3][1]); 
-	// 			float x_bez_p = bezier(p,bez_points[0][0],bez_points[1][0], bez_points[2][0], bez_points[3][0]); 
-	// 			data_list[shapeIndx]->add_edges(Eigen::RowVector3d(x_bez_t,y_bez_t,0),Eigen::RowVector3d(x_bez_p,y_bez_p,0),Eigen::RowVector3d(1/2,1/2,1/2));
-	// 			y_bez_t = y_bez_p;
-	// 			x_bez_t = x_bez_p;
-	// 	} 
-	// 	y_bez_t = bezier(0,bez_points[3][1],bez_points[4][1], bez_points[5][1], bez_points[6][1]);
-	// 	x_bez_t = bezier(0,bez_points[3][0],bez_points[4][0], bez_points[5][0], bez_points[6][0]);
-	// 	for (float t = 0; t < 1; t += 0.001) {
-	// 			float p = t + 0.001; //p is the point after t
-	// 			float y_bez_p = bezier(p,bez_points[3][1],bez_points[4][1], bez_points[5][1], bez_points[6][1]); 
-	// 			float x_bez_p = bezier(p,bez_points[3][0],bez_points[4][0], bez_points[5][0], bez_points[6][0]); 
-	// 			data_list[shapeIndx]->add_edges(Eigen::RowVector3d(x_bez_t,y_bez_t,0),Eigen::RowVector3d(x_bez_p,y_bez_p,0),Eigen::RowVector3d(1/2,1/2,1/2));
-	// 			y_bez_t = y_bez_p;
-	// 			x_bez_t = x_bez_p;
-	// 	}
 }
 
 void Project::drawSection(int shapeIndx ,Eigen::Vector4f p1,Eigen::Vector4f p2,Eigen::Vector4f p3,Eigen::Vector4f p4){
@@ -179,6 +166,15 @@ void Project::drawSection(int shapeIndx ,Eigen::Vector4f p1,Eigen::Vector4f p2,E
 			y_bez_t = y_bez_p;
 			x_bez_t = x_bez_p;
 	} 
+}
+
+Eigen::RowVector3d   velocity(float t, float dt, Eigen::Vector4f p1,Eigen::Vector4f p2,Eigen::Vector4f p3,Eigen::Vector4f p4){
+	float y_bez_t = bezier(t,p1[1],p2[1],p3[1],p4[1]);
+	float x_bez_t = bezier(t,p1[0],p2[0],p3[0],p4[0]);
+	float p = t + dt; //p is the point after t
+	float y_bez_p = bezier(p,p1[1],p2[1],p3[1],p4[1]); 
+	float x_bez_p = bezier(p,p1[0],p2[0],p3[0],p4[0]); 
+	return Eigen::RowVector3d(x_bez_p - x_bez_t, y_bez_p - y_bez_t ,0); 
 }
 
 void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx)
@@ -242,49 +238,61 @@ void Project::WhenTranslate()
 }
 
 void Project::Animate() {
-	int t=0,dt=0,segment=0; //todo make global
+	 //todo make global
 	//bez_points[0][1] += 0.1;
     if(isActive)
 	{
-		int maxSegmentNum = 2;//=((Bezier1D*)data_list[currIndx])->GetSegmentsNum();
-		
-		t+=dt;
+		int maxSegmentNum = 1;//=((Bezier1D*)data_list[currIndx])->GetSegmentsNum();
+		if(t<=1 && t >=0){
+			// std::cout << "Animate" <<GetVelosity(segment, t, dt) <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
+			data_list[3]->MyTranslate(GetVelosity(segment, t, dt),1);
+			//data_list[3]->MyTranslate(((Bezier1D*)data_list[curIndx])->GetVelosity(segment,1-t,dt),1); //todo getVelosity === שיפוע
+			t+=dt;
+		}else if(t>=1){
+			if(segment == maxSegmentNum){
+				std::cout << "Animate 1 1 - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
+				dt = -dt;
+				t =1;
+				std::cout << "---- - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
 
-		if(t>1 && segment < maxSegmentNum ){
-			segment ++;
-			t=dt;
-		}
-		else if(t>1){
-			segment = 0 ;
-			t = 1;
-			dt = -dt;
-		}
-		else if(t<0 &&segment <maxSegmentNum){
-			segment++;
-			t=1;
-		}
-		else if (t<0){
-			segment=0;
-			t=0;
-			dt=-dt;
-		}
+			}else{
+				std::cout << "Animate 1 2 - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
 
-		// if(dt<0)
-		// 	data_list[last]->MyTranslate(((Bezier1D*)data_list[curIndx])->GetVelosity(segment,1-t,dt),1); //todo getVelosity === שיפוע
-		// else
-		// 	data_list[last]->MyTranslate(((Bezier1D*)data_list[curIndx])->GetVelosity(segment,t,dt),1);
+				segment++;
+				t = dt;
+				std::cout << "---- - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
 
+			}
+		}else if(t<=0){
+			if( segment == 0){
+				std::cout << "Animate 2 1 - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
+
+				t = 0;
+				dt = -dt;
+				std::cout << "---- - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
+			}else{
+				std::cout << "Animate 2 2 - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
+
+				segment--;
+				t = 1;
+				std::cout << "---- - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
+
+			}
+		}
+		else std::cout << "Eror whail t:" <<t <<std::endl;
 	}
 	else{
 		t=0;
 		segment =0;
-		dt = std::abs(dt);
+		dt = std::abs(0.01);
 	}
 }
 
-float Project::GetVelosity(int segment, float t, float dt){
-
-	return 0.0;
+Eigen::Vector3d Project::GetVelosity(int segment, float t, float dt){
+	Eigen::Vector3d v = velocity(t,dt, bez_points[segment*3], bez_points[segment*3+1], bez_points[segment*3+2], bez_points[segment*3+3]);
+	if (dt <0)
+		return Eigen::Vector3d(v[0],-1*v[1],0);
+	return v;
 }
 
 
