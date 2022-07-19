@@ -68,22 +68,23 @@ void Project::Init()
 	AddShape(Axis, -1, TRIANGLES,1);
 	SetShapeShader(1, 0);
 	selected_data_index = 1;
-	ShapeTransformation(scaleAll, 0, 0);
+	ShapeTransformation(scaleAll, 0, 1);
 	SetShapeStatic(1);
 	//SetShapeMaterial(1, 0);
 	AddShape(Plane, -1, TRIANGLES,1);
 	SetShapeShader(2,1);
 	SetShapeMaterial(2,1);
 	selected_data_index = 2;
-	ShapeTransformation(scaleAll, 60, 0);
+	ShapeTransformation(scaleAll, 60, 1);
 	SetShapeStatic(2);
 	// AddShape(Plane, -1, TRIANGLES); //background;
 	// SetShapeShader(3, 3);
 	// SetShapeMaterial(3, 1);
 	// SetShapeStatic(3);
-	AddShape(Sphere, -1, TRIANGLES, 0);
+	// AddShape(banny, 1, TRIANGLES, 0);
+	AddShapeFromFile("./data/bunny.off",-1,TRIANGLES);
 	SetShapeShader(3,3);
-	SetShapeMaterial(3,2);
+	// SetShapeMaterial(3,2);
 
 
 

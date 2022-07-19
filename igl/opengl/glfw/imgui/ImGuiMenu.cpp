@@ -251,7 +251,9 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
        // viewer->open_dialog_hide_layer();
     }
     if (ImGui::Button("Change##Materials", ImVec2((w-p), 0)))
-    {}
+    {
+      
+    }
   }
   //metirial 
   if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))

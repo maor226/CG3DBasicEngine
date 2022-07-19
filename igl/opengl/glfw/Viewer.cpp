@@ -315,6 +315,17 @@ IGL_INLINE bool
       return;
     
     this->load_mesh_from_file(fname.c_str());
+      data()->mode = TRIANGLES;
+      data()->shaderID = 1;
+      data()->viewports = 1 << 0;
+      //data()->is_visible = 0x1;
+      data()->show_lines = 0;
+      data()->show_overlay = 0;
+      data()->hide = false;
+
+    // this->load_mesh_from_file(fname.c_str());
+
+
   }
 
   IGL_INLINE void Viewer::open_dialog_save_mesh()
@@ -552,6 +563,9 @@ IGL_INLINE bool
             break;
         case zCylinder:
             this->load_mesh_from_file("./data/zcylinder.obj");
+            break;
+        case banny:
+            this->load_mesh_from_file("./data/mybunny.off");
             break;
         default:
             break;
