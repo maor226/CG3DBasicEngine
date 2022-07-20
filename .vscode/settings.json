@@ -97,5 +97,6 @@
         "openglsupport": "cpp",
         "specialfunctions": "cpp",
         "splines": "cpp"
-}
+},
+"C_Cpp.errorSquiggles": "Disabled"
 }

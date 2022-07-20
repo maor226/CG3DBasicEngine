@@ -13,9 +13,7 @@ static void printMat(const Eigen::Matrix4d& mat)
 	}
 }
 
-Project::Project()
-{
-
+Project::Project() {
 }
 
 //Project::Project(float angle ,float relationWH, float near, float far) : Scene(angle,relationWH,near,far)
@@ -35,9 +33,6 @@ void Project::Init()
 	bez_points[4] = Eigen::Vector4f(x, 1, 0, 0);
 	bez_points[5] = Eigen::Vector4f(1, -x, 0, 0);
 	bez_points[6] = Eigen::Vector4f(-4, 0, 0, 0);
-
-	
-
 	
 	AddShader("shaders/pickingShader");
 	// AddShader("shaders/cubemapShader");

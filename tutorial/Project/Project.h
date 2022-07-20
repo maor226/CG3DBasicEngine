@@ -1,5 +1,6 @@
 #pragma once
 #include "igl/opengl/glfw/Viewer.h"
+#include "Bez.h"
 
 #define bezier(t, p1, p2, p3, p4) (pow((1 - t),3)*p1) + (3* pow((1-t), 2) * t * p2) + (3* pow(t, 2) * (1 - t) * p3) + pow(t,3) * p4
 #define POINTS_NUM 7
@@ -12,7 +13,8 @@ private:
 	Eigen::Vector4f bez_points[POINTS_NUM];
 	float t=0, dt=0.01;
 	int segment=0;
-	
+	Bez bez();
+
 public:
 	int pickedPoint=-1;
 	bool isPicked = false; 
