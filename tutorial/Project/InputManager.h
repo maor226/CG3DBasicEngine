@@ -7,15 +7,16 @@
 
 	void glfw_mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	
+		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
+		Project* scn = (Project*)rndr->GetScene();
 		if (action == GLFW_PRESS)
 		{
-			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
-			Project* scn = (Project*)rndr->GetScene();
+			
 			double x2, y2;
 			
 			glfwGetCursorPos(window, &x2, &y2);
 			rndr->UpdatePress(x2, y2);
-			if (rndr->Picking((int)x2, (int)y2))
+			if ( scn->IsPicked(x2,y2)>=0)
 			{
 				rndr->UpdatePosition(x2, y2);
 				if(button == GLFW_MOUSE_BUTTON_LEFT)
@@ -28,7 +29,9 @@
 		
 		}
 		else
-		{
+		{				
+			scn->UnPicked();
+
 			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 			rndr->UnPick(2);
 		}
@@ -57,12 +60,13 @@
 		Project* scn = (Project*)rndr->GetScene();
 
 		rndr->UpdatePosition((float)xpos,(float)ypos);
-
+		scn->SetPicked((float)xpos,(float)ypos);
+		
 		if (rndr->CheckViewport(xpos,ypos, 0))
 		{
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
-
+				
 				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
@@ -73,6 +77,13 @@
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE && rndr->IsPicked() && rndr->IsMany())
 					rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 
+		}
+		else if(rndr->CheckViewport(xpos,ypos,1)){
+			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+			{
+				
+			}
+			
 		}
 	}
 

@@ -251,7 +251,9 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
        // viewer->open_dialog_hide_layer();
     }
     if (ImGui::Button("Change##Materials", ImVec2((w-p), 0)))
-    {}
+    {
+      
+    }
   }
   //metirial 
   if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
@@ -335,14 +337,14 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
       ImGui::PopItemWidth();
   }
 
-  // Helper for setting viewport specific mesh options
-  auto make_checkbox = [&](const char *label, unsigned int &option)
-  {
-    return ImGui::Checkbox(label,
-      [&]() { return drawInfos[1]->is_set(option); },
-      [&](bool value) { return drawInfos[1]->set(option, value); }
-    );
-  };
+      // Helper for setting viewport specific mesh options
+      auto make_checkbox = [&](const char *label, unsigned int &option)
+      {
+        return ImGui::Checkbox(label,
+          [&]() { return drawInfos[1]->is_set(option); },
+          [&](bool value) { return drawInfos[1]->set(option, value); }
+        );
+      };
       ImGui::ColorEdit4("Background", drawInfos[1]->Clear_RGBA.data(),
       ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueWheel);
 
