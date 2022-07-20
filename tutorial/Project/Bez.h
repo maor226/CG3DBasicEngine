@@ -8,13 +8,13 @@
 class Bez 
 {
 private:
-	Eigen::Vector4f* get_points(int section);
-	
+	Eigen::Vector2d* get_points(int section);
+
 public:
 	Bez();
-	Eigen::Vector4f bez_points[POINTS_NUM];
+	Eigen::Vector2d bez_points[POINTS_NUM];
 
-	float bezier_1(float t, int section);
+	Eigen::Vector3d bezier(float t, int section);
 	Eigen::Vector3d velocity(int t, int section);
 	int pickedPoint=-1;
 	bool isPicked = false; 
