@@ -30,6 +30,7 @@ public:
 	void SetPicked(float x,float y);
 	void drawBezier(int index);
 	void drawSection(int shapeIndx ,Eigen::Vector4f p1,Eigen::Vector4f p2,Eigen::Vector4f p3,Eigen::Vector4f p4);
+	//int AddShapeFromFile1(std::string path, int parent, unsigned int mode, int viewport);
 
 	~Project(void);
 };

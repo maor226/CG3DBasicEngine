@@ -25,7 +25,7 @@ Project::Project()
 
 
 void Project::Init()
-{	float x = 0.5528;
+{	float x = (float)0.5528;
 	unsigned int texIDs[3] = { 0 , 1, 2};
 	unsigned int slots[3] = { 0 , 1, 2 };
 	bez_points[0] = Eigen::Vector4f(-4, 0, 0, 0);
@@ -36,9 +36,6 @@ void Project::Init()
 	bez_points[5] = Eigen::Vector4f(1, -x, 0, 0);
 	bez_points[6] = Eigen::Vector4f(-4, 0, 0, 0);
 
-	
-
-	
 	AddShader("shaders/pickingShader");
 	// AddShader("shaders/cubemapShader");
 	AddShader("shaders/bezierShader");
@@ -53,9 +50,6 @@ void Project::Init()
 	AddMaterial(texIDs,slots, 1);
 	AddMaterial(texIDs+1, slots+1, 1);
 	AddMaterial(texIDs + 2, slots + 2, 1);
-
-	
-
 
 	AddShape(Cube, -2, TRIANGLES);
 	SetShapeMaterial(0, 1);
@@ -81,68 +75,15 @@ void Project::Init()
 	// SetShapeShader(3, 3);
 	// SetShapeMaterial(3, 1);
 	// SetShapeStatic(3);
-	AddShape(Sphere, -1, TRIANGLES, 0);
-	SetShapeShader(3,3);
-	SetShapeMaterial(3,2);
-
-
-
-	
+	//AddShapeFromFile1("./data/sphere.obj", -1, TRIANGLES, 0);
+	//SetShapeShader(3,3);
+	//SetShapeMaterial(3,2);
 	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
-	
-	// SetShapeShader(0, 1);
-	// SetShapeShader(1, 3);
-	// SetShapeShader(2, 3);
-	// SetShapeShader(3, 3);
-	// SetShapeShader(4, 3);
-	// SetShapeShader(5, 1);
-
-
-	// SetShapeMaterial(1, 0);
-	// SetShapeMaterial(2, 0);	
-	// SetShapeMaterial(3, 0);	
-	// SetShapeMaterial(4, 0);
-	// SetShapeMaterial(5, 1);
-	// SetShapeMaterial(0, 1);
-
-
-	// selected_data_index = 0;
-	// float cylinderLen = 1.6f;
-	// float s = 60;
-	// ShapeTransformation(scaleAll, s,0);
-	// selected_data_index = 5;
-	// ShapeTransformation(scaleAll, s,0);
-
-	// selected_data_index = 1;
-	// data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
-	// ShapeTransformation(zTranslate, cylinderLen / 2.0, 1);
-	// selected_data_index = 0;
-	// float cylinderLen = 1.6f;
-	// float s = 60;
-	// ShapeTransformation(scaleAll, s,0);
-	// selected_data_index = 1;
-	// data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
-	// ShapeTransformation(zTranslate, cylinderLen / 2.0, 1);
-	// selected_data_index = 2;
-	// ShapeTransformation(zTranslate, cylinderLen , 1);
-	// data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
-	
-	// selected_data_index = 3;
-	// ShapeTransformation(zTranslate, cylinderLen, 1);
-	// data()->SetCenterOfRotation(Eigen::Vector3d(0, 0, -cylinderLen / 2.0));
-
-
-	// selected_data_index = 0;
-	// SetShapeStatic(0);
-	// selected_data_index = 5;
-	// SetShapeStatic(5);
-	
-
-
 	//SetShapeViewport(6, 1);
 	//	ReadPixel(); //uncomment when you are reading from the z-buffer
 	drawBezier(1);
 }
+
 void Project::drawBezier(int shapeIndx){
 	data_list[shapeIndx]->clear();
 	drawSection(shapeIndx,bez_points[0],bez_points[1], bez_points[2], bez_points[3]);
@@ -168,7 +109,7 @@ void Project::drawSection(int shapeIndx ,Eigen::Vector4f p1,Eigen::Vector4f p2,E
 	} 
 }
 
-Eigen::RowVector3d   velocity(float t, float dt, Eigen::Vector4f p1,Eigen::Vector4f p2,Eigen::Vector4f p3,Eigen::Vector4f p4){
+Eigen::RowVector3d velocity(float t, float dt, Eigen::Vector4f p1,Eigen::Vector4f p2,Eigen::Vector4f p3,Eigen::Vector4f p4){
 	float y_bez_t = bezier(t,p1[1],p2[1],p3[1],p4[1]);
 	float x_bez_t = bezier(t,p1[0],p2[0],p3[0],p4[0]);
 	float p = t + dt; //p is the point after t

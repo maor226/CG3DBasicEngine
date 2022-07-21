@@ -309,12 +309,12 @@ IGL_INLINE bool
 
   IGL_INLINE void Viewer::open_dialog_load_mesh()
   {
-    std::string fname = igl::file_dialog_open();
+    const std::string fname = igl::file_dialog_open();
 
     if (fname.length() == 0)
       return;
     
-    this->load_mesh_from_file(fname.c_str());
+    AddShapeFromFile1(fname);
   }
 
   IGL_INLINE void Viewer::open_dialog_save_mesh()
@@ -506,6 +506,25 @@ IGL_INLINE bool
         overlay_point_shader = new Shader(fileName,true,next_data_id);
         next_data_id +=1;
     }
+
+int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned int mode, int viewport)
+{
+    this->load_mesh_from_file(fileName);
+	//data()->type = type;
+	data()->mode = mode;
+	data()->shaderID = 1;
+	data()->viewports = 1 << viewport;
+	/*//data()->is_visible = 0x1;*/
+	data()->show_lines = 0;
+	data()->show_overlay = 0;
+	data()->hide = false;
+
+	this->parents.emplace_back(parent);
+    int shapeIdx = data_list.size() - (size_t)1;
+    SetShapeShader(shapeIdx,3);
+	SetShapeMaterial(shapeIdx,2);
+    return shapeIdx;
+}
 
     int Viewer::AddShapeFromFile(const std::string& fileName, int parent, unsigned int mode, int viewport)
     {
