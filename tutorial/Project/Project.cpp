@@ -13,9 +13,7 @@ static void printMat(const Eigen::Matrix4d& mat)
 	}
 }
 
-Project::Project()
-{
-
+Project::Project() {
 }
 
 //Project::Project(float angle ,float relationWH, float near, float far) : Scene(angle,relationWH,near,far)
@@ -35,7 +33,10 @@ void Project::Init()
 	bez_points[4] = Eigen::Vector4f(x, 1, 0, 0);
 	bez_points[5] = Eigen::Vector4f(1, -x, 0, 0);
 	bez_points[6] = Eigen::Vector4f(-4, 0, 0, 0);
-
+	Bez b = Bez();
+	std::cout << b.bez_points[0] << "\n";
+	bez.push_back(b);
+	
 	AddShader("shaders/pickingShader");
 	// AddShader("shaders/cubemapShader");
 	AddShader("shaders/bezierShader");
@@ -84,39 +85,33 @@ void Project::Init()
 	drawBezier(1);
 }
 
-void Project::drawBezier(int shapeIndx){
+void Project::drawBezier(int shapeIndx) {
 	data_list[shapeIndx]->clear();
-	drawSection(shapeIndx,bez_points[0],bez_points[1], bez_points[2], bez_points[3]);
-	drawSection(shapeIndx,bez_points[3],bez_points[4], bez_points[5], bez_points[6]);
+	drawSection(shapeIndx, 0);
+	drawSection(shapeIndx, 1);
 }
 
-void Project::drawSection(int shapeIndx ,Eigen::Vector4f p1,Eigen::Vector4f p2,Eigen::Vector4f p3,Eigen::Vector4f p4){
+void Project::drawSection(int shapeIndx ,int section){
 	auto shape = data_list[shapeIndx];
-	float y_bez_t = bezier(0,p1[1],p2[1],p3[1],p4[1]);
-	float x_bez_t = bezier(0,p1[0],p2[0],p3[0],p4[0]);
-	Eigen::RowVector3d vec_t = Eigen::RowVector3d(x_bez_t,y_bez_t,0);
-	Eigen::RowVector3d vec_p, helf_vec = Eigen::RowVector3d(1/2,1/2,1/2);
-	float p, y_bez_p, x_bez_p;
-	for (float t = 0; t < 0.995; t += 0.005) {
-			p = t + 0.005; //p is the point after t
-		 	y_bez_p = bezier(p,p1[1],p2[1],p3[1],p4[1]); 
-		 	x_bez_p = bezier(p,p1[0],p2[0],p3[0],p4[0]); 
-			vec_p = Eigen::RowVector3d(x_bez_p,y_bez_p,0);
-			shape->add_edges(vec_t,vec_p,helf_vec);
-			vec_t = vec_p;
-			y_bez_t = y_bez_p;
-			x_bez_t = x_bez_p;
-	} 
+	Eigen::Vector2d temp = (bez[0]).bezier(0, section);
+	Eigen::RowVector3d vec_t(temp[0], temp[1], 0);
+	Eigen::RowVector3d vec_p, half_vec = Eigen::Vector3d(1/2,1/2,1/2);
+	for (float t = 0.005; t < 1; t += 0.005) {
+		temp = (bez[0]).bezier(t, section);
+		vec_p = Eigen::RowVector3d(temp[0], temp[1], 0);
+		shape->add_edges(vec_t,vec_p,half_vec);
+		vec_t = vec_p;
+	}
 }
 
-Eigen::RowVector3d velocity(float t, float dt, Eigen::Vector4f p1,Eigen::Vector4f p2,Eigen::Vector4f p3,Eigen::Vector4f p4){
-	float y_bez_t = bezier(t,p1[1],p2[1],p3[1],p4[1]);
-	float x_bez_t = bezier(t,p1[0],p2[0],p3[0],p4[0]);
-	float p = t + dt; //p is the point after t
-	float y_bez_p = bezier(p,p1[1],p2[1],p3[1],p4[1]); 
-	float x_bez_p = bezier(p,p1[0],p2[0],p3[0],p4[0]); 
-	return Eigen::RowVector3d(x_bez_p - x_bez_t, y_bez_p - y_bez_t ,0); 
-}
+// Eigen::RowVector3d velocity(float t, float dt, Eigen::Vector4f p1,Eigen::Vector4f p2,Eigen::Vector4f p3,Eigen::Vector4f p4){
+// 	float y_bez_t = bezier(t,p1[1],p2[1],p3[1],p4[1]);
+// 	float x_bez_t = bezier(t,p1[0],p2[0],p3[0],p4[0]);
+// 	float p = t + dt; //p is the point after t
+// 	float y_bez_p = bezier(p,p1[1],p2[1],p3[1],p4[1]); 
+// 	float x_bez_p = bezier(p,p1[0],p2[0],p3[0],p4[0]); 
+// 	return Eigen::RowVector3d(x_bez_p - x_bez_t, y_bez_p - y_bez_t ,0); 
+// }
 
 void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx)
 {
@@ -132,7 +127,12 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniformMat4f("Model", Model);
 	s->SetUniform4f("coeffs",1,1,1,1);
 	s->SetUniform1i("POINTS_NUM", POINTS_NUM);
-	s->SetUniform4fv("bez_points", &bez_points[0], POINTS_NUM);
+	Eigen::Vector4f bez_points[POINTS_NUM];
+	for(int i = 0 ; i < POINTS_NUM ; i++) {
+		Eigen::Vector2d cur = bez[0].bez_points[i];
+		bez_points[i] = Eigen::Vector4f((float)cur[0],(float)cur[1], 0, 0);
+	}
+	s->SetUniform4fv("bez_points", &(bez_points[0]), POINTS_NUM);
 
 
 	if(isPicked&&data_list[shapeIndx]->type == Axis){
@@ -183,11 +183,12 @@ void Project::Animate() {
 	//bez_points[0][1] += 0.1;
     if(isActive)
 	{
+		std::cout << t<< std::endl;
 		int maxSegmentNum = 1;//=((Bezier1D*)data_list[currIndx])->GetSegmentsNum();
-		if(t<=1 && t >=0){
-			// std::cout << "Animate" <<GetVelosity(segment, t, dt) <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
-			data_list[3]->MyTranslate(GetVelosity(segment, t, dt),1);
-			//data_list[3]->MyTranslate(((Bezier1D*)data_list[curIndx])->GetVelosity(segment,1-t,dt),1); //todo getVelosity === שיפוע
+		if(t<=1 && t >=0){  
+			// std::cout << "Animate" <<GetVelocity(segment, t, dt) <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
+			data_list[3]->MyTranslate(GetVelocity(segment, t, dt),1);
+			//data_list[3]->MyTranslate(((Bezier1D*)data_list[curIndx])->GetVelocity(segment,1-t,dt),1); //todo GetVelocity === שיפוע
 			t+=dt;
 		}else if(t>=1){
 			if(segment == maxSegmentNum){
@@ -223,14 +224,14 @@ void Project::Animate() {
 		else std::cout << "Eror whail t:" <<t <<std::endl;
 	}
 	else{
-		t=0;
-		segment =0;
-		dt = std::abs(0.01);
+		t = 0;
+		segment = 0;
+		dt = std::abs(0.01); // assert(dt > 0) (falls for dt = 0)
 	}
 }
 
-Eigen::Vector3d Project::GetVelosity(int segment, float t, float dt){
-	Eigen::Vector3d v = velocity(t,dt, bez_points[segment*3], bez_points[segment*3+1], bez_points[segment*3+2], bez_points[segment*3+3]);
+Eigen::Vector3d Project::GetVelocity(int section, float t, float dt){
+	Eigen::Vector3d v = bez[0].velocity(t, section, dt);
 	if (dt <0)
 		return Eigen::Vector3d(v[0],-1*v[1],0);
 	return v;
@@ -261,7 +262,7 @@ int Project::IsPicked(float x, float y){
 	pickedPoint = -1;
 	isPicked = false;
 	for(int i= 0 ; i<POINTS_NUM ; i ++){
-		if(pow(x-bez_points[i][0],2) +pow(y-bez_points[i][1],2)<Radius*Radius){
+		if(pow(x-bez[0].bez_points[i][0],2) +pow(y-bez[0].bez_points[i][1],2)<Radius*Radius){
 			std::cout << "found " << i  << std::endl;
 			isPicked =true;
 			pickedPoint = i;
@@ -284,8 +285,9 @@ void Project::SetPicked(float x,float y){
 		y=(y-400)/-100;
 		std::cout << "setpoints" << pickedPoint<<":"<< x << "," << y << std::endl;
 
-		bez_points[pickedPoint][0]=x;
-		bez_points[pickedPoint][1]=y;
+		bez[0].bez_points[pickedPoint][0]=x;
+		if(pickedPoint %6 != 0 )
+		bez[0].bez_points[pickedPoint][1]=y;
 	}
 }
 
