@@ -160,7 +160,7 @@ public:
 
     bool UpdateViewport(int viewport);
 
-    inline int GetViewportsSize() { return viewports.size(); }
+    inline int GetViewportsSize() { return (int)viewports.size(); }
 
     float CalcMoveCoeff(int cameraIndx, int width);
 

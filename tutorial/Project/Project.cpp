@@ -26,16 +26,6 @@ void Project::Init()
 {	float x = (float)0.5528;
 	unsigned int texIDs[3] = { 0 , 1, 2};
 	unsigned int slots[3] = { 0 , 1, 2 };
-	bez_points[0] = Eigen::Vector4f(-4, 0, 0, 0);
-	bez_points[1] = Eigen::Vector4f(-1, x, 0, 0);
-	bez_points[2] = Eigen::Vector4f(-x, 1, 0, 0);
-	bez_points[3] = Eigen::Vector4f(0, 4, 0, 0);
-	bez_points[4] = Eigen::Vector4f(x, 1, 0, 0);
-	bez_points[5] = Eigen::Vector4f(1, -x, 0, 0);
-	bez_points[6] = Eigen::Vector4f(-4, 0, 0, 0);
-	Bez b = Bez();
-	std::cout << b.bez_points[0] << "\n";
-	bez.push_back(b);
 	
 	AddShader("shaders/pickingShader");
 	// AddShader("shaders/cubemapShader");
@@ -76,7 +66,7 @@ void Project::Init()
 	// SetShapeShader(3, 3);
 	// SetShapeMaterial(3, 1);
 	// SetShapeStatic(3);
-	//AddShapeFromFile1("./data/sphere.obj", -1, TRIANGLES, 0);
+	AddShapeFromFile1("./data/sphere.obj", -1, TRIANGLES, 0);
 	//SetShapeShader(3,3);
 	//SetShapeMaterial(3,2);
 	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
@@ -96,8 +86,8 @@ void Project::drawSection(int shapeIndx ,int section){
 	Eigen::Vector2d temp = (bez[0]).bezier(0, section);
 	Eigen::RowVector3d vec_t(temp[0], temp[1], 0);
 	Eigen::RowVector3d vec_p, half_vec = Eigen::Vector3d(1/2,1/2,1/2);
-	for (float t = 0.005; t < 1; t += 0.005) {
-		temp = (bez[0]).bezier(t, section);
+	for(double t = 0.005; t < 1; t += 0.005) {
+		temp = (bez[0]).bezier((float)t, section);
 		vec_p = Eigen::RowVector3d(temp[0], temp[1], 0);
 		shape->add_edges(vec_t,vec_p,half_vec);
 		vec_t = vec_p;
@@ -181,62 +171,15 @@ void Project::WhenTranslate()
 void Project::Animate() {
 	 //todo make global
 	//bez_points[0][1] += 0.1;
-    if(isActive)
-	{
-		std::cout << t<< std::endl;
-		int maxSegmentNum = 1;//=((Bezier1D*)data_list[currIndx])->GetSegmentsNum();
-		if(t<=1 && t >=0){  
-			// std::cout << "Animate" <<GetVelocity(segment, t, dt) <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
-			data_list[3]->MyTranslate(GetVelocity(segment, t, dt),1);
-			//data_list[3]->MyTranslate(((Bezier1D*)data_list[curIndx])->GetVelocity(segment,1-t,dt),1); //todo GetVelocity === שיפוע
-			t+=dt;
-		}else if(t>=1){
-			if(segment == maxSegmentNum){
-				std::cout << "Animate 1 1 - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
-				dt = -dt;
-				t =1;
-				std::cout << "---- - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
+	if(!isActive)
+		return;
 
-			}else{
-				std::cout << "Animate 1 2 - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
-
-				segment++;
-				t = dt;
-				std::cout << "---- - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
-
-			}
-		}else if(t<=0){
-			if( segment == 0){
-				std::cout << "Animate 2 1 - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
-
-				t = 0;
-				dt = -dt;
-				std::cout << "---- - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
-			}else{
-				std::cout << "Animate 2 2 - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
-
-				segment--;
-				t = 1;
-				std::cout << "---- - "  <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
-
-			}
-		}
-		else std::cout << "Eror whail t:" <<t <<std::endl;
-	}
-	else{
-		t = 0;
-		segment = 0;
-		dt = std::abs(0.01); // assert(dt > 0) (falls for dt = 0)
+	for(int i = 0 ; i < bez.size() ; i++) {
+		Bez * b = &bez[i];
+		Eigen::Vector3d vel = b->step_animate();
+		data_list[b->shapeIdx]->MyTranslate(vel,1);
 	}
 }
-
-Eigen::Vector3d Project::GetVelocity(int section, float t, float dt){
-	Eigen::Vector3d v = bez[0].velocity(t, section, dt);
-	if (dt <0)
-		return Eigen::Vector3d(v[0],-1*v[1],0);
-	return v;
-}
-
 
 void Project::ScaleAllShapes(float amt,int viewportIndx)
 {

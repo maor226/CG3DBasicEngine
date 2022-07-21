@@ -37,7 +37,7 @@ inline bool Combo(const char* label, int* idx, std::vector<std::string>& values)
 {
   if (values.empty()) { return false; }
   return Combo(label, idx, vector_getter,
-    static_cast<void*>(&values), values.size());
+    static_cast<void*>(&values), (int)values.size());
 }
 
 inline bool Combo(const char* label, int* idx, std::function<const char *(int)> getter, int items_count)
@@ -55,7 +55,7 @@ inline bool ListBox(const char* label, int* idx, std::vector<std::string>& value
 {
   if (values.empty()) { return false; }
   return ListBox(label, idx, vector_getter,
-    static_cast<void*>(&values), values.size());
+    static_cast<void*>(&values), (int)values.size());
 }
 
 inline bool InputText(const char* label, std::string &str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL)

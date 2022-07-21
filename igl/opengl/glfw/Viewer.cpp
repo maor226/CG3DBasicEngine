@@ -523,6 +523,10 @@ int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned 
     int shapeIdx = data_list.size() - (size_t)1;
     SetShapeShader(shapeIdx,3);
 	SetShapeMaterial(shapeIdx,2);
+
+    Bez b = Bez(shapeIdx);
+    bez.push_back(b);
+
     return shapeIdx;
 }
 
