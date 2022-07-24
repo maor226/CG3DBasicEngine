@@ -95,6 +95,10 @@ public:
 			//data_list[3]->MyTranslate(((Bezier1D*)data_list[curIndx])->GetVelocity(segment,1-t,dt),1); //todo GetVelocity === שיפוע
 		  std::cout << this->t << "\n";
       t+=dt;
+      if(t > 1 - std::abs(dt)  && t < 1)
+        t = 1;
+      if(t < 0 + std::abs(dt) && t > 0)
+        t=0;
       std::cout << t << "\n";
       return vel;
 		}

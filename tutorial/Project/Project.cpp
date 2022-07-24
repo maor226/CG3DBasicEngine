@@ -51,17 +51,20 @@ void Project::Init()
 	// AddShape(zCylinder, 2, TRIANGLES);
 
 	AddShape(Axis, -1, TRIANGLES,1);
+		SetShapeViewport(1, 1);
+
 	SetShapeShader(1, 0);
 	selected_data_index = 1;
 	ShapeTransformation(scaleAll, 0, 0);
 	SetShapeStatic(1);
-	//SetShapeMaterial(1, 0);
 	AddShape(Plane, -1, TRIANGLES,1);
 	SetShapeShader(2,1);
 	SetShapeMaterial(2,1);
 	selected_data_index = 2;
 	ShapeTransformation(scaleAll, 60, 0);
 	SetShapeStatic(2);
+	SetShapeViewport(2, 1);
+
 	// AddShape(Plane, -1, TRIANGLES); //background;
 	// SetShapeShader(3, 3);
 	// SetShapeMaterial(3, 1);

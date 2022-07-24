@@ -4,6 +4,8 @@
 #include "Project.h"
 #include "imgui/imgui.h"
 
+using namespace std;
+
 
 	void glfw_mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{	
@@ -18,9 +20,12 @@
 			rndr->UpdatePress((float)x2, (float)y2);
 			if ( scn->IsPicked((float)x2,(float)y2)>=0)
 			{
+				cout<<"button press: " << button << endl;
 				rndr->UpdatePosition(x2, y2);
-				if(button == GLFW_MOUSE_BUTTON_LEFT)
+				if(button == GLFW_MOUSE_BUTTON_LEFT){
 					rndr->Pressed();
+					rndr->PickMany(0);
+				}
 			}
 			else
 			{
@@ -64,9 +69,11 @@
 		
 		if (rndr->CheckViewport((int)xpos, (int)ypos, 0))
 		{
+							
+
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
-				
+				cout<<"bar"<<endl;
 				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
 			}
 			else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
@@ -81,6 +88,7 @@
 		else if(rndr->CheckViewport((int)xpos, (int)ypos,1)){
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
+				
 				
 			}
 			

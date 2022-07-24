@@ -276,7 +276,7 @@ Renderer::~Renderer()
 }
 
 
-bool Renderer::Picking(int x, int y)
+bool Renderer::Picking(int x, int y) // false
 {
 
     Eigen::Vector4d pos;
@@ -284,7 +284,7 @@ bool Renderer::Picking(int x, int y)
     unsigned char data[4];
     //glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
     int i = 0;
-    isPicked =  scn->Picking(data,i);
+    isPicked =  scn->Picking(data,i); //false
     return isPicked;
 
 }
@@ -296,8 +296,8 @@ void Renderer::OutLine()
 
 void Renderer::PickMany(int viewportIndx)
 {
-    if (!isPicked)
-    {
+    //if (!isPicked)
+   // {
         int viewportCurrIndx = 0;
         int xMin = std::min(xWhenPress, xold);
         int yMin = std::min(viewports[viewportCurrIndx].w() - yWhenPress, viewports[viewportCurrIndx].w() - yold);
@@ -313,7 +313,7 @@ void Renderer::PickMany(int viewportIndx)
         else
             depth = 0;
 
-    }
+    //}
 }
 
 void Renderer::ActionDraw(int viewportIndx)
@@ -418,6 +418,7 @@ bool Renderer::UpdateViewport(int viewport)
 
 void Renderer::MouseProccessing(int button, int mode, int viewportIndx)
 {
+    //PickMany(viewportIndx);
     if (isPicked || button == 0)
     {
 
