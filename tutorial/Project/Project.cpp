@@ -175,7 +175,7 @@ void Project::Animate() {
 		return;
 
 	for(int i = 0 ; i < bez.size() ; i++) {
-		Bez * b = &bez[i];
+		Shape * b = &bez[i];
 		Eigen::Vector3d vel = b->step_animate();
 		data_list[b->shapeIdx]->MyTranslate(vel,1);
 	}

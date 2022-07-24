@@ -36,7 +36,7 @@
 
 #define POINTS_NUM 7
 
-class Bez 
+class Shape 
 {
 private:
 	Eigen::Vector2d* get_points(int section){
@@ -49,8 +49,9 @@ public:
   Eigen::Vector3d animate_pos, edit_pos;
 	Eigen::Vector2d bez_points[POINTS_NUM];
   int shapeIdx;
+  int layer;
 
-	Bez(int _shapeIdx) {
+	Shape(int _shapeIdx) {
 		double x = 0.5528;
 		bez_points[0] = Eigen::Vector2d(-4, 0);
 		bez_points[1] = Eigen::Vector2d(-1, x);
@@ -65,6 +66,7 @@ public:
     t = 0;
     dt = 0.01; 
     section = 0;
+    layer = 1;
 	}
 
 	Eigen::Vector2d bezier(double t, int section){
@@ -132,7 +134,8 @@ namespace glfw
   class Viewer : public Movable
   {
   public:
-      std::vector<Bez> bez;
+      std::vector<Shape> bez;
+      std::vector<bool*> show_layer;
 
       enum axis { xAxis, yAxis, zAxis };
       enum transformations { xTranslate, yTranslate, zTranslate, xRotate, yRotate, zRotate, xScale, yScale, zScale,scaleAll,reset };

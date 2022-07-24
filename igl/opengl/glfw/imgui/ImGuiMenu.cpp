@@ -196,13 +196,14 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         window_flags
     );
 
-  // Mesh
-  if (ImGui::CollapsingHeader("Layers", ImGuiTreeNodeFlags_DefaultOpen))
-  {
+  // Layeer
+  if (ImGui::CollapsingHeader("Layers", ImGuiTreeNodeFlags_DefaultOpen)) {
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
     if (ImGui::Button("Add##Layers", ImVec2((w-p), 0)))
     {
+        viewer->show_layer.push_back(new bool(true));
+
       //   int savedIndx = viewer->selected_data_index;
       //  // viewer->selected_data_index = viewer->parents.size();
       //  // viewer->AddShape(viewer->xCylinder,-1,viewer->TRIANGLES);
@@ -227,21 +228,23 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
 
     }
     // ImGui::SameLine(0, p);
-    if (ImGui::Button("Hide##Layers", ImVec2((w-p), 0)))
-    {
-     //todo add to code in viewer.h and viewer.cpp
-     // viewer->open_dialog_hide_layer();
+    for (int i = 1; i <= viewer->show_layer.size(); i++){
+      std::stringstream s("Layer ");
+      s << i;
+      s << "##Layers";
 
-    }
-    if (ImGui::Button("Unhide##Layers", ImVec2((w-p), 0)))
-    {
-     //todo add to code in viewer.h and viewer.cpp
-     // viewer->open_dialog_unhide_layer();
-
+      if (ImGui::Checkbox(s.str().c_str(),viewer->show_layer[i - 1])){
+        std:: cout << "cur val: " << *(viewer->show_layer[i - 1]) << "\n";
+        for(int j = 0 ; j < viewer->bez.size() ; j++) {
+          Shape &s = viewer->bez[j];
+          if(s.layer == i) {
+            viewer->data_list[s.shapeIdx]->hide = !(*(viewer->show_layer[i - 1]));
+          }
+        }
+      }
     }
   }
-
-  //metirial 
+  //material 
   if (ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_DefaultOpen))
   {
     float w = ImGui::GetContentRegionAvailWidth();

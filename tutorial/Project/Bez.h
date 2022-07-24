@@ -5,13 +5,13 @@
 #define step 0.01
 #define POINTS_NUM 7
 
-class Bez 
+class Shape 
 {
 private:
 	Eigen::Vector2d* get_points(int section);
 
 public:
-	Bez();
+	Shape();
 	Eigen::Vector2d bez_points[POINTS_NUM];
 
 	Eigen::Vector3d bezier(float t, int section);

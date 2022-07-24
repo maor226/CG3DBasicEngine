@@ -1,5 +1,5 @@
 #include "Bez.h"
-Bez::Bez() {
+Shape::Shape() {
     float x = 0.5528;
 	bez_points[0] = Eigen::Vector2f(-4, 0);
 	bez_points[1] = Eigen::Vector2f(-1, x);
@@ -10,11 +10,11 @@ Bez::Bez() {
 	bez_points[6] = Eigen::Vector2f(-4, 0);
 }
 
-Eigen::Vector2f* Bez::get_points(int section) {
+Eigen::Vector2f* Shape::get_points(int section) {
     return bez_points + section*3;
 }
 
-Eigen::Vector3d Bez::bezier(float t, int section) {
+Eigen::Vector3d Shape::bezier(float t, int section) {
     Eigen::Vector2f points[4] = get_points(section);
     float t_1 = t, t_2 = t*t, t_3 = t_1 * t_2;
     float tc_1 = (1 -t), tc_2 = (1 -t)*(1 - t), tc_3 = tc_1 * tc_2;

@@ -10,8 +10,7 @@
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		Project* scn = (Project*)rndr->GetScene();
 		if (action == GLFW_PRESS)
-		{
-			
+		{	
 			double x2, y2;
 			
 			glfwGetCursorPos(window, &x2, &y2);

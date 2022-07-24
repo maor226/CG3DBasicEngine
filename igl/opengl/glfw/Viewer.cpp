@@ -69,8 +69,10 @@ namespace glfw
     selected_data_index(0),
     next_data_id(1),
     next_shader_id(1),
-	isActive(false)
+	isActive(false),
+    show_layer()
   {
+    show_layer.push_back(new bool(true));
     data_list.front() = new ViewerData();
     data_list.front()->id = 0;
     staticScene = 0;
@@ -524,7 +526,7 @@ int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned 
     SetShapeShader(shapeIdx,3);
 	SetShapeMaterial(shapeIdx,2);
 
-    Bez b = Bez(shapeIdx);
+    Shape b = Shape(shapeIdx);
     bez.push_back(b);
 
     return shapeIdx;
