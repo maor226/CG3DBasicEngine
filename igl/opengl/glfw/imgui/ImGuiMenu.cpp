@@ -234,7 +234,6 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
       s << "##Layers";
 
       if (ImGui::Checkbox(s.str().c_str(),viewer->show_layer[i - 1])){
-        std:: cout << "cur val: " << *(viewer->show_layer[i - 1]) << "\n";
         for(int j = 0 ; j < viewer->bez.size() ; j++) {
           Shape &s = viewer->bez[j];
           if(s.layer == i) {
