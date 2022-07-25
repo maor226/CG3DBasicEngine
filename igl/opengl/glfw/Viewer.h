@@ -35,6 +35,8 @@
 #define IGL_MOD_SUPER           0x0008
 
 #define POINTS_NUM 7
+#define cur_layer (layer_index + 1)
+#define single_picked (single_picked_shape_idx != -1)
 
 class Shape 
 {
@@ -50,8 +52,9 @@ public:
 	Eigen::Vector2d bez_points[POINTS_NUM];
   int shapeIdx;
   int layer;
+  bool *picked;
 
-	Shape(int _shapeIdx) {
+	Shape(int _shapeIdx, int _layer) {
 		double x = 0.5528;
 		bez_points[0] = Eigen::Vector2d(-4, 0);
 		bez_points[1] = Eigen::Vector2d(-1, x);
@@ -66,13 +69,14 @@ public:
     t = 0;
     dt = 0.01; 
     section = 0;
-    layer = 1;
+    layer = _layer;
+    picked = new bool(true);
 	}
 
 	Eigen::Vector2d bezier(double t, int section){
 		Eigen::Vector2d* points = get_points(section);
-		float t_1 = t, t_2 = t*t, t_3 = t_1 * t_2;
-		float tc_1 = (1 -t), tc_2 = (1 -t)*(1 - t), tc_3 = tc_1 * tc_2;
+		double t_1 = t, t_2 = t*t, t_3 = t_1 * t_2;
+		double tc_1 = (1 -t), tc_2 = (1 -t)*(1 - t), tc_3 = tc_1 * tc_2;
 
 		return tc_3 * points[0] + 3 *tc_2 * t_1 * points[1] + 3* tc_1 * t_2 * points[2] + t_3 * points[3];
 	}
@@ -137,8 +141,14 @@ namespace glfw
   // GLFW-based mesh viewer
   class Viewer : public Movable
   {
+  protected:
+    bool change_bez = true;
   public:
-      std::vector<Shape> bez;
+      int single_picked_shape_idx = -1; 
+      int shape_index = 0;
+      int layer_index = 0;
+      std::vector<Shape> shapes;
+      std::vector<bool*> picked_shapes;
       std::vector<bool*> show_layer;
 
       enum axis { xAxis, yAxis, zAxis };
@@ -168,6 +178,25 @@ namespace glfw
       virtual void WhenTranslate(float dx, float dy) {}
       virtual void WhenRotate(float dx, float dy) {}
       virtual void WhenScroll(float dy) {}
+      
+      //check if single picked and if so update picked_shape_idx
+      void changePickedShape() {
+        //should update bez curves
+        change_bez = true;
+
+        int picked = -1;
+        for(int i = 0; i <shapes.size(); i++){
+          if(*(shapes[i].picked)) {
+            if(picked == -1)
+              picked = i;
+            else {
+              single_picked_shape_idx = -1;
+              return;
+            }
+          }
+        }
+        single_picked_shape_idx = picked;
+      }
     // Mesh IO
     IGL_INLINE bool load_mesh_from_file(const std::string & mesh_file_name);
     IGL_INLINE bool save_mesh_to_file(const std::string & mesh_file_name);

@@ -20,8 +20,6 @@ Project::Project() {
 //{ 	
 //}
 
-
-
 void Project::Init()
 {	float x = (float)0.5528;
 	unsigned int texIDs[3] = { 0 , 1, 2};
@@ -75,22 +73,25 @@ void Project::Init()
 	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
 	//SetShapeViewport(6, 1);
 	//	ReadPixel(); //uncomment when you are reading from the z-buffer
-	drawBezier(1);
+	drawBezier();
 }
 
-void Project::drawBezier(int shapeIndx) {
-	data_list[shapeIndx]->clear();
-	drawSection(shapeIndx, 0);
-	drawSection(shapeIndx, 1);
+void Project::drawBezier() {
+	data_list[plane_idx]->clear();
+	if(!single_picked)
+		return;
+
+	drawSection(0);
+	drawSection(1);
 }
 
-void Project::drawSection(int shapeIndx ,int section){
-	auto shape = data_list[shapeIndx];
-	Eigen::Vector2d temp = (bez[0]).bezier(0, section);
+void Project::drawSection(int section){
+	auto shape = data_list[plane_idx];
+	Eigen::Vector2d temp = (shapes[single_picked_shape_idx]).bezier(0, section);
 	Eigen::RowVector3d vec_t(temp[0], temp[1], 0);
 	Eigen::RowVector3d vec_p, half_vec = Eigen::Vector3d(1/2,1/2,1/2);
 	for(double t = 0.005; t < 1; t += 0.005) {
-		temp = (bez[0]).bezier((float)t, section);
+		temp = (shapes[single_picked_shape_idx]).bezier((float)t, section);
 		vec_p = Eigen::RowVector3d(temp[0], temp[1], 0);
 		shape->add_edges(vec_t,vec_p,half_vec);
 		vec_t = vec_p;
@@ -121,15 +122,16 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniform4f("coeffs",1,1,1,1);
 	s->SetUniform1i("POINTS_NUM", POINTS_NUM);
 	Eigen::Vector4f bez_points[POINTS_NUM];
-	for(int i = 0 ; i < POINTS_NUM ; i++) {
-		Eigen::Vector2d cur = bez[0].bez_points[i];
+	for(int i = 0 ; single_picked && i < POINTS_NUM ; i++) {
+		Eigen::Vector2d cur = shapes[single_picked_shape_idx].bez_points[i];
 		bez_points[i] = Eigen::Vector4f((float)cur[0],(float)cur[1], 0, 0);
 	}
 	s->SetUniform4fv("bez_points", &(bez_points[0]), POINTS_NUM);
 
 
-	if(isPicked&&data_list[shapeIndx]->type == Axis){
-		drawBezier(shapeIndx);
+	if(change_bez || (isPicked && data_list[shapeIndx]->type == Axis)){
+		drawBezier();
+		change_bez = false;
 	}
 	if (data_list[shapeIndx]->GetMaterial() >= 0 && !materials.empty())
 	{
@@ -177,8 +179,8 @@ void Project::Animate() {
 	if(!isActive)
 		return;
 
-	for(int i = 0 ; i < bez.size() ; i++) {
-		Shape * b = &bez[i];
+	for(int i = 0 ; i < shapes.size() ; i++) {
+		Shape * b = &shapes[i];
 		Eigen::Vector3d vel = b->step_animate();
 		data_list[b->shapeIdx]->MyTranslate(vel,1);
 	}
@@ -202,13 +204,17 @@ Project::~Project(void)
 
 
 int Project::IsPicked(float x, float y){
+	// if not single shape dont heck points
+	if(!single_picked)
+		return -1;
+
 	x = (x-1200)/100;
 	y=(y-400)/-100;
 	std::cout << "piced" << x << "," << y << std::endl;
 	pickedPoint = -1;
 	isPicked = false;
 	for(int i= 0 ; i<POINTS_NUM ; i ++){
-		if(pow(x-bez[0].bez_points[i][0],2) +pow(y-bez[0].bez_points[i][1],2)<Radius*Radius){
+		if(pow(x-shapes[single_picked_shape_idx].bez_points[i][0],2) +pow(y-shapes[single_picked_shape_idx].bez_points[i][1],2)<Radius*Radius){
 			std::cout << "found " << i  << std::endl;
 			isPicked =true;
 			pickedPoint = i;
@@ -219,7 +225,7 @@ int Project::IsPicked(float x, float y){
 }
 
 void Project::UnPicked(){
-		std::cout << "unpiced" << std::endl;
+	std::cout << "unpicked" << std::endl;
 
 	pickedPoint = -1;
 	isPicked = false;
@@ -231,9 +237,9 @@ void Project::SetPicked(float x,float y){
 		y=(y-400)/-100;
 		std::cout << "setpoints" << pickedPoint<<":"<< x << "," << y << std::endl;
 
-		bez[0].bez_points[pickedPoint][0]=x;
+		shapes[single_picked_shape_idx].bez_points[pickedPoint][0]=x;
 		if(pickedPoint %6 != 0 )
-		bez[0].bez_points[pickedPoint][1]=y;
+		shapes[single_picked_shape_idx].bez_points[pickedPoint][1]=y;
 	}
 }
 

@@ -4,12 +4,10 @@
 
 #define bezier_1(t, p1, p2, p3, p4) (pow((1 - t),3)*p1) + (3* pow((1-t), 2) * t * p2) + (3* pow(t, 2) * (1 - t) * p3) + pow(t,3) * p4
 #define Radius 0.22
+#define plane_idx 1
 
 class Project : public igl::opengl::glfw::Viewer
 {
-private:
-	int picked_shape = 0;
-
 public:
 	int pickedPoint=-1;
 	bool isPicked = false; 
@@ -25,8 +23,8 @@ public:
 	int IsPicked(float x, float y);
 	void UnPicked();
 	void SetPicked(float x,float y);
-	void drawBezier(int index);
-	void drawSection(int shapeIndx ,int section);
+	void drawBezier();
+	void drawSection(int section);
 
 	~Project(void);
 };

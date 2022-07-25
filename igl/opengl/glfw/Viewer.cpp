@@ -526,8 +526,15 @@ int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned 
     SetShapeShader(shapeIdx,3);
 	SetShapeMaterial(shapeIdx,2);
 
-    Shape b = Shape(shapeIdx);
-    bez.push_back(b);
+    //make new shape the only picked shape
+    for(int i = 0 ; i < shapes.size() ; i++) {
+        *(shapes[i].picked) = false;
+    }
+
+    shapes.push_back(Shape(shapeIdx, cur_layer));
+    picked_shapes.push_back(shapes[shapes.size() - 1].picked);
+
+    changePickedShape();
 
     return shapeIdx;
 }

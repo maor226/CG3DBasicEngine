@@ -52,6 +52,8 @@ IGL_INLINE void ImGuiMenu::init(Display* disp)
     style.FrameRounding = 5.0f;
     reload_font();
   }
+
+  layers.push_back("Layer 1");
 }
 
 IGL_INLINE void ImGuiMenu::reload_font(int font_size)
@@ -92,8 +94,7 @@ IGL_INLINE bool ImGuiMenu::pre_draw()
   return false;
 }
 
-IGL_INLINE bool ImGuiMenu::post_draw()
-{
+IGL_INLINE bool ImGuiMenu::post_draw() {
   //draw_menu(viewer,core);
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -196,52 +197,50 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         window_flags
     );
 
-  // Layeer
+  // Layer
   if (ImGui::CollapsingHeader("Layers", ImGuiTreeNodeFlags_DefaultOpen)) {
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
-    if (ImGui::Button("Add##Layers", ImVec2((w-p), 0)))
-    {
-        viewer->show_layer.push_back(new bool(true));
 
-      //   int savedIndx = viewer->selected_data_index;
-      //  // viewer->selected_data_index = viewer->parents.size();
-      //  // viewer->AddShape(viewer->xCylinder,-1,viewer->TRIANGLES);
-      //   viewer->open_dialog_load_mesh();
-      // if (viewer->data_list.size() > viewer->parents.size())
-      // {
-          
-      //     viewer->parents.push_back(-1);
-      //     viewer->SetShapeViewport(viewer->selected_data_index, 0);
-      //     viewer->SetShapeShader(viewer->selected_data_index, 2);
-      //     viewer->SetShapeMaterial(viewer->selected_data_index,0);
-      //     //viewer->data_list.back()->set_visible(false, 1);
-      //     //viewer->data_list.back()->set_visible(true, 2);
-      //     viewer->data_list.back()->UnHide();
-      //     viewer->data_list.back()->show_faces = 3;
-      //     viewer->data()->mode = viewer->TRIANGLES;
-      //     viewer->selected_data_index = savedIndx;
-      // }
-
-      // ToDo make add layers 
-      //   viewer->open_dialog_add_layer();
-
+    if (ImGui::Button("Add##Layers", ImVec2((w-p), 0))){
+          viewer->show_layer.push_back(new bool(true));
+          char s[9] = "Layer  ";
+          s[6] = (layers.size() + 1) + '0';
+          layers.push_back(s);
     }
-    // ImGui::SameLine(0, p);
-    for (int i = 1; i <= viewer->show_layer.size(); i++){
+
+    if (ImGui::CollapsingHeader("Hide/Unhide##Layers", ImGuiTreeNodeFlags_DefaultOpen)) {
+      float w_i = ImGui::GetContentRegionAvailWidth();
+      float p_i = ImGui::GetStyle().FramePadding.x;
+      
+      for (int i = 1; i <= viewer->show_layer.size(); i++){
       std::stringstream s("Layer ");
       s << i;
-      s << "##Layers";
+      s << "##Hide/Unhide##Layers";
 
       if (ImGui::Checkbox(s.str().c_str(),viewer->show_layer[i - 1])){
-        for(int j = 0 ; j < viewer->bez.size() ; j++) {
-          Shape &s = viewer->bez[j];
+        for(int j = 0 ; j < viewer->shapes.size() ; j++) {
+          Shape &s = viewer->shapes[j];
           if(s.layer == i) {
             viewer->data_list[s.shapeIdx]->hide = !(*(viewer->show_layer[i - 1]));
           }
         }
       }
     }
+    }
+    // ImGui::SameLine(0, p);
+    
+     if (ImGui::CollapsingHeader("Select Layer##Layers", ImGuiTreeNodeFlags_DefaultOpen)) {
+      float w_i = ImGui::GetContentRegionAvailWidth();
+      float p_i = ImGui::GetStyle().FramePadding.x;
+      if(ImGui::ListBox("##Select Layer##Layers", &(viewer->layer_index), layers)) {
+        for(int i = 0 ; i < viewer->picked_shapes.size() ; i++) {
+          if(*viewer->picked_shapes[i]) {
+            viewer->shapes[i].layer = viewer->layer_index + 1;
+          }
+        } 
+      }
+     }
   }
   //material 
   if (ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_DefaultOpen))
@@ -298,6 +297,22 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     if (ImGui::Button("Save##Mesh", ImVec2((w-p)/2.f, 0)))
     {
       viewer->open_dialog_save_mesh();
+    }
+
+    if (ImGui::CollapsingHeader("Select Shapes##Mesh", ImGuiTreeNodeFlags_DefaultOpen)) {
+      float w_i = ImGui::GetContentRegionAvailWidth();
+      float p_i = ImGui::GetStyle().FramePadding.x;
+      
+      for (int i = 0; i < viewer->picked_shapes.size(); i++){
+        std::stringstream s("Shape ");
+        s << i + 1;
+        s << "##Select Shapes##Mesh";
+
+        if (ImGui::Checkbox(s.str().c_str(),viewer->picked_shapes[i])) {
+          std::cout << "what??? \n";
+          viewer->changePickedShape();
+        }
+      }
     }
   }
 
