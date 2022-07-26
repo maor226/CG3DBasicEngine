@@ -35,7 +35,6 @@
 #define IGL_MOD_SUPER           0x0008
 
 #define POINTS_NUM 7
-#define cur_layer (layer_index + 1)
 #define single_picked (single_picked_shape_idx != -1)
 #define picking_shader 0
 
@@ -214,9 +213,10 @@ namespace glfw
       void ChangePickedShapeMaterial();
       void open_dialog_load_texture();
 
-      //check if single picked and if so update picked_shape_idx
+    //check if single picked and if so update picked_shape_idx
     void changePickedShape();
     void ChangePickedShapeDelay();
+    void changePickedLayer();
     // Mesh IO
     IGL_INLINE bool load_mesh_from_file(const std::string & mesh_file_name);
     IGL_INLINE bool save_mesh_to_file(const std::string & mesh_file_name);
