@@ -773,9 +773,7 @@ void Viewer::ChangePickedShapeMaterial(){
 
     bool Viewer::Picking(unsigned char data[4], int newViewportIndx)
     {
-
         return false;
-
     }
 
     void Viewer::WhenTranslate( const Eigen::Matrix4d& preMat, float dx, float dy)

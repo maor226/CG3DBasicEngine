@@ -173,6 +173,12 @@ void Project::WhenTranslate()
 {
 }
 
+bool Project::Picking(unsigned char data[4], int newViewportIndx) {
+	int index = data[0];
+	std::cout << (int)data[0] << " " << (int)data[1] << " " << (int)data[2] << " " << (int)data[3] << std::endl;
+	return false;
+}
+
 void Project::reset_animation() {
 	for(int i = 0 ; i < shapes.size() ; i++) {
 		Shape & s = shapes[i];
@@ -220,7 +226,7 @@ int Project::IsPicked(float x, float y){
 
 	x = (x-1200)/100;
 	y=(y-400)/-100;
-	std::cout << "piced" << x << "," << y << std::endl;
+	//std::cout << "piced" << x << "," << y << std::endl;
 	pickedPoint = -1;
 	isPicked = false;
 	for(int i= 0 ; i<POINTS_NUM ; i ++){
@@ -235,7 +241,7 @@ int Project::IsPicked(float x, float y){
 }
 
 void Project::UnPicked(){
-	std::cout << "unpicked" << std::endl;
+	//std::cout << "unpicked" << std::endl;
 
 	pickedPoint = -1;
 	isPicked = false;

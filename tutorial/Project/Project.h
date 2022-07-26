@@ -10,7 +10,7 @@ class Project : public igl::opengl::glfw::Viewer
 {
 private:
  	void reset_animation();
-	
+
 public:
 	int pickedPoint=-1;
 	bool isPicked = false; 
@@ -28,6 +28,7 @@ public:
 	void SetPicked(float x,float y);
 	void drawBezier();
 	void drawSection(int section);
+	bool Picking(unsigned char data[4], int newViewportIndx);
 
 	~Project(void);
 };

@@ -282,9 +282,13 @@ bool Renderer::Picking(int x, int y) // false
     Eigen::Vector4d pos;
 
     unsigned char data[4];
-    //glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
+    int viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
+
+    glReadPixels(x, viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
     int i = 0;
-    isPicked =  scn->Picking(data,i); //false
+    isPicked =  scn->Picking(data, i); //false
     return isPicked;
 
 }
