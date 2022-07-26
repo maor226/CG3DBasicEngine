@@ -173,11 +173,21 @@ void Project::WhenTranslate()
 {
 }
 
+void Project::reset_animation() {
+	for(int i = 0 ; i < shapes.size() ; i++) {
+		Shape & s = shapes[i];
+		data_list[s.shapeIdx]->MyTranslate(s.edit_pos - s.animate_pos, 1);
+		s.reset_animation();
+	}
+}
+
 void Project::Animate() {
 	 //todo make global
 	//bez_points[0][1] += 0.1;
-	if(!isActive)
+	if(!isActive) {
+		reset_animation();
 		return;
+	}
 
 	for(int i = 0 ; i < shapes.size() ; i++) {
 		Shape * b = &shapes[i];

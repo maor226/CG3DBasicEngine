@@ -8,6 +8,9 @@
 
 class Project : public igl::opengl::glfw::Viewer
 {
+private:
+ 	void reset_animation();
+	
 public:
 	int pickedPoint=-1;
 	bool isPicked = false; 

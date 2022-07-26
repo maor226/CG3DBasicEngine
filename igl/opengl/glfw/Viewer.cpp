@@ -318,6 +318,18 @@ IGL_INLINE bool
     
     AddShapeFromFile1(fname);
   }
+  void Viewer::open_dialog_load_texture()
+  {
+    const std::string fname = igl::file_dialog_open();
+
+    if (fname.length() == 0)
+      return;
+    
+    AddTexture(fname,2);
+    unsigned int texId[1],slots[1];
+    texId[0] = slots[0] = textures.size()-1;
+    AddMaterial(texId, slots, 1);
+  }
 
   IGL_INLINE void Viewer::open_dialog_save_mesh()
   {
@@ -526,18 +538,27 @@ int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned 
     SetShapeShader(shapeIdx,3);
 	SetShapeMaterial(shapeIdx,2);
 
-    //make new shape the only picked shape
-    for(int i = 0 ; i < shapes.size() ; i++) {
-        *(shapes[i].picked) = false;
-    }
-
     shapes.push_back(Shape(shapeIdx, cur_layer));
     picked_shapes.push_back(shapes[shapes.size() - 1].picked);
 
+    //make new shape the only picked shape
+    for(int i = 0 ; i < shapes.size() - 1 ; i++) {
+        *(shapes[i].picked) = false;
+    }
+
+    //update cur picked shape
     changePickedShape();
+
+    //add shape name to array for gui
+    shape_names.push_back(get_name_from_path(fileName));
 
     return shapeIdx;
 }
+void Viewer::ChangePickedShapeMaterial(){
+    if(single_picked)
+        SetShapeMaterial(shapes[single_picked_shape_idx].shapeIdx,material_idx);
+}
+
 
     int Viewer::AddShapeFromFile(const std::string& fileName, int parent, unsigned int mode, int viewport)
     {
@@ -795,6 +816,7 @@ int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned 
 
     int Viewer::AddMaterial(unsigned int texIndices[], unsigned int slots[], unsigned int size)
     {
+
         materials.push_back(new Material(texIndices, slots, size));
         return (materials.size() - 1);
     }
@@ -843,8 +865,19 @@ int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned 
             return 0;
     }
 
+    string Viewer::get_name_from_path(const std::string& path) {
+        size_t start_name = path.find_last_of("/\\") + 1 ;
+        string s = path.substr(start_name);
+
+        return s.substr(0, s.find_last_of("."));
+
+    }
+
     int Viewer::AddTexture(const std::string& textureFileName, int dim)
     {
+        string name = get_name_from_path(textureFileName);
+        material_names.push_back(name);
+
         textures.push_back(new Texture(textureFileName, dim));
         return(textures.size() - 1);
     }

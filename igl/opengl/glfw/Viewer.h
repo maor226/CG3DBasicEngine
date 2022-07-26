@@ -38,6 +38,8 @@
 #define cur_layer (layer_index + 1)
 #define single_picked (single_picked_shape_idx != -1)
 
+using namespace std;
+
 class Shape 
 {
 private:
@@ -107,9 +109,7 @@ public:
         t=0;
       std::cout << t << "\n";
       return vel;
-		}
-
-    if(t>=1){
+    } else if(t>=1){
 			if(section == maxSegmentNum){
 				dt = -dt;
 				t =1;
@@ -130,6 +130,13 @@ public:
     return Eigen::Vector3d(0, 0, 0);
   }
 
+  void reset_animation() {
+    t = 0;
+		dt = abs(dt);
+		section = 0;
+		animate_pos = edit_pos;
+  }
+
 };
 
 namespace igl
@@ -146,10 +153,16 @@ namespace glfw
   public:
       int single_picked_shape_idx = -1; 
       int shape_index = 0;
-      int layer_index = 0;
       std::vector<Shape> shapes;
+
+      //for gui menu
+      int layer_index = 0;
+      int material_idx = 0;
       std::vector<bool*> picked_shapes;
       std::vector<bool*> show_layer;
+      vector<string> material_names;
+      vector<string> shape_names;
+
 
       enum axis { xAxis, yAxis, zAxis };
       enum transformations { xTranslate, yTranslate, zTranslate, xRotate, yRotate, zRotate, xScale, yScale, zScale,scaleAll,reset };
@@ -178,7 +191,11 @@ namespace glfw
       virtual void WhenTranslate(float dx, float dy) {}
       virtual void WhenRotate(float dx, float dy) {}
       virtual void WhenScroll(float dy) {}
-      
+
+      string get_name_from_path(const std::string& path);
+      void ChangePickedShapeMaterial();
+      void open_dialog_load_texture();
+
       //check if single picked and if so update picked_shape_idx
       void changePickedShape() {
         //should update bez curves
