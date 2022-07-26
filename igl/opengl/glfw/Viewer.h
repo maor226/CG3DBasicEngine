@@ -51,14 +51,17 @@ private:
 		return bez_points + section*3;
 	}
   double t, dt;
+  double delayCountDown;
   int section;
 
 public:
   Eigen::Vector3d animate_pos;
 	Eigen::Vector2d bez_points[POINTS_NUM];
   int shapeIdx;
+  int materialIdx;
   int layer;
   bool *picked;
+  float delay;
 
 	Shape(int _shapeIdx, int _layer) {
 		double x = 0.5528;
@@ -71,12 +74,14 @@ public:
 		bez_points[6] = Eigen::Vector2d(-4, 0);
 
     shapeIdx = _shapeIdx;
+    materialIdx = 2; //grass
     animate_pos = Eigen::Vector3d(0, 0, 0);
     t = 0;
     dt = 0.01; 
     section = 0;
     layer = _layer;
     picked = new bool(true);
+    delay = 0;
 	}
 
 	Eigen::Vector2d bezier(double t, int section){
@@ -98,6 +103,10 @@ public:
   Eigen::Vector3d step_animate() {
 		//std::cout << t<< std::endl;
 		int maxSegmentNum = 1;//=((Bezier1D*)data_list[currIndx])->GetSegmentsNum();
+    if(delayCountDown >0){
+      delayCountDown -= (dt / (2*2));
+      return Eigen::Vector3d(0, 0, 0);
+    }
 		if(t<=1 && t >=0){ 
 			Eigen::Vector3d vel = velocity();
 			if (dt <0)
@@ -140,6 +149,7 @@ public:
     t = 0;
 		dt = abs(dt);
 		section = 0;
+    delayCountDown = delay;
 		animate_pos = Eigen::Vector3d(0, 0, 0);
   }
 
@@ -169,6 +179,7 @@ namespace glfw
       std::vector<bool*> show_layer;
       vector<string> material_names;
       vector<string> shape_names;
+      float delayVal = 0.f;
 
 
       enum axis { xAxis, yAxis, zAxis };
@@ -204,24 +215,8 @@ namespace glfw
       void open_dialog_load_texture();
 
       //check if single picked and if so update picked_shape_idx
-      void changePickedShape() {
-        //should update bez curves
-        change_bez = true;
-
-        int picked = -1;
-        for(int i = 0; i <shapes.size(); i++){
-          if(*(shapes[i].picked)) {
-            if(picked == -1)
-              picked = i;
-            else {
-              single_picked_shape_idx = -1;
-              return;
-            }
-          }
-        }
-        pick = (picked != -1);
-        single_picked_shape_idx = picked;
-      }
+    void changePickedShape();
+    void ChangePickedShapeDelay();
     // Mesh IO
     IGL_INLINE bool load_mesh_from_file(const std::string & mesh_file_name);
     IGL_INLINE bool save_mesh_to_file(const std::string & mesh_file_name);

@@ -554,9 +554,41 @@ int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned 
 
     return shapeIdx;
 }
+void Viewer::changePickedShape() {
+    //should update bez curves
+    change_bez = true;
+
+    int picked = -1;
+    for(int i = 0; i <shapes.size(); i++){
+        if(*(shapes[i].picked)) {
+        if(picked == -1)
+            picked = i;
+        else {
+            single_picked_shape_idx = -1;
+            return;
+        }
+        }
+    }
+    pick = (picked != -1);
+    single_picked_shape_idx = picked;
+     if(single_picked_shape_idx != -1){
+        Shape s = shapes[single_picked_shape_idx];
+        layer_index = s.layer;
+        material_idx = s.materialIdx;
+        delayVal = s.delay;
+    }
+}
 void Viewer::ChangePickedShapeMaterial(){
-    if(single_picked)
+    if(single_picked){
         SetShapeMaterial(shapes[single_picked_shape_idx].shapeIdx,material_idx);
+        shapes[single_picked_shape_idx].materialIdx = material_idx;
+    }
+}
+void Viewer::ChangePickedShapeDelay(){
+    if(single_picked){
+        shapes[single_picked_shape_idx].delay = delayVal;
+        shapes[single_picked_shape_idx].delay = delayVal;        
+    }
 }
 
 
