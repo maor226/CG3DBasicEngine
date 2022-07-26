@@ -41,7 +41,7 @@ void Project::Init()
 	AddMaterial(texIDs + 2, slots + 2, 1);
 
 	AddShape(Cube, -2, TRIANGLES);
-	SetShapeMaterial(0, 1);
+	SetShapeMaterial(0, 0);
 	SetShapeStatic(0);
 
 	// AddShape(zCylinder, -1, TRIANGLES);
@@ -63,16 +63,16 @@ void Project::Init()
 	SetShapeStatic(2);
 	SetShapeViewport(2, 1);
 
+	AddShapeFromFile1("./data/sphere.obj", -1, TRIANGLES, 0);
 	// AddShape(Plane, -1, TRIANGLES); //background;
 	// SetShapeShader(3, 3);
 	// SetShapeMaterial(3, 1);
 	// SetShapeStatic(3);
-	AddShapeFromFile1("./data/sphere.obj", -1, TRIANGLES, 0);
 	//SetShapeShader(3,3);
 	//SetShapeMaterial(3,2);
 	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
 	//SetShapeViewport(6, 1);
-	//	ReadPixel(); //uncomment when you are reading from the z-buffer
+	// ReadPixel(); //uncomment when you are reading from the z-buffer
 	drawBezier();
 }
 
@@ -128,7 +128,6 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	}
 	s->SetUniform4fv("bez_points", &(bez_points[0]), POINTS_NUM);
 
-
 	if(change_bez || (isPicked && data_list[shapeIndx]->type == Axis)){
 		drawBezier();
 		change_bez = false;
@@ -138,6 +137,7 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 		// materials[shapes[pickedShape]->GetMaterial()]->Bind(textures);
 		BindMaterial(s, data_list[shapeIndx]->GetMaterial());
 	}
+
 	if (shaderIndx == 0)
 		s->SetUniform4f("lightColor", r / 255.0f, g / 255.0f, b / 255.0f, 0.0f);
 	else
@@ -153,14 +153,12 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	// 	}
 	// }
 	
-	
-
 	// s->SetUniform1i("sampler2", materials[shapes[pickedShape]->GetMaterial()]->GetSlot(1));
 	//s->SetUniform4f("lightDirection", 0.0f , 0.0f, -1.0f, 0.0f);
-//	if(shaderIndx == 0)
-//		s->SetUniform4f("lightColor",r/255.0f, g/255.0f, b/255.0f,1.0f);
-//	else 
-//		s->SetUniform4f("lightColor",0.7f,0.8f,0.1f,1.0f);
+	//	if(shaderIndx == 0)
+	//		s->SetUniform4f("lightColor",r/255.0f, g/255.0f, b/255.0f,1.0f);
+	//	else 
+	//		s->SetUniform4f("lightColor",0.7f,0.8f,0.1f,1.0f);
 	s->Unbind();
 }
 

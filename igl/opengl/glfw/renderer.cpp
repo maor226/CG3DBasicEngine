@@ -278,19 +278,19 @@ Renderer::~Renderer()
 
 bool Renderer::Picking(int x, int y) // false
 {
-
     Eigen::Vector4d pos;
 
     unsigned char data[4];
     int viewport[4];
+    ActionDraw(0);
+
     glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
 
     glReadPixels(x, viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
     int i = 0;
-    isPicked =  scn->Picking(data, i); //false
+    isPicked = scn->Picking(data, i); //false
     return isPicked;
-
 }
 
 void Renderer::OutLine()
@@ -423,9 +423,9 @@ bool Renderer::UpdateViewport(int viewport)
 void Renderer::MouseProccessing(int button, int mode, int viewportIndx)
 {
     //PickMany(viewportIndx);
-    if (isPicked || button == 0)
+    
+    if (scn->pick || button == 0)
     {
-
 		if(button == 2)
 			scn->MouseProccessing(button, zrel, zrel, CalcMoveCoeff(mode & 7, viewports[viewportIndx].w()), cameras[0]->MakeTransd(), viewportIndx);
 		else

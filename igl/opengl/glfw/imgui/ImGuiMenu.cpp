@@ -330,7 +330,6 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         s << viewer->shape_names[i];
 
         if (ImGui::Checkbox(s.str().c_str(),viewer->picked_shapes[i])) {
-          std::cout << "what??? \n";
           viewer->changePickedShape();
         }
       }
@@ -416,8 +415,6 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
   }
   ImGui::End();
 }
-
-
 
 IGL_INLINE float ImGuiMenu::pixel_ratio()
 {

@@ -37,6 +37,10 @@
 #define POINTS_NUM 7
 #define cur_layer (layer_index + 1)
 #define single_picked (single_picked_shape_idx != -1)
+#define picking_shader 0
+
+#define SCREEN_WIDTH 100.0
+#define SCREEN_HEIGHT SCREEN_WIDTH
 
 using namespace std;
 
@@ -151,6 +155,7 @@ namespace glfw
   protected:
     bool change_bez = true;
   public:
+      bool pick = false;
       int single_picked_shape_idx = -1; 
       int shape_index = 0;
       std::vector<Shape> shapes;
@@ -212,6 +217,7 @@ namespace glfw
             }
           }
         }
+        pick = (picked != -1);
         single_picked_shape_idx = picked;
       }
     // Mesh IO

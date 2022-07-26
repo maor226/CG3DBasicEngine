@@ -697,11 +697,17 @@ void Viewer::ChangePickedShapeMaterial(){
 
         if (button == 1)
         {
-            for (int pShape : pShapes)
-            {
-                selected_data_index = pShape;
-                WhenTranslate(scnMat * cameraMat, -xrel / movCoeff, yrel / movCoeff);
+            for(int i = 0 ; i < picked_shapes.size() ; i++) {
+                if(*(picked_shapes[i])) {
+                    data_list[shapes[i].shapeIdx]->MyTranslate(Eigen::Vector3d(-xrel/SCREEN_WIDTH, yrel/SCREEN_HEIGHT, 0), 1);
+                }
             }
+
+            // for (int pShape : pShapes)
+            // {
+            //     selected_data_index = pShape;
+            //     WhenTranslate(scnMat * cameraMat, -xrel / movCoeff, yrel / movCoeff);
+            // }
         }
         else
         {
@@ -773,7 +779,10 @@ void Viewer::ChangePickedShapeMaterial(){
 
     bool Viewer::Picking(unsigned char data[4], int newViewportIndx)
     {
-        return false;
+        int index = data[0];
+        std::cout << (int)data[0] << " " << (int)data[1] << " " << (int)data[2] << " " << (int)data[3] << std::endl;
+        
+        return index >= 4 && index < shapes.size() + 3;
     }
 
     void Viewer::WhenTranslate( const Eigen::Matrix4d& preMat, float dx, float dy)
