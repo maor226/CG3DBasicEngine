@@ -26,13 +26,14 @@ void Project::Init()
 	unsigned int slots[3] = { 0 , 1, 2 };
 	
 	AddShader("shaders/pickingShader");
-	// AddShader("shaders/cubemapShader");
+	// 
 	AddShader("shaders/bezierShader");
 	AddShader("shaders/basicShaderTex");
 	AddShader("shaders/basicShader");
-	
+	AddShader("shaders/cubemapShader");
+
 	AddTexture("textures/plane.png",2);
-	AddTexture("textures/cubemaps/kisspng-skybox-texture-mapping-panorama-5b2a44a372ea72.7553873615294967394707.png", 0);
+	AddTexture("textures/cubemaps/Daylight Box_", 3);
 	AddTexture("textures/grass.bmp", 2);
 	//AddTexture("../res/textures/Cat_bump.jpg", 2);
 
@@ -41,7 +42,11 @@ void Project::Init()
 	AddMaterial(texIDs + 2, slots + 2, 1);
 
 	AddShape(Cube, -2, TRIANGLES);
-	SetShapeMaterial(0, 0);
+	SetShapeMaterial(0, 1);
+	SetShapeShader(0, 4);
+	selected_data_index = 0;
+	float s = 60;
+	ShapeTransformation(scaleAll, s,0);
 	SetShapeStatic(0);
 
 	// AddShape(zCylinder, -1, TRIANGLES);
