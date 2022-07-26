@@ -277,6 +277,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     if(ImGui::ListBox("##Materials", &viewer->material_idx, viewer->material_names)) {
 
     }
+
   }
   //metirial 
   if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_None))

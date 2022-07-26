@@ -17,6 +17,7 @@ int main(int argc,char *argv[])
     Display disp = Display(DISPLAY_WIDTH, DISPLAY_HEIGHT, "OPENGL");
     igl::opengl::glfw::imgui::ImGuiMenu* menu = new igl::opengl::glfw::imgui::ImGuiMenu();
     Renderer* rndr = new Renderer(CAMERA_ANGLE, (float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT/2.0f, NEAR, FAR);
+	// rndr->AddCamera(CAMERA_ANGLE,(float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT/2.0f,NEAR,FAR);
 	Project *scn = new Project();  //initializing scene
 	
     Init(disp,menu); 			//adding callback functions

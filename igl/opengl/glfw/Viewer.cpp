@@ -316,6 +316,7 @@ IGL_INLINE bool
     if (fname.length() == 0)
       return;
     
+
     AddShapeFromFile1(fname);
   }
   void Viewer::open_dialog_load_texture()
@@ -329,6 +330,7 @@ IGL_INLINE bool
     unsigned int texId[1],slots[1];
     texId[0] = slots[0] = textures.size()-1;
     AddMaterial(texId, slots, 1);
+
   }
 
   IGL_INLINE void Viewer::open_dialog_save_mesh()
@@ -637,6 +639,9 @@ void Viewer::ChangePickedShapeDelay(){
             break;
         case zCylinder:
             this->load_mesh_from_file("./data/zcylinder.obj");
+            break;
+        case banny:
+            this->load_mesh_from_file("./data/mybunny.off");
             break;
         default:
             break;

@@ -185,7 +185,7 @@ namespace glfw
       enum axis { xAxis, yAxis, zAxis };
       enum transformations { xTranslate, yTranslate, zTranslate, xRotate, yRotate, zRotate, xScale, yScale, zScale,scaleAll,reset };
       enum modes { POINTS, LINES, LINE_LOOP, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN, QUADS };
-      enum shapes {Axis, xCylinder,yCylinder,zCylinder, Plane, Cube, Octahedron, Tethrahedron, LineCopy, MeshCopy, Sphere, Bezier_Line };
+      enum shapes {Axis, xCylinder,yCylinder,zCylinder, Plane, Cube, Octahedron, Tethrahedron, LineCopy, MeshCopy, Sphere, Bezier_Line ,banny};
       enum buffers { COLOR, DEPTH, STENCIL, BACK, FRONT, NONE };
     // UI Enumerations
    // enum class MouseButton {Left, Middle, Right};
