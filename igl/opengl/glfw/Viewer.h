@@ -54,7 +54,7 @@ private:
   int section;
 
 public:
-  Eigen::Vector3d animate_pos, edit_pos;
+  Eigen::Vector3d animate_pos;
 	Eigen::Vector2d bez_points[POINTS_NUM];
   int shapeIdx;
   int layer;
@@ -71,7 +71,7 @@ public:
 		bez_points[6] = Eigen::Vector2d(-4, 0);
 
     shapeIdx = _shapeIdx;
-    edit_pos = animate_pos = Eigen::Vector3d(0, 0, 0);
+    animate_pos = Eigen::Vector3d(0, 0, 0);
     t = 0;
     dt = 0.01; 
     section = 0;
@@ -121,12 +121,14 @@ public:
 				section++;
 				t = dt;
 			}
-		}else if(t<=0){
+		}else if(t<=0) {
 			if(section == 0){
 				t = 0;
 				dt = -dt;
-        //return animate_pos - edit_pos; //floating point error
-			}else{
+        Eigen::Vector3d temp(animate_pos);
+        animate_pos = Eigen::Vector3d(0, 0, 0);
+        return Eigen::Vector3d(0, 0, 0) - temp; //floating point error
+			} else{
 				section--;
 				t = 1;
 			}
@@ -138,7 +140,7 @@ public:
     t = 0;
 		dt = abs(dt);
 		section = 0;
-		animate_pos = edit_pos;
+		animate_pos = Eigen::Vector3d(0, 0, 0);
   }
 
 };

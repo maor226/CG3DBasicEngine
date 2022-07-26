@@ -715,9 +715,13 @@ void Viewer::ChangePickedShapeMaterial(){
 
             if (button == 0)
             {
+                for(int i = 0 ; i < picked_shapes.size() ; i++) {
+                    if(*(picked_shapes[i])) {
+                        data_list[shapes[i].shapeIdx]->MyTranslate(Eigen::Vector3d(-xrel/SCREEN_WIDTH, yrel/SCREEN_HEIGHT, 0), 1);
+                    }
+                }
 //                if (selected_data_index > 0 )
-                    WhenRotate(scnMat * cameraMat, -((float)xrel/180) / movCoeff, ((float)yrel/180) / movCoeff);
-
+                  //  WhenRotate(scnMat * cameraMat, -((float)xrel/180) / movCoeff, ((float)yrel/180) / movCoeff);
             }
             else
             {
@@ -937,7 +941,6 @@ void Viewer::ChangePickedShapeMaterial(){
             data_list[indx]->MyTranslate(-tmp.head<3>(), false);
         }
     }
-
 
 } // end namespace
 } // end namespace

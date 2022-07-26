@@ -180,7 +180,7 @@ bool Project::Picking(unsigned char data[4], int newViewportIndx) {
 void Project::reset_animation() {
 	for(int i = 0 ; i < shapes.size() ; i++) {
 		Shape & s = shapes[i];
-		data_list[s.shapeIdx]->MyTranslate(s.edit_pos - s.animate_pos, 1);
+		data_list[s.shapeIdx]->MyTranslate(Eigen::Vector3d(0, 0, 0) - s.animate_pos, 1);
 		s.reset_animation();
 	}
 }
