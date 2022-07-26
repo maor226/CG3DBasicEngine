@@ -38,6 +38,9 @@ namespace imgui
 
 class ImGuiMenu //: public igl::opengl::glfw::ViewerPlugin
 {
+private:
+  std::vector<std::string> layers;
+
 protected:
   // Hidpi scaling to be used for text rendering.
   float hidpi_scaling_;

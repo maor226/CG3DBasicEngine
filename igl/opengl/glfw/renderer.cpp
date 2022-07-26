@@ -276,17 +276,21 @@ Renderer::~Renderer()
 }
 
 
-bool Renderer::Picking(int x, int y)
+bool Renderer::Picking(int x, int y) // false
 {
-
     Eigen::Vector4d pos;
 
     unsigned char data[4];
-    //glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
-    int i = 0;
-    isPicked =  scn->Picking(data,i);
-    return isPicked;
+    int viewport[4];
+    ActionDraw(0);
 
+    glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
+
+    glReadPixels(x, viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+    int i = 0;
+    isPicked = scn->Picking(data, i); //false
+    return isPicked;
 }
 
 void Renderer::OutLine()
@@ -296,8 +300,8 @@ void Renderer::OutLine()
 
 void Renderer::PickMany(int viewportIndx)
 {
-    if (!isPicked)
-    {
+    //if (!isPicked)
+   // {
         int viewportCurrIndx = 0;
         int xMin = std::min(xWhenPress, xold);
         int yMin = std::min(viewports[viewportCurrIndx].w() - yWhenPress, viewports[viewportCurrIndx].w() - yold);
@@ -313,7 +317,7 @@ void Renderer::PickMany(int viewportIndx)
         else
             depth = 0;
 
-    }
+    //}
 }
 
 void Renderer::ActionDraw(int viewportIndx)
@@ -418,9 +422,10 @@ bool Renderer::UpdateViewport(int viewport)
 
 void Renderer::MouseProccessing(int button, int mode, int viewportIndx)
 {
-    if (isPicked || button == 0)
+    //PickMany(viewportIndx);
+    
+    if (scn->pick || button == 0)
     {
-
 		if(button == 2)
 			scn->MouseProccessing(button, zrel, zrel, CalcMoveCoeff(mode & 7, viewports[viewportIndx].w()), cameras[0]->MakeTransd(), viewportIndx);
 		else

@@ -34,7 +34,116 @@
 #define IGL_MOD_ALT             0x0004
 #define IGL_MOD_SUPER           0x0008
 
+#define POINTS_NUM 7
+#define cur_layer (layer_index + 1)
+#define single_picked (single_picked_shape_idx != -1)
+#define picking_shader 0
 
+#define SCREEN_WIDTH 100.0
+#define SCREEN_HEIGHT SCREEN_WIDTH
+
+using namespace std;
+
+class Shape 
+{
+private:
+	Eigen::Vector2d* get_points(int section){
+		return bez_points + section*3;
+	}
+  double t, dt;
+  int section;
+
+public:
+  Eigen::Vector3d animate_pos;
+	Eigen::Vector2d bez_points[POINTS_NUM];
+  int shapeIdx;
+  int layer;
+  bool *picked;
+
+	Shape(int _shapeIdx, int _layer) {
+		double x = 0.5528;
+		bez_points[0] = Eigen::Vector2d(-4, 0);
+		bez_points[1] = Eigen::Vector2d(-1, x);
+		bez_points[2] = Eigen::Vector2d(-x, 1);
+		bez_points[3] = Eigen::Vector2d(0, 4);
+		bez_points[4] = Eigen::Vector2d(x, 1);
+		bez_points[5] = Eigen::Vector2d(1, -x);
+		bez_points[6] = Eigen::Vector2d(-4, 0);
+
+    shapeIdx = _shapeIdx;
+    animate_pos = Eigen::Vector3d(0, 0, 0);
+    t = 0;
+    dt = 0.01; 
+    section = 0;
+    layer = _layer;
+    picked = new bool(true);
+	}
+
+	Eigen::Vector2d bezier(double t, int section){
+		Eigen::Vector2d* points = get_points(section);
+		double t_1 = t, t_2 = t*t, t_3 = t_1 * t_2;
+		double tc_1 = (1 -t), tc_2 = (1 -t)*(1 - t), tc_3 = tc_1 * tc_2;
+
+		return tc_3 * points[0] + 3 *tc_2 * t_1 * points[1] + 3* tc_1 * t_2 * points[2] + t_3 * points[3];
+	}
+
+	Eigen::Vector3d velocity(){
+		Eigen::Vector2d bez_t = bezier(t, section);
+		Eigen::Vector2d bez_p = bezier(t + dt, section);
+		Eigen::Vector3d temp(bez_p[0] - bez_t[0], bez_p[1] - bez_t[1] ,0);
+		//std::cout<<_t<< "\n"<<dt<< "\n" << temp << "\n\n";
+		return temp; 
+	}
+
+  Eigen::Vector3d step_animate() {
+		//std::cout << t<< std::endl;
+		int maxSegmentNum = 1;//=((Bezier1D*)data_list[currIndx])->GetSegmentsNum();
+		if(t<=1 && t >=0){ 
+			Eigen::Vector3d vel = velocity();
+			if (dt <0)
+				vel = Eigen::Vector3d(vel[0],-1*vel[1],0);
+			// std::cout << "Animate" <<GetVelocity(segment, t, dt) <<std::endl << t <<std::endl<< dt <<std::endl<< segment<< std::endl;
+		  animate_pos += vel;
+			//data_list[3]->MyTranslate(((Bezier1D*)data_list[curIndx])->GetVelocity(segment,1-t,dt),1); //todo GetVelocity === שיפוע
+		  std::cout << this->t << "\n";
+      t+=dt;
+      if(t > 1 - std::abs(dt)  && t < 1)
+        t = 1;
+      if(t < 0 + std::abs(dt) && t > 0)
+        t=0;
+      std::cout << t << "\n";
+      return vel;
+    } else if(t>=1){
+			if(section == maxSegmentNum){
+				dt = -dt;
+				t =1;
+			}else{
+				section++;
+				t = dt;
+			}
+		}else if(t<=0) {
+			if(section == 0){
+				t = 0;
+				dt = -dt;
+        Eigen::Vector3d temp(animate_pos);
+        animate_pos = Eigen::Vector3d(0, 0, 0);
+        return Eigen::Vector3d(0, 0, 0) - temp; //floating point error
+			} else{
+				section--;
+				t = 1;
+			}
+		}
+    return Eigen::Vector3d(0, 0, 0);
+  }
+
+  void reset_animation() {
+    t = 0;
+		dt = abs(dt);
+		section = 0;
+		animate_pos = Eigen::Vector3d(0, 0, 0);
+  }
+
+};
 
 namespace igl
 {
@@ -45,7 +154,23 @@ namespace glfw
   // GLFW-based mesh viewer
   class Viewer : public Movable
   {
+  protected:
+    bool change_bez = true;
   public:
+      bool pick = false;
+      int single_picked_shape_idx = -1; 
+      int shape_index = 0;
+      std::vector<Shape> shapes;
+
+      //for gui menu
+      int layer_index = 0;
+      int material_idx = 0;
+      std::vector<bool*> picked_shapes;
+      std::vector<bool*> show_layer;
+      vector<string> material_names;
+      vector<string> shape_names;
+
+
       enum axis { xAxis, yAxis, zAxis };
       enum transformations { xTranslate, yTranslate, zTranslate, xRotate, yRotate, zRotate, xScale, yScale, zScale,scaleAll,reset };
       enum modes { POINTS, LINES, LINE_LOOP, LINE_STRIP, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN, QUADS };
@@ -68,10 +193,35 @@ namespace glfw
       virtual void Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx){};
       virtual void Update_overlay(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int shapeIndx,bool is_points);
       virtual int AddShape(int type, int parent, unsigned int mode, int viewport = 0);
+      virtual int AddShapeFromFile1(const std::string& fileName, int parent = -1, unsigned int mode = TRIANGLES, int viewport = 0);
       virtual int AddShapeFromFile(const std::string& fileName, int parent, unsigned int mode, int viewport = 0);
       virtual void WhenTranslate(float dx, float dy) {}
       virtual void WhenRotate(float dx, float dy) {}
       virtual void WhenScroll(float dy) {}
+
+      string get_name_from_path(const std::string& path);
+      void ChangePickedShapeMaterial();
+      void open_dialog_load_texture();
+
+      //check if single picked and if so update picked_shape_idx
+      void changePickedShape() {
+        //should update bez curves
+        change_bez = true;
+
+        int picked = -1;
+        for(int i = 0; i <shapes.size(); i++){
+          if(*(shapes[i].picked)) {
+            if(picked == -1)
+              picked = i;
+            else {
+              single_picked_shape_idx = -1;
+              return;
+            }
+          }
+        }
+        pick = (picked != -1);
+        single_picked_shape_idx = picked;
+      }
     // Mesh IO
     IGL_INLINE bool load_mesh_from_file(const std::string & mesh_file_name);
     IGL_INLINE bool save_mesh_to_file(const std::string & mesh_file_name);

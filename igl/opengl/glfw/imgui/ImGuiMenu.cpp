@@ -52,6 +52,8 @@ IGL_INLINE void ImGuiMenu::init(Display* disp)
     style.FrameRounding = 5.0f;
     reload_font();
   }
+
+  layers.push_back("Layer 1");
 }
 
 IGL_INLINE void ImGuiMenu::reload_font(int font_size)
@@ -92,8 +94,7 @@ IGL_INLINE bool ImGuiMenu::pre_draw()
   return false;
 }
 
-IGL_INLINE bool ImGuiMenu::post_draw()
-{
+IGL_INLINE bool ImGuiMenu::post_draw() {
   //draw_menu(viewer,core);
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -195,68 +196,87 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         "Viewer", p_open,
         window_flags
     );
-
-  // Mesh
-  if (ImGui::CollapsingHeader("Layers", ImGuiTreeNodeFlags_DefaultOpen))
-  {
+    char  * b_name = "Play";
+    if(viewer->IsActive()){
+      b_name = "Stop";
+      ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(168,50,70,255));
+    }
+    else
+      ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(50,168,105,255));
+    if(ImGui::Button(b_name, ImVec2(-1, 0)))
+    {
+      if (viewer->IsActive())
+        viewer->Deactivate();
+      else
+        viewer->Activate();
+    }
+    ImGui::PopStyleColor();
+  // Layer
+  if (ImGui::CollapsingHeader("Layers", ImGuiTreeNodeFlags_None)) {
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
-    if (ImGui::Button("Add##Layers", ImVec2((w-p), 0)))
-    {
-      //   int savedIndx = viewer->selected_data_index;
-      //  // viewer->selected_data_index = viewer->parents.size();
-      //  // viewer->AddShape(viewer->xCylinder,-1,viewer->TRIANGLES);
-      //   viewer->open_dialog_load_mesh();
-      // if (viewer->data_list.size() > viewer->parents.size())
-      // {
-          
-      //     viewer->parents.push_back(-1);
-      //     viewer->SetShapeViewport(viewer->selected_data_index, 0);
-      //     viewer->SetShapeShader(viewer->selected_data_index, 2);
-      //     viewer->SetShapeMaterial(viewer->selected_data_index,0);
-      //     //viewer->data_list.back()->set_visible(false, 1);
-      //     //viewer->data_list.back()->set_visible(true, 2);
-      //     viewer->data_list.back()->UnHide();
-      //     viewer->data_list.back()->show_faces = 3;
-      //     viewer->data()->mode = viewer->TRIANGLES;
-      //     viewer->selected_data_index = savedIndx;
-      // }
 
-      // ToDo make add layers 
-      //   viewer->open_dialog_add_layer();
+    if (ImGui::Button("Add##Layers", ImVec2((w-p), 0))){
+          viewer->show_layer.push_back(new bool(true));
+          char s[9] = "Layer  ";
+          s[6] = (layers.size() + 1) + '0';
+          layers.push_back(s);
+    }
 
+    if (ImGui::CollapsingHeader("Hide/Unhide##Layers", ImGuiTreeNodeFlags_DefaultOpen)) {
+      float w_i = ImGui::GetContentRegionAvailWidth();
+      float p_i = ImGui::GetStyle().FramePadding.x;
+      
+      for (int i = 1; i <= viewer->show_layer.size(); i++){
+      std::stringstream s("");
+      s << "Layer ";
+      s << i;
+      s << "##Hide/Unhide##Layers";
+
+      if (ImGui::Checkbox(s.str().c_str(),viewer->show_layer[i - 1])){
+        for(int j = 0 ; j < viewer->shapes.size() ; j++) {
+          Shape &s = viewer->shapes[j];
+          if(s.layer == i) {
+            viewer->data_list[s.shapeIdx]->hide = !(*(viewer->show_layer[i - 1]));
+          }
+        }
+      }
+    }
     }
     // ImGui::SameLine(0, p);
-    if (ImGui::Button("Hide##Layers", ImVec2((w-p), 0)))
-    {
-     //todo add to code in viewer.h and viewer.cpp
-     // viewer->open_dialog_hide_layer();
-
-    }
-    if (ImGui::Button("Unhide##Layers", ImVec2((w-p), 0)))
-    {
-     //todo add to code in viewer.h and viewer.cpp
-     // viewer->open_dialog_unhide_layer();
-
-    }
+    
+     if (ImGui::CollapsingHeader("Select Layer##Layers", ImGuiTreeNodeFlags_DefaultOpen)) {
+      float w_i = ImGui::GetContentRegionAvailWidth();
+      float p_i = ImGui::GetStyle().FramePadding.x;
+      if(ImGui::ListBox("##Select Layer##Layers", &(viewer->layer_index), layers)) {
+        for(int i = 0 ; i < viewer->picked_shapes.size() ; i++) {
+          if(*viewer->picked_shapes[i]) {
+            viewer->shapes[i].layer = viewer->layer_index + 1;
+          }
+        } 
+      }
+     }
   }
-
-  //metirial 
-  if (ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_DefaultOpen))
+  //material 
+  if (ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_None))
   {
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
     if (ImGui::Button("Add##Materials", ImVec2((w-p), 0)))
     {
-       // viewer->open_dialog_hide_layer();
+       viewer->open_dialog_load_texture();
     }
-    if (ImGui::Button("Change##Materials", ImVec2((w-p), 0)))
-    {
-      
+    if (ImGui::Button("Change##Materials", ImVec2((w-p), 0))) {
+      viewer->ChangePickedShapeMaterial();
     }
+
+    if(ImGui::ListBox("##Materials", &viewer->material_idx, viewer->material_names)) {
+
+    }
+
   }
   //metirial 
-  if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+  if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_None))
   {
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
@@ -269,7 +289,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
   }
 
   // Mesh
-  if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
+  if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_None))
   {
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
@@ -299,10 +319,26 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     {
       viewer->open_dialog_save_mesh();
     }
+
+    if (ImGui::CollapsingHeader("Select Shapes##Mesh", ImGuiTreeNodeFlags_DefaultOpen)) {
+      float w_i = ImGui::GetContentRegionAvailWidth();
+      float p_i = ImGui::GetStyle().FramePadding.x;
+      
+      for (int i = 0; i < viewer->picked_shapes.size(); i++){
+        std::stringstream s("");
+        s << i + 1;
+        s << " ";
+        s << viewer->shape_names[i];
+
+        if (ImGui::Checkbox(s.str().c_str(),viewer->picked_shapes[i])) {
+          viewer->changePickedShape();
+        }
+      }
+    }
   }
 
   // Viewing options
-  if (ImGui::CollapsingHeader("Viewing Options", ImGuiTreeNodeFlags_DefaultOpen))
+  if (ImGui::CollapsingHeader("Viewing Options", ImGuiTreeNodeFlags_None))
   {
     if (ImGui::Button("Center object", ImVec2(-1, 0)))
     {
@@ -349,7 +385,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
       ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueWheel);
 
   // Draw options
-  if (ImGui::CollapsingHeader("Draw Options", ImGuiTreeNodeFlags_DefaultOpen))
+  if (ImGui::CollapsingHeader("Draw Options", ImGuiTreeNodeFlags_None))
   {
     if (ImGui::Checkbox("Face-based", &(viewer->data()->face_based)))
     {
@@ -372,7 +408,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
   }
 
   // Overlays
-  if (ImGui::CollapsingHeader("Overlays", ImGuiTreeNodeFlags_DefaultOpen))
+  if (ImGui::CollapsingHeader("Overlays", ImGuiTreeNodeFlags_None))
   {
     make_checkbox("Wireframe", viewer->data()->show_lines);
     make_checkbox("Fill", viewer->data()->show_faces);
@@ -380,8 +416,6 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
   }
   ImGui::End();
 }
-
-
 
 IGL_INLINE float ImGuiMenu::pixel_ratio()
 {

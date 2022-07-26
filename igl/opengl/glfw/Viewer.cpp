@@ -69,8 +69,10 @@ namespace glfw
     selected_data_index(0),
     next_data_id(1),
     next_shader_id(1),
-	isActive(false)
+	isActive(false),
+    show_layer()
   {
+    show_layer.push_back(new bool(true));
     data_list.front() = new ViewerData();
     data_list.front()->id = 0;
     staticScene = 0;
@@ -309,22 +311,25 @@ IGL_INLINE bool
 
   IGL_INLINE void Viewer::open_dialog_load_mesh()
   {
-    std::string fname = igl::file_dialog_open();
+    const std::string fname = igl::file_dialog_open();
 
     if (fname.length() == 0)
       return;
     
-    this->load_mesh_from_file(fname.c_str());
-      data()->mode = TRIANGLES;
-      data()->shaderID = 1;
-      data()->viewports = 1 << 0;
-      //data()->is_visible = 0x1;
-      data()->show_lines = 0;
-      data()->show_overlay = 0;
-      data()->hide = false;
 
-    // this->load_mesh_from_file(fname.c_str());
+    AddShapeFromFile1(fname);
+  }
+  void Viewer::open_dialog_load_texture()
+  {
+    const std::string fname = igl::file_dialog_open();
 
+    if (fname.length() == 0)
+      return;
+    
+    AddTexture(fname,2);
+    unsigned int texId[1],slots[1];
+    texId[0] = slots[0] = textures.size()-1;
+    AddMaterial(texId, slots, 1);
 
   }
 
@@ -518,6 +523,45 @@ IGL_INLINE bool
         next_data_id +=1;
     }
 
+int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned int mode, int viewport)
+{
+    this->load_mesh_from_file(fileName);
+	//data()->type = type;
+	data()->mode = mode;
+	data()->shaderID = 1;
+	data()->viewports = 1 << viewport;
+	/*//data()->is_visible = 0x1;*/
+	data()->show_lines = 0;
+	data()->show_overlay = 0;
+	data()->hide = false;
+
+	this->parents.emplace_back(parent);
+    int shapeIdx = data_list.size() - (size_t)1;
+    SetShapeShader(shapeIdx,3);
+	SetShapeMaterial(shapeIdx,2);
+
+    shapes.push_back(Shape(shapeIdx, cur_layer));
+    picked_shapes.push_back(shapes[shapes.size() - 1].picked);
+
+    //make new shape the only picked shape
+    for(int i = 0 ; i < shapes.size() - 1 ; i++) {
+        *(shapes[i].picked) = false;
+    }
+
+    //update cur picked shape
+    changePickedShape();
+
+    //add shape name to array for gui
+    shape_names.push_back(get_name_from_path(fileName));
+
+    return shapeIdx;
+}
+void Viewer::ChangePickedShapeMaterial(){
+    if(single_picked)
+        SetShapeMaterial(shapes[single_picked_shape_idx].shapeIdx,material_idx);
+}
+
+
     int Viewer::AddShapeFromFile(const std::string& fileName, int parent, unsigned int mode, int viewport)
     {
         this->load_mesh_from_file(fileName);
@@ -658,11 +702,17 @@ IGL_INLINE bool
 
         if (button == 1)
         {
-            for (int pShape : pShapes)
-            {
-                selected_data_index = pShape;
-                WhenTranslate(scnMat * cameraMat, -xrel / movCoeff, yrel / movCoeff);
+            for(int i = 0 ; i < picked_shapes.size() ; i++) {
+                if(*(picked_shapes[i])) {
+                    data_list[shapes[i].shapeIdx]->MyTranslate(Eigen::Vector3d(-xrel/SCREEN_WIDTH, yrel/SCREEN_HEIGHT, 0), 1);
+                }
             }
+
+            // for (int pShape : pShapes)
+            // {
+            //     selected_data_index = pShape;
+            //     WhenTranslate(scnMat * cameraMat, -xrel / movCoeff, yrel / movCoeff);
+            // }
         }
         else
         {
@@ -670,9 +720,13 @@ IGL_INLINE bool
 
             if (button == 0)
             {
+                for(int i = 0 ; i < picked_shapes.size() ; i++) {
+                    if(*(picked_shapes[i])) {
+                        data_list[shapes[i].shapeIdx]->MyTranslate(Eigen::Vector3d(-xrel/SCREEN_WIDTH, yrel/SCREEN_HEIGHT, 0), 1);
+                    }
+                }
 //                if (selected_data_index > 0 )
-                    WhenRotate(scnMat * cameraMat, -((float)xrel/180) / movCoeff, ((float)yrel/180) / movCoeff);
-
+                  //  WhenRotate(scnMat * cameraMat, -((float)xrel/180) / movCoeff, ((float)yrel/180) / movCoeff);
             }
             else
             {
@@ -734,9 +788,10 @@ IGL_INLINE bool
 
     bool Viewer::Picking(unsigned char data[4], int newViewportIndx)
     {
-
-        return false;
-
+        int index = data[0];
+        std::cout << (int)data[0] << " " << (int)data[1] << " " << (int)data[2] << " " << (int)data[3] << std::endl;
+        
+        return index >= 4 && index < shapes.size() + 3;
     }
 
     void Viewer::WhenTranslate( const Eigen::Matrix4d& preMat, float dx, float dy)
@@ -777,6 +832,7 @@ IGL_INLINE bool
 
     int Viewer::AddMaterial(unsigned int texIndices[], unsigned int slots[], unsigned int size)
     {
+
         materials.push_back(new Material(texIndices, slots, size));
         return (materials.size() - 1);
     }
@@ -825,8 +881,19 @@ IGL_INLINE bool
             return 0;
     }
 
+    string Viewer::get_name_from_path(const std::string& path) {
+        size_t start_name = path.find_last_of("/\\") + 1 ;
+        string s = path.substr(start_name);
+
+        return s.substr(0, s.find_last_of("."));
+
+    }
+
     int Viewer::AddTexture(const std::string& textureFileName, int dim)
     {
+        string name = get_name_from_path(textureFileName);
+        material_names.push_back(name);
+
         textures.push_back(new Texture(textureFileName, dim));
         return(textures.size() - 1);
     }
@@ -879,7 +946,6 @@ IGL_INLINE bool
             data_list[indx]->MyTranslate(-tmp.head<3>(), false);
         }
     }
-
 
 } // end namespace
 } // end namespace
