@@ -720,17 +720,16 @@ void Viewer::ChangePickedShapeMaterial(){
 
             if (button == 0)
             {
-                for(int i = 0 ; i < picked_shapes.size() ; i++) {
-                    if(*(picked_shapes[i])) {
-                        data_list[shapes[i].shapeIdx]->MyTranslate(Eigen::Vector3d(-xrel/SCREEN_WIDTH, yrel/SCREEN_HEIGHT, 0), 1);
-                    }
-                }
+                // for(int i = 0 ; i < picked_shapes.size() ; i++) {
+                //     if(*(picked_shapes[i])) {
+                //         data_list[shapes[i].shapeIdx]->MyRotate(Eigen::Vector3d(-((float)xrel/180) / movCoeff, ((float)yrel/180) / movCoeff, 0), 1.0/100.0);
+                //     }
+                // }
 //                if (selected_data_index > 0 )
-                  //  WhenRotate(scnMat * cameraMat, -((float)xrel/180) / movCoeff, ((float)yrel/180) / movCoeff);
+                WhenRotate(scnMat * cameraMat, -((float)xrel/180) / movCoeff, -((float)yrel/180) / movCoeff);
             }
             else
             {
-
                 for (int pShape : pShapes)
                 {
                     selected_data_index = pShape;
@@ -807,18 +806,13 @@ void Viewer::ChangePickedShapeMaterial(){
 
     void Viewer::WhenRotate(const Eigen::Matrix4d& preMat, float dx, float dy)
     {
-        Movable* obj;
-        if (selected_data_index == 0 || data()->IsStatic())
-            obj = (Movable*)this;
-        else
-        {
-            int ps = selected_data_index;
-            for (; parents[ps] > -1; ps = parents[ps]);
-            obj = (Movable*)data_list[ps];
+        for(int i = 0 ; i < picked_shapes.size() ; i++) {
+            if(*picked_shapes[i]) {
+                ViewerData * v = data_list[shapes[i].shapeIdx];
+                v->RotateInSystem(Eigen::Vector3d(0, 1, 0), dx);
+                v->RotateInSystem(Eigen::Vector3d(1, 0, 0), dy);
+            }
         }
-        obj->RotateInSystem(Eigen::Vector3d(0, 1, 0), dx);
-        obj->RotateInSystem( Eigen::Vector3d(1, 0, 0), dy);
-        WhenRotate(dx, dy);
     }
 
     void Viewer::WhenScroll(const Eigen::Matrix4d& preMat, float dy)
