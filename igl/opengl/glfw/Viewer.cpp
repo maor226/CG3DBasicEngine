@@ -821,10 +821,7 @@ void Viewer::ChangePickedShapeDelay(){
 
     bool Viewer::Picking(unsigned char data[4], int newViewportIndx)
     {
-        int index = data[0];
-        std::cout << (int)data[0] << " " << (int)data[1] << " " << (int)data[2] << " " << (int)data[3] << std::endl;
-        
-        return index >= 4 && index < shapes.size() + 3;
+        return false;
     }
 
     void Viewer::WhenTranslate( const Eigen::Matrix4d& preMat, float dx, float dy)

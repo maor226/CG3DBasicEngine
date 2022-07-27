@@ -17,7 +17,9 @@ using namespace std;
 			
 			glfwGetCursorPos(window, &x2, &y2);
 			rndr->UpdatePress((float)x2, (float)y2);
-			//rndr->Picking((int)x2, (int)y2);
+			if(rndr->Picking((int)x2, (int)y2)) {
+				
+			}
 			if ( scn->IsPicked((float)x2,(float)y2)>=0)
 			{
 				rndr->UpdatePosition(x2, y2);
