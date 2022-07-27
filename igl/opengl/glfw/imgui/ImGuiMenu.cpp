@@ -279,6 +279,24 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     }
 
   }
+   if (ImGui::CollapsingHeader("Background", ImGuiTreeNodeFlags_None))
+  {
+    float w = ImGui::GetContentRegionAvailWidth();
+    float p = ImGui::GetStyle().FramePadding.x;
+    // if (ImGui::Button("Add##Background", ImVec2((w-p), 0)))
+    // {
+    //    viewer->open_dialog_load_cube_texture();
+    // }
+    
+  if (ImGui::Button("Change##Background", ImVec2((w-p), 0)))
+    {
+      std::cout << viewer->background_idx <<"\n";
+      viewer->SetCubeShapeMaterial(0,viewer->background_idx);
+    }
+    if(ImGui::ListBox("##Background", &viewer->background_idx, viewer->cube_material_names)) {
+      
+    }
+  }
   //metirial 
   if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_None))
   {

@@ -333,6 +333,19 @@ IGL_INLINE bool
 
   }
 
+  void Viewer::open_dialog_load_cube_texture()
+  {
+    const std::string fname = igl::file_dialog_open();
+
+    if (fname.length() == 0)
+      return;
+    
+    
+    unsigned int texId[1],slots[1];
+    texId[0] = slots[0] = AddCubeTexture(fname);
+    AddCubeMaterial(texId, slots, 1);
+  }
+
   IGL_INLINE void Viewer::open_dialog_save_mesh()
   {
     std::string fname = igl::file_dialog_save();
@@ -849,6 +862,13 @@ void Viewer::ChangePickedShapeDelay(){
         return (materials.size() - 1);
     }
 
+    int Viewer::AddCubeMaterial(unsigned int texIndices[], unsigned int slots[], unsigned int size)
+    {
+
+        cube_materials.push_back(new Material(texIndices, slots, size));
+        return (cube_materials.size() - 1);
+    }
+
     Eigen::Matrix4d Viewer::GetPriviousTrans(const Eigen::Matrix4d& View, unsigned int index)
     {
         Eigen::Matrix4d Model = Eigen::Matrix4d::Identity();
@@ -910,13 +930,23 @@ void Viewer::ChangePickedShapeDelay(){
         return(textures.size() - 1);
     }
 
-    void Viewer::BindMaterial(Shader* s, unsigned int materialIndx)
+    int Viewer::AddCubeTexture(const std::string& textureFileName)
     {
+        string name = get_name_from_path(textureFileName);
+        cube_material_names.push_back(name);
 
-        for (int i = 0; i < materials[materialIndx]->GetNumOfTexs(); i++)
+        cube_textures.push_back(new Texture(textureFileName, 3));
+        return (cube_textures.size()-1);
+    }
+
+    void Viewer::BindMaterial(Shader* s, unsigned int materialIndx,bool isCube=false)
+    {
+        auto & t = isCube? cube_textures : textures;
+        auto & m = isCube? cube_materials :materials;
+        for (int i = 0; i < m[materialIndx]->GetNumOfTexs(); i++)
         {
-            materials[materialIndx]->Bind(textures, i);
-            s->SetUniform1i("sampler" + std::to_string(i + 1), materials[materialIndx]->GetSlot(i));
+            m[materialIndx]->Bind(t, i);
+            s->SetUniform1i("sampler" + std::to_string(i + 1), m[materialIndx]->GetSlot(i));
         }
     }
 
