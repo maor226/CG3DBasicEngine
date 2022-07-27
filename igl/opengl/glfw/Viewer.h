@@ -173,10 +173,11 @@ namespace glfw
 
       //for gui menu
       int layer_index = 0;
-      int material_idx = 0;
+      int material_idx = 0,background_idx = 0;
       std::vector<bool*> picked_shapes;
       std::vector<bool*> show_layer;
       vector<string> material_names;
+      vector<string> cube_material_names;
       vector<string> shape_names;
       float delayVal = 0.f;
 
@@ -213,7 +214,8 @@ namespace glfw
       void ChangePickedShapeMaterial();
       void open_dialog_load_texture();
 
-    //check if single picked and if so update picked_shape_idx
+      void open_dialog_load_cube_texture();
+      //check if single picked and if so update picked_shape_idx
     void changePickedShape();
     void ChangePickedShapeDelay();
     void changePickedLayer();
@@ -297,9 +299,11 @@ public:
     // Stores all the data that should be visualized
     std::vector<ViewerData*> data_list;
     std::vector<int> pShapes;
-	std::vector<int> parents;
+	  std::vector<int> parents;
     std::vector<Texture*> textures;
+    std::vector<Texture*> cube_textures;
     std::vector<Material*> materials;
+    std::vector<Material*> cube_materials;
     std::list<int> pickedShapes;
     Eigen::Vector3d pickedNormal;
     int selected_data_index;
@@ -332,6 +336,7 @@ public:
       void ClearPickedShapes(int viewportIndx);
 
       int AddMaterial(unsigned int *texIndices, unsigned int *slots, unsigned int size);
+      int AddCubeMaterial(unsigned int *texIndices, unsigned int *slots, unsigned int size);
 
       Eigen::Matrix4d GetPriviousTrans(const Eigen::Matrix4d &View, unsigned int index);
 
@@ -349,14 +354,17 @@ public:
       virtual void WhenRotate(const Eigen::Matrix4d &preMat, float dx, float dy);
 
       int AddTexture(const std::string& textureFileName, int dim);
+      int AddCubeTexture(const std::string& textureFileName);
       int AddTexture(int width, int height, unsigned char* data, int mode);
-      void BindMaterial(Shader* s, unsigned int materialIndx);
+      void BindMaterial(Shader* s, unsigned int materialIndx,bool isCube);
       void BindTexture(int texIndx, int slot) { textures[texIndx]->Bind(slot); }
       IGL_INLINE void SetShapeShader(int shpIndx, int shdrIndx) { data_list[shpIndx]->SetShader(shdrIndx); }
       IGL_INLINE void SetShapeStatic(int shpIndx) { data_list[shpIndx]->SetStatic(); }
       IGL_INLINE void SetShapeViewport(int shpIndx, int vpIndx) { vpIndx>0 ? data_list[shpIndx]->AddViewport(vpIndx) : data_list[shpIndx]->RemoveViewport(~vpIndx); }
       inline void UpdateNormal(unsigned char data[]) { pickedNormal = (Eigen::Vector3d(data[0], data[1], data[2])).normalized(); }
       IGL_INLINE void SetShapeMaterial(int shpIndx, int materialIndx) { data_list[shpIndx]->SetMaterial(materialIndx); }
+      IGL_INLINE void SetCubeShapeMaterial(int shpIndx, int materialIndx) { data_list[shpIndx]->SetCubeMaterial(materialIndx); }
+
 
       void SetShader_overlay(const std::string &fileName);
 

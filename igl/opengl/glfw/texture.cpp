@@ -53,7 +53,7 @@ Texture::Texture(const std::string& fileName, const int dim)
 		{
 			data = stbi_load((fileName + directions[i] + ".bmp").c_str(), &width, &height, &numComponents, 4);
 			if (data == NULL)
-				std::cerr << "Unable to load texture: " << fileName << std::endl;
+				std::cerr << "Unable to load texture: " << fileName << directions[i] << ".bmp"<< std::endl;
 
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		}
