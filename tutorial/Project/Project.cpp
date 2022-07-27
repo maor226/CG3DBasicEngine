@@ -33,16 +33,28 @@ void Project::Init()
 	AddShader("shaders/cubemapShader");
 
 	AddTexture("textures/plane.png",2);
-	AddTexture("textures/cubemaps/Daylight Box_", 3);
+	AddTexture("textures/snake.jpg",2);
+	
 	AddTexture("textures/grass.bmp", 2);
 	//AddTexture("../res/textures/Cat_bump.jpg", 2);
 
 	AddMaterial(texIDs,slots, 1);
 	AddMaterial(texIDs+1, slots+1, 1);
 	AddMaterial(texIDs + 2, slots + 2, 1);
+	
+	unsigned int cubeTexIDs[3] = { 0 , 1, 2};
+	unsigned int cubeSlots[3] = { 0 , 1, 2 };
+	AddCubeTexture("textures/cubemaps/Daylight Box_");
+	AddCubeTexture("textures/cubemaps/space/space_");
+	AddCubeTexture("textures/cubemaps/neon_city/neon_city_");
+	AddCubeMaterial(cubeTexIDs,cubeSlots, 1);
+	AddCubeMaterial(cubeTexIDs+1,cubeSlots+1, 1);
+	AddCubeMaterial(cubeTexIDs+2,cubeSlots+2, 1);
+
+
 
 	AddShape(Cube, -2, TRIANGLES);
-	SetShapeMaterial(0, 1);
+	SetCubeShapeMaterial(0, 0);
 	SetShapeShader(0, 4);
 	selected_data_index = 0;
 	float s = 60;
@@ -140,7 +152,7 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	if (data_list[shapeIndx]->GetMaterial() >= 0 && !materials.empty())
 	{
 		// materials[shapes[pickedShape]->GetMaterial()]->Bind(textures);
-		BindMaterial(s, data_list[shapeIndx]->GetMaterial());
+		BindMaterial(s, data_list[shapeIndx]->GetMaterial(),data_list[shapeIndx]->isCube);
 	}
 
 	if (shaderIndx == 0)
