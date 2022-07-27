@@ -70,13 +70,13 @@ void Project::Init()
 
 	SetShapeShader(1, 0);
 	selected_data_index = 1;
-	ShapeTransformation(scaleAll, 0, 0);
+	ShapeTransformation(scaleAll, 0, 1);
 	SetShapeStatic(1);
 	AddShape(Plane, -1, TRIANGLES,1);
 	SetShapeShader(2,1);
 	SetShapeMaterial(2,1);
 	selected_data_index = 2;
-	ShapeTransformation(scaleAll, 60, 0);
+	ShapeTransformation(scaleAll, 60, 1);
 	SetShapeStatic(2);
 	SetShapeViewport(2, 1);
 
@@ -87,6 +87,7 @@ void Project::Init()
 	// SetShapeStatic(3);
 	//SetShapeShader(3,3);
 	//SetShapeMaterial(3,2);
+
 	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
 	//SetShapeViewport(6, 1);
 	// ReadPixel(); //uncomment when you are reading from the z-buffer
@@ -197,7 +198,7 @@ bool Project::Picking(unsigned char data[4], int newViewportIndx) {
 void Project::reset_animation() {
 	for(int i = 0 ; i < shapes.size() ; i++) {
 		Shape & s = shapes[i];
-		data_list[s.shapeIdx]->MyTranslate(s.edit_pos - s.animate_pos, 1);
+		data_list[s.shapeIdx]->MyTranslate(Eigen::Vector3d(0, 0, 0) - s.animate_pos, 1);
 		s.reset_animation();
 	}
 }

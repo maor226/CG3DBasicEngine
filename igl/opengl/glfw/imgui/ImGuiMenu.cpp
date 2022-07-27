@@ -211,10 +211,14 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         viewer->Activate();
     }
     ImGui::PopStyleColor();
-  // Layer
-  if (ImGui::CollapsingHeader("Layers", ImGuiTreeNodeFlags_None)) {
-    float w = ImGui::GetContentRegionAvailWidth();
-    float p = ImGui::GetStyle().FramePadding.x;
+
+    if(ImGui::SliderFloat("delay", &viewer->delayVal ,0.f, 1.f)){
+       viewer->ChangePickedShapeDelay();
+    }
+    // Layer
+    if (ImGui::CollapsingHeader("Layers", ImGuiTreeNodeFlags_None)) {
+      float w = ImGui::GetContentRegionAvailWidth();
+      float p = ImGui::GetStyle().FramePadding.x;
 
     if (ImGui::Button("Add##Layers", ImVec2((w-p), 0))){
           viewer->show_layer.push_back(new bool(true));
@@ -273,6 +277,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     if(ImGui::ListBox("##Materials", &viewer->material_idx, viewer->material_names)) {
 
     }
+
   }
    if (ImGui::CollapsingHeader("Background", ImGuiTreeNodeFlags_None))
   {

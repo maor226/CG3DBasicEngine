@@ -53,7 +53,7 @@ using namespace std;
 		}
 		else
 		{
-			// rndr->MoveCamera(0, rndr->zTranslate, (float)yoffset);
+			rndr->MoveCamera(0, rndr->zTranslate, (float)yoffset);
 		}
 		
 	}

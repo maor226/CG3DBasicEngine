@@ -316,6 +316,7 @@ IGL_INLINE bool
     if (fname.length() == 0)
       return;
     
+
     AddShapeFromFile1(fname);
   }
   void Viewer::open_dialog_load_texture()
@@ -329,6 +330,7 @@ IGL_INLINE bool
     unsigned int texId[1],slots[1];
     texId[0] = slots[0] = textures.size()-1;
     AddMaterial(texId, slots, 1);
+
   }
 
   void Viewer::open_dialog_load_cube_texture()
@@ -567,9 +569,41 @@ int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned 
 
     return shapeIdx;
 }
+void Viewer::changePickedShape() {
+    //should update bez curves
+    change_bez = true;
+
+    int picked = -1;
+    for(int i = 0; i <shapes.size(); i++){
+        if(*(shapes[i].picked)) {
+        if(picked == -1)
+            picked = i;
+        else {
+            single_picked_shape_idx = -1;
+            return;
+        }
+        }
+    }
+    pick = (picked != -1);
+    single_picked_shape_idx = picked;
+     if(single_picked_shape_idx != -1){
+        Shape s = shapes[single_picked_shape_idx];
+        layer_index = s.layer;
+        material_idx = s.materialIdx;
+        delayVal = s.delay;
+    }
+}
 void Viewer::ChangePickedShapeMaterial(){
-    if(single_picked)
+    if(single_picked){
         SetShapeMaterial(shapes[single_picked_shape_idx].shapeIdx,material_idx);
+        shapes[single_picked_shape_idx].materialIdx = material_idx;
+    }
+}
+void Viewer::ChangePickedShapeDelay(){
+    if(single_picked){
+        shapes[single_picked_shape_idx].delay = delayVal;
+        shapes[single_picked_shape_idx].delay = delayVal;        
+    }
 }
 
 
@@ -618,6 +652,9 @@ void Viewer::ChangePickedShapeMaterial(){
             break;
         case zCylinder:
             this->load_mesh_from_file("./data/zcylinder.obj");
+            break;
+        case banny:
+            this->load_mesh_from_file("./data/mybunny.off");
             break;
         default:
             break;
@@ -710,17 +747,7 @@ void Viewer::ChangePickedShapeMaterial(){
 
         if (button == 1)
         {
-            for(int i = 0 ; i < picked_shapes.size() ; i++) {
-                if(*(picked_shapes[i])) {
-                    data_list[shapes[i].shapeIdx]->MyTranslate(Eigen::Vector3d(-xrel/SCREEN_WIDTH, yrel/SCREEN_HEIGHT, 0), 1);
-                }
-            }
-
-            // for (int pShape : pShapes)
-            // {
-            //     selected_data_index = pShape;
-            //     WhenTranslate(scnMat * cameraMat, -xrel / movCoeff, yrel / movCoeff);
-            // }
+            WhenTranslate(scnMat * cameraMat, -xrel / SCREEN_WIDTH, yrel / SCREEN_HEIGHT);
         }
         else
         {
@@ -728,13 +755,10 @@ void Viewer::ChangePickedShapeMaterial(){
 
             if (button == 0)
             {
-//                if (selected_data_index > 0 )
-                    WhenRotate(scnMat * cameraMat, -((float)xrel/180) / movCoeff, ((float)yrel/180) / movCoeff);
-
+                WhenRotate(scnMat * cameraMat, -((float)xrel/180) / movCoeff, -((float)yrel/180) / movCoeff);
             }
             else
             {
-
                 for (int pShape : pShapes)
                 {
                     selected_data_index = pShape;
@@ -800,29 +824,26 @@ void Viewer::ChangePickedShapeMaterial(){
 
     void Viewer::WhenTranslate( const Eigen::Matrix4d& preMat, float dx, float dy)
     {
-        Movable* obj;
-        if (selected_data_index == 0 || data()->IsStatic())
-            obj = (Movable*)this;
-        else  if (selected_data_index > 0) { obj = (Movable *) data(); }
-        obj->TranslateInSystem(preMat.block<3, 3>(0, 0), Eigen::Vector3d(dx, 0, 0));
-        obj->TranslateInSystem(preMat.block<3, 3>(0, 0), Eigen::Vector3d(0, dy, 0));
-        WhenTranslate(dx,dy);
+        for(int i = 0 ; i < picked_shapes.size() ; i++) {
+            if(*(picked_shapes[i])) {
+                ViewerData * obj = data_list[shapes[i].shapeIdx];
+                obj->MyTranslate(Eigen::Vector3d(dx, dy, 0), 1);
+                // obj->TranslateInSystem(preMat.block<3, 3>(0, 0), Eigen::Vector3d(dx, 0, 0));
+                // obj->TranslateInSystem(preMat.block<3, 3>(0, 0), Eigen::Vector3d(0, dy, 0));
+            }
+        }
+        
     }
 
     void Viewer::WhenRotate(const Eigen::Matrix4d& preMat, float dx, float dy)
     {
-        Movable* obj;
-        if (selected_data_index == 0 || data()->IsStatic())
-            obj = (Movable*)this;
-        else
-        {
-            int ps = selected_data_index;
-            for (; parents[ps] > -1; ps = parents[ps]);
-            obj = (Movable*)data_list[ps];
+        for(int i = 0 ; i < picked_shapes.size() ; i++) {
+            if(*picked_shapes[i]) {
+                ViewerData * v = data_list[shapes[i].shapeIdx];
+                v->RotateInSystem(Eigen::Vector3d(0, 1, 0), dx);
+                v->RotateInSystem(Eigen::Vector3d(1, 0, 0), dy);
+            }
         }
-        obj->RotateInSystem(Eigen::Vector3d(0, 1, 0), dx);
-        obj->RotateInSystem( Eigen::Vector3d(1, 0, 0), dy);
-        WhenRotate(dx, dy);
     }
 
     void Viewer::WhenScroll(const Eigen::Matrix4d& preMat, float dy)
@@ -967,7 +988,6 @@ void Viewer::ChangePickedShapeMaterial(){
             data_list[indx]->MyTranslate(-tmp.head<3>(), false);
         }
     }
-
 
 } // end namespace
 } // end namespace
