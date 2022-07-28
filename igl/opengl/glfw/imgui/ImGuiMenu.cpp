@@ -435,6 +435,11 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     make_checkbox("Fill", viewer->data()->show_faces);
 
   }
+  float w = ImGui::GetContentRegionAvailWidth();
+  float p = ImGui::GetStyle().FramePadding.x;
+  if (ImGui::Button("Add Bezier Shape", ImVec2((w-p), 0))){
+          viewer->AddBezierShape();
+  }
   ImGui::End();
 }
 

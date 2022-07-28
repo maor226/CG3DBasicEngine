@@ -8,7 +8,7 @@ using namespace std;
 
 
 	void glfw_mouse_callback(GLFWwindow* window,int button, int action, int mods)
-	{	
+	{
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		Project* scn = (Project*)rndr->GetScene();
 		if (action == GLFW_PRESS)

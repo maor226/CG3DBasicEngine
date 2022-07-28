@@ -14,6 +14,7 @@
 
 #include "../../igl_inline.h"
 #include "../MeshGL.h"
+#include "igl/list_to_matrix.h"
 
 #include "../ViewerData.h"
 #include "ViewerPlugin.h"
@@ -43,47 +44,42 @@
 
 using namespace std;
 
-class Shape 
-{
-private:
-	Eigen::Vector2d* get_points(int section){
-		return bez_points + section*3;
-	}
+class Bezier{
+private: 
   double t, dt;
   double delayCountDown;
   int section;
+  float delay;
+  int number_of_vertices;
 
 public:
+  Eigen::Vector2d* get_points(int section){
+		return bez_points + section*3;
+	}
+
   Eigen::Vector3d animate_pos;
 	Eigen::Vector2d bez_points[POINTS_NUM];
-  int shapeIdx;
-  int materialIdx;
-  int layer;
-  bool *picked;
-  float delay;
 
-	Shape(int _shapeIdx, int _layer) {
-		double x = 0.5528;
-		bez_points[0] = Eigen::Vector2d(-4, 0);
-		bez_points[1] = Eigen::Vector2d(-1, x);
-		bez_points[2] = Eigen::Vector2d(-x, 1);
-		bez_points[3] = Eigen::Vector2d(0, 4);
-		bez_points[4] = Eigen::Vector2d(x, 1);
-		bez_points[5] = Eigen::Vector2d(1, -x);
-		bez_points[6] = Eigen::Vector2d(-4, 0);
+  Bezier(double y = 2){
+    double x = 0.5522847;
 
-    shapeIdx = _shapeIdx;
-    materialIdx = 2; //grass
+		bez_points[0] = Eigen::Vector2d(-y, 0);
+		bez_points[1] = Eigen::Vector2d(-y, y*x);
+		bez_points[2] = Eigen::Vector2d(-y*x, y);
+		bez_points[3] = Eigen::Vector2d(0, y);
+		bez_points[4] = Eigen::Vector2d(y*x, y);
+		bez_points[5] = Eigen::Vector2d(y, y*x);
+		bez_points[6] = Eigen::Vector2d(y, 0);
+
     animate_pos = Eigen::Vector3d(0, 0, 0);
     t = 0;
     dt = 0.01; 
     section = 0;
-    layer = _layer;
-    picked = new bool(true);
     delay = 0;
-	}
+    number_of_vertices = 32;
+  } 
 
-	Eigen::Vector2d bezier(double t, int section){
+  Eigen::Vector2d bezier(double t, int section){
 		Eigen::Vector2d* points = get_points(section);
 		double t_1 = t, t_2 = t*t, t_3 = t_1 * t_2;
 		double tc_1 = (1 -t), tc_2 = (1 -t)*(1 - t), tc_3 = tc_1 * tc_2;
@@ -151,7 +147,124 @@ public:
     delayCountDown = delay;
 		animate_pos = Eigen::Vector3d(0, 0, 0);
   }
+  
+  vector<int> init_vec_int(size_t && val1, size_t && val2, size_t && val3) {
+    vector<int> v;
+    v.push_back((int)val1);
+    v.push_back((int)val2);
+    v.push_back((int)val3);
+    return v;
+  }
 
+  vector<double> init_vec_double(double val1, double val2, double val3) {
+    vector<double> v;
+    v.push_back(val1);
+    v.push_back(val2);
+    v.push_back(val3);
+    return v;
+  }
+
+  void readBezier(std::vector<std::vector<double>> & V, std::vector<std::vector<int>> & F) {
+    int num_of_circles = number_of_vertices*2;
+    vector<vector<double>> firstCircle =  getVerticesOfCircle(bez_points[0][0], bez_points[0][1]);
+    V.resize(firstCircle.size()*num_of_circles);//num of points in circle * num of circles
+    F.resize(firstCircle.size()*2*(num_of_circles-1));//num of points in circle *(2 tringles)* (num of circles -1)
+
+    int Fidx = 0;
+    int Vidx = 0;
+    for(; Vidx < firstCircle.size(); Vidx++){
+        V[Vidx] =  firstCircle[Vidx];
+    }
+
+    for(int circ = 1; circ < number_of_vertices; circ++){
+      Eigen::Vector2d bez = bezier((circ/(double)(number_of_vertices -1)), 0 );
+      vector<vector<double>> circle =  getVerticesOfCircle(bez[0], bez[1]);
+      for(int i=0; i < firstCircle.size(); i++){
+        V[Vidx++] =  circle[i];
+      }
+    }
+    for(int circ = 0; circ < number_of_vertices; circ++){
+      Eigen::Vector2d bez = bezier(circ/(double)(number_of_vertices -1), 1 );
+      vector<vector<double>> circle =  getVerticesOfCircle(bez[0], bez[1]);
+      for(int i=0; i < firstCircle.size(); i++){
+        V[Vidx++] =  circle[i];
+      }
+    }
+    for(int circ = 0; circ < (num_of_circles)-1; circ++){//run on circles 
+      for(int i=0; i < firstCircle.size()-1; i++){//vertex in circl
+        F[Fidx++] = init_vec_int(circ*firstCircle.size() + i, circ*firstCircle.size() + i +1, (circ+1)*firstCircle.size() + i);
+        F[Fidx++] = init_vec_int(circ*firstCircle.size() + i +1, (circ+1)*firstCircle.size() + i +1, (circ+1)*firstCircle.size() + i);
+      }
+      F[Fidx++] =  init_vec_int((circ+1)*firstCircle.size() - 1,  circ*firstCircle.size(), (circ+1)*firstCircle.size());
+      F[Fidx++] =  init_vec_int((circ+1)*firstCircle.size() - 1, (circ+2)*firstCircle.size() - 1, (circ+1)*firstCircle.size());
+    }
+  }
+
+  void calc_circle(vector<vector<double>> & circle, Bezier b, const double x) {
+    for(int i = 0; i < number_of_vertices; i++) {
+      double t = (i /(double) number_of_vertices );
+      Eigen::Vector2d bez = b.bezier(t,0);
+      vector<double> v(init_vec_double(x, bez[0], bez[1]));
+      circle.push_back(v);
+    }
+    for(int i = 0; i < number_of_vertices; i++) {
+      double t = (i / (double)number_of_vertices );
+      Eigen::Vector2d bez = b.bezier(t,1);
+      vector<double> v(init_vec_double(x, bez[0], bez[1]));
+      circle.push_back(v);
+    }
+  }
+
+  Bezier circle_bez(double y) {
+    Bezier b = Bezier();
+    double c = 0.5522847;
+     //first half
+    b.bez_points[0] = Eigen::Vector2d(y, 0);
+		b.bez_points[1] = Eigen::Vector2d(y, y*c);
+		b.bez_points[2] = Eigen::Vector2d(y*c, y);
+		b.bez_points[3] = Eigen::Vector2d(0, y);
+		b.bez_points[4] = Eigen::Vector2d(-y*c, y);
+		b.bez_points[5] = Eigen::Vector2d(-y, y*c);
+		b.bez_points[6] = Eigen::Vector2d(-y, 0);
+    return b;
+  }
+
+  //x,y cordinats of the one point from the original curve
+  //in all returnd points value of x will be eqwal to original x
+  //rotation on x axess
+  vector<vector<double>> getVerticesOfCircle(double x, double y){
+    Bezier b(y);
+    vector<vector<double>> circle;
+
+    //first section 
+    calc_circle(circle, b, x);
+    // invert goren
+    for(Eigen::Vector2d & v: b.bez_points){
+      v = -v;
+    }
+    //second section 
+    calc_circle(circle, b, x);
+
+    return circle;
+  }
+};
+
+class Shape  {
+public:
+  int shapeIdx;
+  int materialIdx;
+  int layer;
+  bool *picked;
+  float delay;
+  Bezier bez;
+
+	Shape(int _shapeIdx, int _layer) {
+    shapeIdx = _shapeIdx;
+    materialIdx = 2; //grass
+    layer = _layer;
+    picked = new bool(true);
+    bez = Bezier();
+	}
 };
 
 namespace igl
@@ -170,6 +283,7 @@ namespace glfw
       int single_picked_shape_idx = -1; 
       int shape_index = 0;
       std::vector<Shape> shapes;
+      Shape shape_creation;
 
       //for gui menu
       int layer_index = 0;
@@ -205,6 +319,7 @@ namespace glfw
       virtual void Update_overlay(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int shapeIndx,bool is_points);
       virtual int AddShape(int type, int parent, unsigned int mode, int viewport = 0);
       virtual int AddShapeFromFile1(const std::string& fileName, int parent = -1, unsigned int mode = TRIANGLES, int viewport = 0);
+      virtual int AddShapeFromBezier(Bezier bez, int parent = -1, unsigned int mode = TRIANGLES, int viewport = 0);
       virtual int AddShapeFromFile(const std::string& fileName, int parent, unsigned int mode, int viewport = 0);
       virtual void WhenTranslate(float dx, float dy) {}
       virtual void WhenRotate(float dx, float dy) {}
@@ -213,6 +328,7 @@ namespace glfw
       string get_name_from_path(const std::string& path);
       void ChangePickedShapeMaterial();
       void open_dialog_load_texture();
+      void AddBezierShape();
 
       void open_dialog_load_cube_texture();
       //check if single picked and if so update picked_shape_idx
