@@ -18,16 +18,19 @@ int main(int argc,char *argv[])
     igl::opengl::glfw::imgui::ImGuiMenu* menu = new igl::opengl::glfw::imgui::ImGuiMenu();
     Renderer* rndr = new Renderer(CAMERA_ANGLE, (float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT/2.0f, NEAR, FAR);
 
-	rndr->AddCamera(Eigen::Vector3d(1, 0, 0), CAMERA_ANGLE,(float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT/2.0f,NEAR,FAR);
-	rndr->AddDraw(1,1,1,0,273);
+	rndr->AddCamera(Eigen::Vector3d(0, 0, 10), CAMERA_ANGLE,(float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT/2.0f,NEAR,FAR);
+
+	//rndr->AddDraw(1,1,1,0,273);
 	//rndr->AddDraw(1, 1, 1)
 	Project *scn = new Project();  //initializing scene
 
+	//rndr->AddViewport()
     Init(disp,menu); 			//adding callback functions
 	scn->Init();    			//adding shaders, textures, shapes to scene
     rndr->Init(scn,x,y,1,menu); // adding scene and viewports to the renderer
-    disp.SetRenderer(rndr);
+	//rndr->draw; // info 3 change camera to 1
 
+	disp.SetRenderer(rndr);
     disp.launch_rendering(rndr);
 
 	delete scn;
