@@ -227,9 +227,11 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
 
     if (ImGui::Button("Add##Layers", ImVec2((w-p), 0))){
           viewer->show_layer.push_back(new bool(true));
-          char s[9] = "Layer  ";
-          s[6] = (layers.size() + 1) + '0';
-          layers.push_back(s);
+          stringstream s("");
+
+          s << "Layer  ";
+          s << (layers.size() + 1);
+          layers.push_back(s.str());
     }
 
     if (ImGui::CollapsingHeader("Hide/Unhide##Layers", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -460,6 +462,11 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     make_checkbox("Wireframe", viewer->data()->show_lines);
     make_checkbox("Fill", viewer->data()->show_faces);
 
+  }
+  float w = ImGui::GetContentRegionAvailWidth();
+  float p = ImGui::GetStyle().FramePadding.x;
+  if (ImGui::Button("Add Bezier Shape", ImVec2((w-p), 0))){
+          viewer->AddBezierShape();
   }
   ImGui::End();
 }

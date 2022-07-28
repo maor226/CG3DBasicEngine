@@ -21,7 +21,6 @@ public:
 	void AddMouseCallBacks(void (*mousebuttonfun)(GLFWwindow*, int, int, int), void(*scrollfun)(GLFWwindow*, double, double), void (*cursorposfun)(GLFWwindow*, double, double));
 	void AddResizeCallBack(void (*windowsizefun)(GLFWwindow*, int, int));
 
-	
 	~Display();
 //private:
 	GLFWwindow* window;
