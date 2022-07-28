@@ -14,7 +14,6 @@
 
 Renderer::Renderer(float angle, float relationWH, float near, float far)
 {
-
     callback_init = nullptr;
     callback_pre_draw = nullptr;
     callback_post_draw = nullptr;
@@ -237,9 +236,9 @@ void Renderer::AddDraw(int viewportIndx, int cameraIndx, int shaderIndx, int buf
     next_property_id <<= 1;
 }
 
-// void Renderer::UpdateDrawCamera(int infoIndx, int new_camera) {
-
-// }
+void Renderer::UpdateDrawCamera(int infoIndx, int new_camera) {
+    drawInfos[infoIndx]->cameraIndx = new_camera;
+}
 
 void Renderer::CopyDraw(int infoIndx, int property, int indx)
 {
