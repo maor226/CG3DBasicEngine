@@ -20,6 +20,11 @@
 //#include <GLFW/glfw3.h>
 #include <iostream>
 ////////////////////////////////////////////////////////////////////////////////
+#define BACKGROUND_DATA 0 
+#define  makeMiror( ind,viewer) viewer->SetShapeShader(ind,viewer->data_list[BACKGROUND_DATA]->shaderID);\
+                                viewer->SetCubeShapeMaterial(ind,(int)(viewer->data_list[BACKGROUND_DATA]->GetMaterial()));
+#define  makeUnMiror( ind,viewer) viewer->SetShapeShader(viewer->shapes[ind].shapeIdx,3);\
+                                viewer->SetShapeMaterial(viewer->shapes[ind].shapeIdx,viewer->shapes[ind].materialIdx);
 
 namespace igl
 {
@@ -272,11 +277,49 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     if (ImGui::Button("Change##Materials", ImVec2((w-p), 0))) {
       viewer->ChangePickedShapeMaterial();
     }
-
+    if (ImGui::Button("Make Miror ##Materials", ImVec2((w-p), 0))) {
+        for (int i = 0; i < viewer->shapes.size(); i++)
+        {
+          if(*(viewer->shapes[i].picked)){
+            *(viewer->shapes[i].isMiror) = true;
+            makeMiror((viewer->shapes[i].shapeIdx),viewer);
+          }
+        }
+        
+    }
+    if (ImGui::Button("Make Unmiror ##Materials", ImVec2((w-p), 0))) {
+        for (int i = 0; i < viewer->shapes.size(); i++)
+        {
+          if(*(viewer->shapes[i].picked)){
+            *(viewer->shapes[i].isMiror) = false;
+            viewer->SetShapeShader(viewer->shapes[i].shapeIdx,3);
+            viewer->SetShapeMaterial(viewer->shapes[i].shapeIdx,viewer->shapes[i].materialIdx);
+          }
+        }
+        
+    }
+   
     if(ImGui::ListBox("##Materials", &viewer->material_idx, viewer->material_names)) {
 
     }
 
+  }
+  if (ImGui::CollapsingHeader("Tranperent", ImGuiTreeNodeFlags_None))
+  {
+    float w = ImGui::GetContentRegionAvailWidth();
+    float p = ImGui::GetStyle().FramePadding.x;
+    if (ImGui::Button("tagle transperent ##Tranperent", ImVec2((w-p), 0))) {
+      if(viewer->single_picked_shape_idx!=-1){
+        viewer->data_list[viewer->shapes[viewer->single_picked_shape_idx].shapeIdx]->isTransfetent = !viewer->data_list[viewer->shapes[viewer->single_picked_shape_idx].shapeIdx]->isTransfetent;
+        viewer->data_list[viewer->shapes[viewer->single_picked_shape_idx].shapeIdx]->alpha = viewer->alpha;
+      }
+    }
+    if(ImGui::SliderFloat("alpha ##Tranperent", &viewer->alpha ,0.f, 1.f)){
+       if(viewer->single_picked_shape_idx!=-1){
+        viewer->data_list[viewer->shapes[viewer->single_picked_shape_idx].shapeIdx]->alpha = viewer->alpha;
+      }
+    }
+    
   }
    if (ImGui::CollapsingHeader("Background", ImGuiTreeNodeFlags_None))
   {
@@ -291,6 +334,14 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     {
       std::cout << viewer->background_idx <<"\n";
       viewer->SetCubeShapeMaterial(0,viewer->background_idx);
+      for (int i = 0; i < viewer->shapes.size(); i++)
+      {
+        if(*(viewer->shapes[i].isMiror))
+        {
+          makeMiror((viewer->shapes[i].shapeIdx),viewer)
+        }
+      }
+      
     }
     if(ImGui::ListBox("##Background", &viewer->background_idx, viewer->cube_material_names)) {
       
@@ -306,7 +357,9 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
        // viewer->open_dialog_hide_layer();
     }
     if (ImGui::Button("Change Camera##Camera", ImVec2((w-p), 0)))
-    {}
+    {
+      
+    }
   }
 
   // Mesh
@@ -462,6 +515,7 @@ IGL_INLINE float ImGuiMenu::hidpi_scaling()
   glfwGetWindowContentScale(window, &xscale, &yscale);
   return 0.5 * (xscale + yscale);
 }
+
 
 } // end namespace
 } // end namespace

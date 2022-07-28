@@ -256,6 +256,7 @@ public:
   int layer;
   bool *picked;
   float delay;
+  bool *isMiror;
   Bezier bez;
 
 	Shape(int _shapeIdx, int _layer) {
@@ -263,6 +264,7 @@ public:
     materialIdx = 2; //grass
     layer = _layer;
     picked = new bool(true);
+    isMiror = new bool(false);
     bez = Bezier();
 	}
 };
@@ -284,6 +286,7 @@ namespace glfw
       int shape_index = 0;
       std::vector<Shape> shapes;
       Shape shape_creation;
+      float alpha = 0;
 
       //for gui menu
       int layer_index = 0;

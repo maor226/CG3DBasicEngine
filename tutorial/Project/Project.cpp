@@ -26,7 +26,7 @@ void Project::Init()
 	unsigned int slots[3] = { 0 , 1, 2 };
 	
 	AddShader("shaders/pickingShader");
-	// 
+
 	AddShader("shaders/bezierShader");
 	AddShader("shaders/basicShaderTex");
 	AddShader("shaders/basicShader");
@@ -83,11 +83,11 @@ void Project::Init()
 	// SetShapeShader(3, 3);
 	// SetShapeMaterial(3, 1);
 	// SetShapeStatic(3);
-	//SetShapeShader(3,3);
-	//SetShapeMaterial(3,2);
+	// SetShapeShader(3,3);
+	// SetShapeMaterial(3,2);
 
-	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
-	//SetShapeViewport(6, 1);
+	// AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
+	// SetShapeViewport(6, 1);
 	// ReadPixel(); //uncomment when you are reading from the z-buffer
 	drawBezier();
 }
@@ -149,6 +149,12 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniform1i("POINTS_NUM", POINTS_NUM);
 	Eigen::Vector4f bez_points[POINTS_NUM];
 	Bezier * bez = get_cur_bez();
+	if(data_list[shapeIndx]->isTransfetent){
+		s->SetUniform1f("alpha", data_list[shapeIndx]->alpha);
+	}
+	else{
+		s->SetUniform1f("alpha", 1);
+	}
 
 	if(bez != nullptr) {
 		for(int i = 0 ; i < POINTS_NUM ; i++) {
@@ -202,13 +208,16 @@ void Project::WhenTranslate()
 
 bool Project::Picking(unsigned char data[4], int newViewportIndx) {
 	int shape_index = data[0] - 1;
+	bool flag = false;
         // find shape associated with shape index
 	for(Shape & s: shapes) {
 		if(s.shapeIdx == shape_index) {
 			*s.picked = !(*s.picked);
+			flag = true;
 		}
 	}
-	changePickedShape();
+	if(flag)
+		changePickedShape();
 	return shape_index >= 3 && shape_index < shapes.size() + 3;
 }
 
