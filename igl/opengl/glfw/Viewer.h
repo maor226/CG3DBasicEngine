@@ -318,8 +318,9 @@ namespace glfw
       virtual void Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx){};
       virtual void Update_overlay(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int shapeIndx,bool is_points);
       virtual int AddShape(int type, int parent, unsigned int mode, int viewport = 0);
-      virtual int AddShapeFromFile1(const std::string& fileName, int parent = -1, unsigned int mode = TRIANGLES, int viewport = 0);
-      virtual int AddShapeFromBezier(Bezier bez, int parent = -1, unsigned int mode = TRIANGLES, int viewport = 0);
+
+      virtual void AddShapeFromFile1(const std::string& fileName, int parent = -1, unsigned int mode = TRIANGLES, int viewport = 0);
+      virtual void AddShapeFromBezier(Bezier bez, int parent = -1, unsigned int mode = TRIANGLES, int viewport = 0);
       virtual int AddShapeFromFile(const std::string& fileName, int parent, unsigned int mode, int viewport = 0);
       virtual void WhenTranslate(float dx, float dy) {}
       virtual void WhenRotate(float dx, float dy) {}
@@ -329,6 +330,35 @@ namespace glfw
       void ChangePickedShapeMaterial();
       void open_dialog_load_texture();
       void AddBezierShape();
+      void AddShape1() {
+    int parent = -1;
+    unsigned int mode = TRIANGLES; 
+    int viewport = 0;
+    //data()->type = type;
+	data()->mode = mode;
+	data()->shaderID = 1;
+	data()->viewports = 1 << viewport;
+	/*//data()->is_visible = 0x1;*/
+	data()->show_lines = 0;
+	data()->show_overlay = 0;
+	data()->hide = false;
+
+	this->parents.emplace_back(parent);
+    int shapeIdx = (int)(data_list.size() - (size_t)1);
+    SetShapeShader(shapeIdx,3);
+	SetShapeMaterial(shapeIdx,2);
+
+    shapes.push_back(Shape(shapeIdx, layer_index));
+    picked_shapes.push_back(shapes[shapes.size() - 1].picked);
+
+    //make new shape the only picked shape
+    for(int i = 0 ; i < shapes.size() - 1 ; i++) {
+        *(shapes[i].picked) = false;
+    }
+
+    //update cur picked shape
+    changePickedShape();
+}
 
       void open_dialog_load_cube_texture();
       //check if single picked and if so update picked_shape_idx

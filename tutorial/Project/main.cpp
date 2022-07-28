@@ -17,9 +17,12 @@ int main(int argc,char *argv[])
     Display disp = Display(DISPLAY_WIDTH, DISPLAY_HEIGHT, "OPENGL");
     igl::opengl::glfw::imgui::ImGuiMenu* menu = new igl::opengl::glfw::imgui::ImGuiMenu();
     Renderer* rndr = new Renderer(CAMERA_ANGLE, (float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT/2.0f, NEAR, FAR);
-	// rndr->AddCamera(CAMERA_ANGLE,(float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT/2.0f,NEAR,FAR);
+
+	rndr->AddCamera(Eigen::Vector3d(1, 0, 0), CAMERA_ANGLE,(float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT/2.0f,NEAR,FAR);
+	rndr->AddDraw(1,1,1,0,273);
+	//rndr->AddDraw(1, 1, 1)
 	Project *scn = new Project();  //initializing scene
-	
+
     Init(disp,menu); 			//adding callback functions
 	scn->Init();    			//adding shaders, textures, shapes to scene
     rndr->Init(scn,x,y,1,menu); // adding scene and viewports to the renderer
@@ -30,7 +33,7 @@ int main(int argc,char *argv[])
 	delete scn;
 	delete rndr;
 	if(menu)
-		delete menu;
+	delete menu;
 	return 0;
 }
 

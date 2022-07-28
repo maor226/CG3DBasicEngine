@@ -192,7 +192,6 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->Unbind();
 }
 
-
 void Project::WhenRotate()
 {
 }
@@ -202,9 +201,15 @@ void Project::WhenTranslate()
 }
 
 bool Project::Picking(unsigned char data[4], int newViewportIndx) {
-	int index = data[0];
-	std::cout << (int)data[0] << " " << (int)data[1] << " " << (int)data[2] << " " << (int)data[3] << std::endl;
-	return false;
+	int shape_index = data[0] - 1;
+        // find shape associated with shape index
+	for(Shape & s: shapes) {
+		if(s.shapeIdx == shape_index) {
+			*s.picked = !(*s.picked);
+		}
+	}
+	changePickedShape();
+	return shape_index >= 3 && shape_index < shapes.size() + 3;
 }
 
 void Project::reset_animation() {
