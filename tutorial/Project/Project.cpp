@@ -234,8 +234,9 @@ Project::~Project(void)
 
 int Project::IsPicked(float x, float y){
 	// if not single shape dont heck points
-	if(!single_picked)
+	if(!single_picked || isActive) {
 		return -1;
+	}
 
 	x = (x-1200)/100;
 	y=(y-400)/-100;

@@ -536,8 +536,7 @@ IGL_INLINE bool
         next_data_id +=1;
     }
 
-int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned int mode, int viewport)
-{
+int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned int mode, int viewport) {
     this->load_mesh_from_file(fileName);
 	//data()->type = type;
 	data()->mode = mode;
@@ -553,7 +552,7 @@ int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned 
     SetShapeShader(shapeIdx,3);
 	SetShapeMaterial(shapeIdx,2);
 
-    shapes.push_back(Shape(shapeIdx, cur_layer));
+    shapes.push_back(Shape(shapeIdx, layer_index));
     picked_shapes.push_back(shapes[shapes.size() - 1].picked);
 
     //make new shape the only picked shape
@@ -569,6 +568,12 @@ int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned 
 
     return shapeIdx;
 }
+
+void Viewer::changePickedLayer() {
+    if(single_picked)
+        shapes[single_picked_shape_idx].layer = layer_index;
+}
+
 void Viewer::changePickedShape() {
     //should update bez curves
     change_bez = true;
@@ -586,8 +591,9 @@ void Viewer::changePickedShape() {
     }
     pick = (picked != -1);
     single_picked_shape_idx = picked;
-     if(single_picked_shape_idx != -1){
-        Shape s = shapes[single_picked_shape_idx];
+
+    if(single_picked_shape_idx != -1){
+        Shape & s = shapes[single_picked_shape_idx];
         layer_index = s.layer;
         material_idx = s.materialIdx;
         delayVal = s.delay;
@@ -601,7 +607,6 @@ void Viewer::ChangePickedShapeMaterial(){
 }
 void Viewer::ChangePickedShapeDelay(){
     if(single_picked){
-        shapes[single_picked_shape_idx].delay = delayVal;
         shapes[single_picked_shape_idx].delay = delayVal;        
     }
 }

@@ -231,17 +231,17 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
       float w_i = ImGui::GetContentRegionAvailWidth();
       float p_i = ImGui::GetStyle().FramePadding.x;
       
-      for (int i = 1; i <= viewer->show_layer.size(); i++){
+      for (int i = 0; i < viewer->show_layer.size(); i++){
       std::stringstream s("");
       s << "Layer ";
-      s << i;
+      s << i + 1;
       s << "##Hide/Unhide##Layers";
 
-      if (ImGui::Checkbox(s.str().c_str(),viewer->show_layer[i - 1])){
+      if (ImGui::Checkbox(s.str().c_str(),viewer->show_layer[i])){
         for(int j = 0 ; j < viewer->shapes.size() ; j++) {
           Shape &s = viewer->shapes[j];
           if(s.layer == i) {
-            viewer->data_list[s.shapeIdx]->hide = !(*(viewer->show_layer[i - 1]));
+            viewer->data_list[s.shapeIdx]->hide = !(*(viewer->show_layer[i]));
           }
         }
       }
@@ -250,15 +250,12 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     // ImGui::SameLine(0, p);
     
      if (ImGui::CollapsingHeader("Select Layer##Layers", ImGuiTreeNodeFlags_DefaultOpen)) {
+      if(ImGui::Button("Change Layer", ImVec2((w-p), 0))) {
+        viewer->changePickedLayer();
+      }
       float w_i = ImGui::GetContentRegionAvailWidth();
       float p_i = ImGui::GetStyle().FramePadding.x;
-      if(ImGui::ListBox("##Select Layer##Layers", &(viewer->layer_index), layers)) {
-        for(int i = 0 ; i < viewer->picked_shapes.size() ; i++) {
-          if(*viewer->picked_shapes[i]) {
-            viewer->shapes[i].layer = viewer->layer_index + 1;
-          }
-        } 
-      }
+      if(ImGui::ListBox("##Select Layer##Layers", &(viewer->layer_index), layers)) {}
      }
   }
   //material 
