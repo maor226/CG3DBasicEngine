@@ -51,8 +51,6 @@ void Project::Init()
 	AddCubeMaterial(cubeTexIDs+1,cubeSlots+1, 1);
 	AddCubeMaterial(cubeTexIDs+2,cubeSlots+2, 1);
 
-
-
 	AddShape(Cube, -2, TRIANGLES);
 	SetCubeShapeMaterial(0, 0);
 	SetShapeShader(0, 4);
@@ -66,7 +64,7 @@ void Project::Init()
 	// AddShape(zCylinder, 2, TRIANGLES);
 
 	AddShape(Axis, -1, TRIANGLES,1);
-		SetShapeViewport(1, 1);
+	SetShapeViewport(1, 1);
 
 	SetShapeShader(1, 0);
 	selected_data_index = 1;
@@ -109,7 +107,7 @@ void Project::drawSection(int section, Bezier * b){
 	Eigen::Vector2d temp = (b->bezier(0, section));
 	Eigen::RowVector3d vec_t(temp[0], temp[1], 0);
 	Eigen::RowVector3d vec_p, half_vec = Eigen::Vector3d(1/2,1/2,1/2);
-	for(double t = 0.005; t < 1; t += 0.005) {
+	for(double t = 0.005; t <= 1.0005; t += 0.005) {
 		temp = (b->bezier((float)t, section));
 		vec_p = Eigen::RowVector3d(temp[0], temp[1], 0);
 		shape->add_edges(vec_t,vec_p,half_vec);
@@ -285,9 +283,10 @@ void Project::SetPicked(float x,float y){
 		y=(y-400)/-100;
 		std::cout << "setpoints" << pickedPoint<<":"<< x << "," << y << std::endl;
 
-		shapes[single_picked_shape_idx].bez.bez_points[pickedPoint][0]=x;
+		Bezier * b = get_cur_bez();
+			b->bez_points[pickedPoint][0]=x;
 		if(pickedPoint %6 != 0 )
-		shapes[single_picked_shape_idx].bez.bez_points[pickedPoint][1]=y;
+		 	b->bez_points[pickedPoint][1]=y;
 	}
 }
 

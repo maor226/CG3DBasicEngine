@@ -8,7 +8,7 @@ using namespace std;
 
 
 	void glfw_mouse_callback(GLFWwindow* window,int button, int action, int mods)
-	{	
+	{
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
 		Project* scn = (Project*)rndr->GetScene();
 		if (action == GLFW_PRESS)
@@ -17,7 +17,7 @@ using namespace std;
 			
 			glfwGetCursorPos(window, &x2, &y2);
 			rndr->UpdatePress((float)x2, (float)y2);
-			//rndr->Picking((int)x2, (int)y2);
+			// rndr->Picking((int)x2, (int)y2);
 			if ( scn->IsPicked((float)x2,(float)y2)>=0)
 			{
 				rndr->UpdatePosition(x2, y2);
