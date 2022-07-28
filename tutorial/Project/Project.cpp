@@ -202,13 +202,16 @@ void Project::WhenTranslate()
 
 bool Project::Picking(unsigned char data[4], int newViewportIndx) {
 	int shape_index = data[0] - 1;
+	bool flag = false;
         // find shape associated with shape index
 	for(Shape & s: shapes) {
 		if(s.shapeIdx == shape_index) {
 			*s.picked = !(*s.picked);
+			flag = true;
 		}
 	}
-	changePickedShape();
+	if(flag)
+		changePickedShape();
 	return shape_index >= 3 && shape_index < shapes.size() + 3;
 }
 
