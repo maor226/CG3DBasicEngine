@@ -298,7 +298,15 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         }
         
     }
-
+    if (ImGui::Button("tagle transperent ##Materials", ImVec2((w-p), 0))) {
+        for (int i = 0; i < viewer->shapes.size(); i++)
+        {
+          if(*(viewer->shapes[i].picked)){
+            viewer->data_list[viewer->shapes[i].shapeIdx]->isTransfetent = !viewer->data_list[viewer->shapes[i].shapeIdx]->isTransfetent;
+          }
+        }
+        
+    }
     if(ImGui::ListBox("##Materials", &viewer->material_idx, viewer->material_names)) {
 
     }

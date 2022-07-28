@@ -48,6 +48,7 @@ private:
     bool isStatic;
 
 public:
+  bool isTransfetent = false;
   bool isCube=false;
   ViewerData();
     IGL_INLINE void Draw(Shader* shader, bool cond);
