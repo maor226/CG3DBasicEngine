@@ -206,10 +206,9 @@ bool Project::Picking(unsigned char data[4], int newViewportIndx) {
 	for(Shape & s: shapes) {
 		if(s.shapeIdx == shape_index) {
 			*s.picked = !(*s.picked);
-			return true;
 		}
 	}
-
+	changePickedShape();
 	return shape_index >= 3 && shape_index < shapes.size() + 3;
 }
 

@@ -23,7 +23,7 @@ using namespace std;
 			if ( scn->IsPicked((float)x2,(float)y2)>=0)
 			{
 				rndr->UpdatePosition(x2, y2);
-				if(button == GLFW_MOUSE_BUTTON_LEFT){
+				if(button == GLFW_MOUSE_BUTTON_LEFT) {
 					rndr->Pressed();
 					rndr->PickMany(0);
 				}
