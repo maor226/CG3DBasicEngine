@@ -18,4 +18,5 @@ public:
 	Eigen::Vector3d velocity(int t, int section);
 	int pickedPoint=-1;
 	bool isPicked = false; 
+	bool isMiror= false;
 };

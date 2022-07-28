@@ -61,6 +61,7 @@ public:
   int layer;
   bool *picked;
   float delay;
+  bool *isMiror;
 
 	Shape(int _shapeIdx, int _layer) {
 		double x = 0.5528;
@@ -80,6 +81,7 @@ public:
     section = 0;
     layer = _layer;
     picked = new bool(true);
+    isMiror = new bool(false);
     delay = 0;
 	}
 
