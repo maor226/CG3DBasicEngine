@@ -150,10 +150,10 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	Eigen::Vector4f bez_points[POINTS_NUM];
 	Bezier * bez = get_cur_bez();
 	if(data_list[shapeIndx]->isTransfetent){
-		s->SetUniform1f("alpha", 0.5);
+		s->SetUniform1f("alpha", data_list[shapeIndx]->alpha);
 	}
 	else{
-		s->SetUniform1f("alpha", 0.5);
+		s->SetUniform1f("alpha", 1);
 	}
 
 	if(bez != nullptr) {

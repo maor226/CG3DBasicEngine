@@ -457,10 +457,7 @@ IGL_INLINE bool
             {
 
                 Eigen::Matrix4f Model = shape->MakeTransScale();
-                if(shape->isTransfetent){
-                    glEnable(GL_BLEND);
-	                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
-                }
+                
 
                 if (!shape->IsStatic())
                 {
@@ -472,6 +469,10 @@ IGL_INLINE bool
                 }
                 if (!(flgs & 65536))
                 {
+                    if(shape->isTransfetent){
+                        glEnable(GL_BLEND);
+	                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+                    }
                     Update(Proj, View, Model, shape->GetShader(),i);
                     // Draw fill
                     if (shape->show_faces & property_id)
@@ -513,7 +514,7 @@ IGL_INLINE bool
                         Update(Proj, View ,  Model, 0,i);
                     }
                     shape->Draw(shaders[0], true);
-                }
+                } 
             }
         }
     }

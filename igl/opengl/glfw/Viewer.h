@@ -286,6 +286,7 @@ namespace glfw
       int shape_index = 0;
       std::vector<Shape> shapes;
       Shape shape_creation;
+      float alpha = 0;
 
       //for gui menu
       int layer_index = 0;

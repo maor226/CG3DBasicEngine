@@ -50,6 +50,7 @@ private:
 public:
   bool isTransfetent = false;
   bool isCube=false;
+  float alpha = 1;
   ViewerData();
     IGL_INLINE void Draw(Shader* shader, bool cond);
     IGL_INLINE void SetShader(const int id) { shaderID = id; }
