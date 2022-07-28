@@ -13,4 +13,7 @@ out vec4 Color;
 void main()
 {
 	Color = texture2D(sampler1, texCoord0); //you must have gl_FragColor
+	if (Color.a<0.5)
+		discard;
+	
 }
