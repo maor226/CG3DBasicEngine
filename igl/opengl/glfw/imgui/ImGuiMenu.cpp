@@ -298,11 +298,28 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         }
         
     }
-
+   
     if(ImGui::ListBox("##Materials", &viewer->material_idx, viewer->material_names)) {
 
     }
 
+  }
+  if (ImGui::CollapsingHeader("Tranperent", ImGuiTreeNodeFlags_None))
+  {
+    float w = ImGui::GetContentRegionAvailWidth();
+    float p = ImGui::GetStyle().FramePadding.x;
+    if (ImGui::Button("tagle transperent ##Tranperent", ImVec2((w-p), 0))) {
+      if(viewer->single_picked_shape_idx!=-1){
+        viewer->data_list[viewer->shapes[viewer->single_picked_shape_idx].shapeIdx]->isTransfetent = !viewer->data_list[viewer->shapes[viewer->single_picked_shape_idx].shapeIdx]->isTransfetent;
+        viewer->data_list[viewer->shapes[viewer->single_picked_shape_idx].shapeIdx]->alpha = viewer->alpha;
+      }
+    }
+    if(ImGui::SliderFloat("alpha ##Tranperent", &viewer->alpha ,0.f, 1.f)){
+       if(viewer->single_picked_shape_idx!=-1){
+        viewer->data_list[viewer->shapes[viewer->single_picked_shape_idx].shapeIdx]->alpha = viewer->alpha;
+      }
+    }
+    
   }
    if (ImGui::CollapsingHeader("Background", ImGuiTreeNodeFlags_None))
   {
