@@ -180,7 +180,6 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->Unbind();
 }
 
-
 void Project::WhenRotate()
 {
 }
@@ -193,9 +192,7 @@ bool Project::Picking(unsigned char data[4], int newViewportIndx) {
 	int shape_index = data[0] - 1;
         // find shape associated with shape index
 	for(Shape & s: shapes) {
-		cout << s.shapeIdx << "   " << shape_index << "needs to work" <<endl;
 		if(s.shapeIdx == shape_index) {
-			cout << "needs to work" <<endl;
 			*s.picked = !(*s.picked);
 			return true;
 		}
