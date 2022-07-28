@@ -60,8 +60,7 @@ namespace glfw
 
   void Viewer::Init(const std::string config)
   {
-	  
-
+	
   }
 
   IGL_INLINE Viewer::Viewer():
@@ -70,7 +69,8 @@ namespace glfw
     next_data_id(1),
     next_shader_id(1),
 	isActive(false),
-    show_layer()
+    show_layer(),
+    shape_creation(-1, -1)
   {
     show_layer.push_back(new bool(true));
     data_list.front() = new ViewerData();
@@ -568,6 +568,57 @@ int Viewer::AddShapeFromFile1(const std::string& fileName, int parent, unsigned 
 
     return shapeIdx;
 }
+int Viewer::AddShapeFromBezier(Bezier bez, int parent, unsigned int mode, int viewport) {
+    // Create new data slot and set to selected
+    if(!(data()->F.rows() == 0  && data()->V.rows() == 0))
+    {
+      append_mesh();
+    }
+    data()->clear();
+    
+    Eigen::MatrixXd V;
+    Eigen::MatrixXi F;
+    std::vector<std::vector<double>> vV;
+    std::vector<std::vector<int>> vF;
+    bez.readBezier(vV,vF);
+    igl::list_to_matrix(vV,V);
+    igl::list_to_matrix(vF,F);
+    data()->set_mesh(V,F);
+    
+	//data()->type = type;
+	data()->mode = mode;
+	data()->shaderID = 1;
+	data()->viewports = 1 << viewport;
+	/*//data()->is_visible = 0x1;*/
+	data()->show_lines = 0;
+	data()->show_overlay = 0;
+	data()->hide = false;
+
+	this->parents.emplace_back(parent);
+    int shapeIdx = data_list.size() - (size_t)1;
+    SetShapeShader(shapeIdx,3);
+	SetShapeMaterial(shapeIdx,2);
+
+    shapes.push_back(Shape(shapeIdx, layer_index));
+    picked_shapes.push_back(shapes[shapes.size() - 1].picked);
+
+    //make new shape the only picked shape
+    for(int i = 0 ; i < shapes.size() - 1 ; i++) {
+        *(shapes[i].picked) = false;
+    }
+
+    //update cur picked shape
+    changePickedShape();
+
+    //add shape name to array for gui
+    shape_names.push_back("bez!!!");
+
+    return shapeIdx;
+}
+void Viewer::AddBezierShape(){
+    if(!pick)
+        AddShapeFromBezier(shape_creation.bez);
+}
 
 void Viewer::changePickedLayer() {
     if(single_picked)
@@ -581,12 +632,12 @@ void Viewer::changePickedShape() {
     int picked = -1;
     for(int i = 0; i <shapes.size(); i++){
         if(*(shapes[i].picked)) {
-        if(picked == -1)
-            picked = i;
-        else {
-            single_picked_shape_idx = -1;
-            return;
-        }
+            if(picked == -1)
+                picked = i;
+            else {
+                single_picked_shape_idx = -1;
+                return;
+            }
         }
     }
     pick = (picked != -1);
@@ -597,6 +648,11 @@ void Viewer::changePickedShape() {
         layer_index = s.layer;
         material_idx = s.materialIdx;
         delayVal = s.delay;
+    }
+    else {
+        Shape & s = shape_creation;
+        layer_index = material_idx = -1;
+        delayVal = 0;
     }
 }
 void Viewer::ChangePickedShapeMaterial(){

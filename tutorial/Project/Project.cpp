@@ -51,8 +51,6 @@ void Project::Init()
 	AddCubeMaterial(cubeTexIDs+1,cubeSlots+1, 1);
 	AddCubeMaterial(cubeTexIDs+2,cubeSlots+2, 1);
 
-
-
 	AddShape(Cube, -2, TRIANGLES);
 	SetCubeShapeMaterial(0, 0);
 	SetShapeShader(0, 4);
@@ -66,7 +64,7 @@ void Project::Init()
 	// AddShape(zCylinder, 2, TRIANGLES);
 
 	AddShape(Axis, -1, TRIANGLES,1);
-		SetShapeViewport(1, 1);
+	SetShapeViewport(1, 1);
 
 	SetShapeShader(1, 0);
 	selected_data_index = 1;
@@ -96,20 +94,21 @@ void Project::Init()
 
 void Project::drawBezier() {
 	data_list[plane_idx]->clear();
-	if(!single_picked)
+	Bezier * b = get_cur_bez();
+	if(b == nullptr)
 		return;
 
-	drawSection(0);
-	drawSection(1);
+	drawSection(0, b);
+	drawSection(1, b);
 }
 
-void Project::drawSection(int section){
+void Project::drawSection(int section, Bezier * b){
 	auto shape = data_list[plane_idx];
-	Eigen::Vector2d temp = (shapes[single_picked_shape_idx]).bezier(0, section);
+	Eigen::Vector2d temp = (b->bezier(0, section));
 	Eigen::RowVector3d vec_t(temp[0], temp[1], 0);
 	Eigen::RowVector3d vec_p, half_vec = Eigen::Vector3d(1/2,1/2,1/2);
-	for(double t = 0.005; t < 1; t += 0.005) {
-		temp = (shapes[single_picked_shape_idx]).bezier((float)t, section);
+	for(double t = 0.005; t <= 1.0005; t += 0.005) {
+		temp = (b->bezier((float)t, section));
 		vec_p = Eigen::RowVector3d(temp[0], temp[1], 0);
 		shape->add_edges(vec_t,vec_p,half_vec);
 		vec_t = vec_p;
@@ -124,6 +123,15 @@ void Project::drawSection(int section){
 // 	float x_bez_p = bezier(p,p1[0],p2[0],p3[0],p4[0]); 
 // 	return Eigen::RowVector3d(x_bez_p - x_bez_t, y_bez_p - y_bez_t ,0); 
 // }
+Bezier * Project::get_cur_bez() {
+	Bezier * bez = nullptr;
+	if(single_picked)
+		bez = &shapes[single_picked_shape_idx].bez;
+	else if(!pick) {
+		bez = &shape_creation.bez;
+	}
+	return bez;
+}
 
 void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, const Eigen::Matrix4f& Model, unsigned int  shaderIndx, unsigned int shapeIndx)
 {
@@ -140,9 +148,13 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniform4f("coeffs",1,1,1,1);
 	s->SetUniform1i("POINTS_NUM", POINTS_NUM);
 	Eigen::Vector4f bez_points[POINTS_NUM];
-	for(int i = 0 ; single_picked && i < POINTS_NUM ; i++) {
-		Eigen::Vector2d cur = shapes[single_picked_shape_idx].bez_points[i];
-		bez_points[i] = Eigen::Vector4f((float)cur[0],(float)cur[1], 0, 0);
+	Bezier * bez = get_cur_bez();
+
+	if(bez != nullptr) {
+		for(int i = 0 ; i < POINTS_NUM ; i++) {
+			Eigen::Vector2d cur = bez->bez_points[i];
+			bez_points[i] = Eigen::Vector4f((float)cur[0],(float)cur[1], 0, 0);
+		}
 	}
 	s->SetUniform4fv("bez_points", &(bez_points[0]), POINTS_NUM);
 
@@ -198,8 +210,8 @@ bool Project::Picking(unsigned char data[4], int newViewportIndx) {
 void Project::reset_animation() {
 	for(int i = 0 ; i < shapes.size() ; i++) {
 		Shape & s = shapes[i];
-		data_list[s.shapeIdx]->MyTranslate(Eigen::Vector3d(0, 0, 0) - s.animate_pos, 1);
-		s.reset_animation();
+		data_list[s.shapeIdx]->MyTranslate(Eigen::Vector3d(0, 0, 0) - s.bez.animate_pos, 1);
+		s.bez.reset_animation();
 	}
 }
 
@@ -213,7 +225,7 @@ void Project::Animate() {
 
 	for(int i = 0 ; i < shapes.size() ; i++) {
 		Shape * b = &shapes[i];
-		Eigen::Vector3d vel = b->step_animate();
+		Eigen::Vector3d vel = b->bez.step_animate();
 		data_list[b->shapeIdx]->MyTranslate(vel,1);
 	}
 }
@@ -236,8 +248,9 @@ Project::~Project(void)
 
 
 int Project::IsPicked(float x, float y){
-	// if not single shape dont heck points
-	if(!single_picked || isActive) {
+	// if not single shape dont check points
+	Bezier * b = get_cur_bez();
+	if(b == nullptr || isActive) {
 		return -1;
 	}
 
@@ -247,7 +260,7 @@ int Project::IsPicked(float x, float y){
 	pickedPoint = -1;
 	isPicked = false;
 	for(int i= 0 ; i<POINTS_NUM ; i ++){
-		if(pow(x-shapes[single_picked_shape_idx].bez_points[i][0],2) +pow(y-shapes[single_picked_shape_idx].bez_points[i][1],2)<Radius*Radius){
+		if(pow(x-b->bez_points[i][0],2) +pow(y - b->bez_points[i][1],2)<Radius*Radius){
 			std::cout << "found " << i  << std::endl;
 			isPicked =true;
 			pickedPoint = i;
@@ -270,9 +283,11 @@ void Project::SetPicked(float x,float y){
 		y=(y-400)/-100;
 		std::cout << "setpoints" << pickedPoint<<":"<< x << "," << y << std::endl;
 
-		shapes[single_picked_shape_idx].bez_points[pickedPoint][0]=x;
+		Bezier * b = get_cur_bez();
+			b->bez_points[pickedPoint][0]=x;
 		if(pickedPoint %6 != 0 )
-		shapes[single_picked_shape_idx].bez_points[pickedPoint][1]=y;
+		 	b->bez_points[pickedPoint][1]=y;
 	}
 }
+
 
