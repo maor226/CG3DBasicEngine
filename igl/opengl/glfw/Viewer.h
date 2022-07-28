@@ -256,6 +256,7 @@ public:
   int layer;
   bool *picked;
   float delay;
+  bool *isMiror;
   Bezier bez;
 
 	Shape(int _shapeIdx, int _layer) {
@@ -263,6 +264,7 @@ public:
     materialIdx = 2; //grass
     layer = _layer;
     picked = new bool(true);
+    isMiror = new bool(false);
     bez = Bezier();
 	}
 };

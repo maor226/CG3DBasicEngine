@@ -83,11 +83,11 @@ void Project::Init()
 	// SetShapeShader(3, 3);
 	// SetShapeMaterial(3, 1);
 	// SetShapeStatic(3);
-	//SetShapeShader(3,3);
-	//SetShapeMaterial(3,2);
+	// SetShapeShader(3,3);
+	// SetShapeMaterial(3,2);
 
-	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
-	//SetShapeViewport(6, 1);
+	// AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
+	// SetShapeViewport(6, 1);
 	// ReadPixel(); //uncomment when you are reading from the z-buffer
 	drawBezier();
 }
