@@ -51,8 +51,6 @@ void Project::Init()
 	AddCubeMaterial(cubeTexIDs+1,cubeSlots+1, 1);
 	AddCubeMaterial(cubeTexIDs+2,cubeSlots+2, 1);
 
-
-
 	AddShape(Cube, -2, TRIANGLES);
 	SetCubeShapeMaterial(0, 0);
 	SetShapeShader(0, 4);
@@ -85,11 +83,11 @@ void Project::Init()
 	// SetShapeShader(3, 3);
 	// SetShapeMaterial(3, 1);
 	// SetShapeStatic(3);
-	//SetShapeShader(3,3);
-	//SetShapeMaterial(3,2);
+	// SetShapeShader(3,3);
+	// SetShapeMaterial(3,2);
 
-	//AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
-	//SetShapeViewport(6, 1);
+	// AddShapeFromFile("../res/objs/Cat_v1.obj", -1, TRIANGLES);
+	// SetShapeViewport(6, 1);
 	// ReadPixel(); //uncomment when you are reading from the z-buffer
 	drawBezier();
 }
@@ -98,7 +96,6 @@ void Project::drawBezier() {
 	data_list[plane_idx]->clear();
 	if(!single_picked)
 		return;
-
 	drawSection(0);
 	drawSection(1);
 }
