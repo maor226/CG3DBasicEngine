@@ -317,6 +317,14 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     {
       std::cout << viewer->background_idx <<"\n";
       viewer->SetCubeShapeMaterial(0,viewer->background_idx);
+      for (int i = 0; i < viewer->shapes.size(); i++)
+      {
+        if(*(viewer->shapes[i].isMiror))
+        {
+          makeMiror((viewer->shapes[i].shapeIdx),viewer)
+        }
+      }
+      
     }
     if(ImGui::ListBox("##Background", &viewer->background_idx, viewer->cube_material_names)) {
       
