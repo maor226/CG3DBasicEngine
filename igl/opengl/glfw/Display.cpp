@@ -121,7 +121,6 @@ bool Display::launch_rendering(bool loop)
 //		renderer->core().toggle(renderer->GetScene()->data_list[i].show_lines);
 	while (!glfwWindowShouldClose(window))
 	{
-
 		double tic = igl::get_seconds();
 		renderer->Animate();
 		renderer->draw(window);

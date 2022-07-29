@@ -11,7 +11,6 @@
 #define M_PI 3.1415926535897932384626433832795
 #endif
 
-
 Renderer::Renderer(float angle, float relationWH, float near, float far)
 {
     callback_init = nullptr;
@@ -45,8 +44,6 @@ Renderer::Renderer(float angle, float relationWH, float near, float far)
     currentViewport = 0;
     isPicked = false;
 }
-
-
 
 void Renderer::Clear(float r, float g, float b, float a,unsigned int flags)
 {
@@ -173,7 +170,6 @@ void Renderer::SetScene(igl::opengl::glfw::Viewer* viewer)
 	scn = viewer;
 }
 
-
 void Renderer::UpdatePosition(double xpos, double ypos)
 {
 	xrel = xold - xpos;
@@ -181,7 +177,6 @@ void Renderer::UpdatePosition(double xpos, double ypos)
 	xold = xpos;
 	yold = ypos;
 }
-
 
 void Renderer::TranslateCamera(Eigen::Vector3f amt)
 {
@@ -236,9 +231,9 @@ void Renderer::AddDraw(int viewportIndx, int cameraIndx, int shaderIndx, int buf
     next_property_id <<= 1;
 }
 
-void Renderer::UpdateDrawCamera(int infoIndx, int new_camera) {
-    drawInfos[infoIndx]->cameraIndx = new_camera;
-}
+// void Renderer::UpdateDrawCamera(int infoIndx, int new_camera) {
+//     drawInfos[infoIndx]->cameraIndx = new_camera;
+//}
 
 void Renderer::CopyDraw(int infoIndx, int property, int indx)
 {
@@ -289,7 +284,8 @@ bool Renderer::Picking(int x, int y) // false
 
     glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
 
-    glReadPixels(x, viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    cout << (int)viewport[0] << " " << (int)viewport[1] << " " << (int)viewport[2] << " " << (int)viewport[3] << endl;
+    glReadPixels(x, viewport[1] + viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
     int i = 0;
     isPicked = scn->Picking(data, i); //false
@@ -407,7 +403,7 @@ void Renderer::MoveCamera(int cameraIndx, int type, float amt)
 
 bool Renderer::CheckViewport(int x, int y, int viewportIndx)
 {
-    return (viewports[viewportIndx].x() < x && viewports[viewportIndx].y() < y && viewports[viewportIndx].z() + viewports[viewportIndx].x() > x && viewports[viewportIndx].w() + viewports[viewportIndx].y() > y);
+    return (viewports[viewportIndx].x() < x && viewports[viewportIndx].y() > y && viewports[viewportIndx].z() + viewports[viewportIndx].x() > x && viewports[viewportIndx].y() - viewports[viewportIndx].w() < y);
 }
 
 bool Renderer::UpdateViewport(int viewport)
@@ -434,7 +430,6 @@ void Renderer::MouseProccessing(int button, int mode, int viewportIndx)
 		else
 			scn->MouseProccessing(button, xrel, yrel, CalcMoveCoeff(mode & 7, viewports[viewportIndx].w()), cameras[0]->MakeTransd(), viewportIndx);
     }
-
 }
 
 float Renderer::CalcMoveCoeff(int cameraIndx, int width)
@@ -500,32 +495,65 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
     yViewport.push_front(0);
     std::list<int>::iterator xit = xViewport.begin();
     int indx = 0;
-    
-    for (++xit; xit != xViewport.end(); ++xit)
-    {
-        std::list<int>::iterator yit = yViewport.begin();
-        for (++yit; yit != yViewport.end(); ++yit)
-        {
-            viewports.emplace_back(*std::prev(xit), *std::prev(yit), *xit - *std::prev(xit), *yit - *std::prev(yit));
+    auto xval = *(++(++xViewport.begin()));
+    auto yval = *(++yViewport.begin());
 
-            if ((1 << indx) & pickingBits) {
-                DrawInfo* new_draw_info = new DrawInfo(indx, indx, 0, 0,
-                                                  1 | inAction | depthTest | stencilTest | passStencil | blackClear |
-                                                  clearStencil | clearDepth | onPicking ,
-                                                  next_property_id);
-                next_property_id <<= 1;
-                //for (auto& data : scn->data_list)
-                //{
-                //    new_draw_info->set(data->is_visible, true);
-                //}
-                drawInfos.emplace_back(new_draw_info);
-            }
-            DrawInfo* temp = new DrawInfo(indx, indx, 1, 0, (int)(indx < 1) | depthTest | clearDepth ,next_property_id);
-            next_property_id <<= 1;
-            drawInfos.emplace_back(temp);
-            indx++;
-        }
-    }
+    float CAMERA_ANGLE = 45.0f, NEAR = 1.0F, FAR = 45.0f;
+
+    viewports.emplace_back(0, yval/2, xval/2, yval/2);
+    viewports.emplace_back(xval/2, 0, xval/2, yval);
+    viewports.emplace_back(0, 0, xval/2, yval/2);
+
+    AddCamera(Eigen::Vector3d(0, 0, 10), CAMERA_ANGLE,(float)xval/(float)yval/2.0f, NEAR, FAR);
+    AddCamera(Eigen::Vector3d(0, 0, 10), CAMERA_ANGLE,(float)xval/(float)yval/2.0f,NEAR,FAR);
+
+    //for stencil and picking and shit
+    DrawInfo* new_draw_info = new DrawInfo(0, 0, 0, 0,
+                                                1 | inAction | depthTest | stencilTest | passStencil | blackClear |
+                                                clearStencil | clearDepth | onPicking ,
+                                                next_property_id);
+    next_property_id <<= 1;
+    drawInfos.emplace_back(new_draw_info);
+
+    //animate
+    new_draw_info = new DrawInfo(2, 2, 1, 0,
+                                                depthTest | clearDepth ,next_property_id);
+    next_property_id <<= 1;
+    drawInfos.emplace_back(new_draw_info);
+
+    //editor
+    new_draw_info = new DrawInfo(0, 0, 1, 0,
+                                                1 | depthTest | clearDepth ,next_property_id);
+    next_property_id <<= 1;
+    drawInfos.emplace_back(new_draw_info);
+
+    //bez curves
+    new_draw_info = new DrawInfo(1, 1, 1, 0,
+                                                depthTest | clearDepth ,next_property_id);
+    next_property_id <<= 1;
+    drawInfos.emplace_back(new_draw_info);
+
+    // for (++xit; xit != xViewport.end(); ++xit) {
+    //     std::list<int>::iterator yit = yViewport.begin();
+    //     for (++yit; yit != yViewport.end(); ++yit)
+    //     {
+    //         viewports.emplace_back(*std::prev(xit), *std::prev(yit), *xit - *std::prev(xit), *yit - *std::prev(yit));
+
+    //         if ((1 << indx) & pickingBits) {
+    //             DrawInfo* new_draw_info = new DrawInfo(indx, indx, 0, 0,
+    //                                               1 | inAction | depthTest | stencilTest | passStencil | blackClear |
+    //                                               clearStencil | clearDepth | onPicking ,
+    //                                               next_property_id);
+    //             next_property_id <<= 1;
+
+    //             drawInfos.emplace_back(new_draw_info);
+    //         }
+    //         DrawInfo* temp = new DrawInfo(indx, indx, 1, 0, (int)(indx < 1) | depthTest | clearDepth ,next_property_id);
+    //         next_property_id <<= 1;
+    //         drawInfos.emplace_back(temp);
+    //         indx++;
+    //     }
+    // }
 
     if (menu)
     {
