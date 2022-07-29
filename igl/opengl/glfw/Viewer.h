@@ -39,7 +39,7 @@
 #define single_picked (single_picked_shape_idx != -1)
 #define picking_shader 0
 
-#define SCREEN_WIDTH 100.0
+#define SCREEN_WIDTH 50.0
 #define SCREEN_HEIGHT SCREEN_WIDTH
 
 using namespace std;
@@ -265,6 +265,7 @@ public:
     layer = _layer;
     picked = new bool(true);
     isMiror = new bool(false);
+    delay = 0.f;
     bez = Bezier();
 	}
 };

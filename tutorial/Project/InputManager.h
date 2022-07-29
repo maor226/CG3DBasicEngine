@@ -30,7 +30,7 @@ using namespace std;
 			}
 			else
 			{
-				rndr->UnPick(2);
+				rndr->UnPick(0);
 			}
 		
 		}
@@ -39,7 +39,7 @@ using namespace std;
 			scn->UnPicked();
 
 			Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
-			rndr->UnPick(2);
+			rndr->UnPick(0);
 		}
 	}
 	
@@ -70,8 +70,7 @@ using namespace std;
 		
 		if (rndr->CheckViewport((int)xpos, (int)ypos, 0))
 		{
-							
-
+			
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
 				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);

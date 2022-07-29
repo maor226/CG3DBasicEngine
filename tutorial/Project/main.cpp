@@ -16,9 +16,7 @@ int main(int argc,char *argv[])
 	y.push_back(DISPLAY_HEIGHT);
     Display disp = Display(DISPLAY_WIDTH, DISPLAY_HEIGHT, "OPENGL");
     igl::opengl::glfw::imgui::ImGuiMenu* menu = new igl::opengl::glfw::imgui::ImGuiMenu();
-    Renderer* rndr = new Renderer(CAMERA_ANGLE, (float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT/2.0f, NEAR, FAR);
-
-	rndr->AddCamera(Eigen::Vector3d(0, 0, 10), CAMERA_ANGLE,(float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT/2.0f,NEAR,FAR);
+    Renderer* rndr = new Renderer(CAMERA_ANGLE, (float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT, NEAR, FAR);
 
 	//rndr->AddDraw(1,1,1,0,273);
 	//rndr->AddDraw(1, 1, 1)
