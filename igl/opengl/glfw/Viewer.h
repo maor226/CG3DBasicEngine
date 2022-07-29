@@ -41,6 +41,7 @@
 
 #define SCREEN_WIDTH 50.0
 #define SCREEN_HEIGHT SCREEN_WIDTH
+#define sten_viewport 2
 
 using namespace std;
 
@@ -334,6 +335,14 @@ namespace glfw
       void ChangePickedShapeMaterial();
       void open_dialog_load_texture();
       void AddBezierShape();
+      void updateShapePiked(Shape & s){
+        if(*s.picked){
+				  data_list[s.shapeIdx]->RemoveViewport(sten_viewport);
+			}
+			else
+				data_list[s.shapeIdx]->AddViewport(sten_viewport);
+			*s.picked = !(*s.picked);
+      }
       void AddShape1() {
     int parent = -1;
     unsigned int mode = TRIANGLES; 
@@ -342,23 +351,27 @@ namespace glfw
 	data()->mode = mode;
 	data()->shaderID = 1;
 	data()->viewports = 1 << viewport;
+  data()->AddViewport(sten_viewport);
 	/*//data()->is_visible = 0x1;*/
 	data()->show_lines = 0;
 	data()->show_overlay = 0;
 	data()->hide = false;
+
 
 	this->parents.emplace_back(parent);
     int shapeIdx = (int)(data_list.size() - (size_t)1);
     SetShapeShader(shapeIdx,3);
 	SetShapeMaterial(shapeIdx,2);
 
+    //make new shape the only picked shape
+    for(int i = 0 ; i < shapes.size() ; i++) {
+      if(*(shapes[i].picked)){
+        updateShapePiked(shapes[i]);
+      }
+    }
+
     shapes.push_back(Shape(shapeIdx, layer_index));
     picked_shapes.push_back(shapes[shapes.size() - 1].picked);
-
-    //make new shape the only picked shape
-    for(int i = 0 ; i < shapes.size() - 1 ; i++) {
-        *(shapes[i].picked) = false;
-    }
 
     //update cur picked shape
     changePickedShape();

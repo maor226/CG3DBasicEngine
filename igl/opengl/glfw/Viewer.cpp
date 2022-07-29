@@ -443,6 +443,7 @@ IGL_INLINE bool
     IGL_INLINE void Viewer::Draw(int shaderIndx, const Eigen::Matrix4f &Proj, const Eigen::Matrix4f &View, int viewportIndx, unsigned int flgs,unsigned int property_id)
     {
 
+
         Eigen::Matrix4f Normal;
 
         if (!(staticScene & (1<<viewportIndx)))
@@ -455,6 +456,18 @@ IGL_INLINE bool
             auto shape = data_list[i];
             if (shape->Is2Render(viewportIndx))
             {
+                // bool toHilight = false;
+                // for(Shape & s : shapes){
+                // if(s.shapeIdx == i)
+                //     if(*s.picked){
+                //         toHilight = true;
+                //     }
+                //     break;
+                // }
+                // if(!toHilight){
+                //     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+                //     glStencilMask(0x00);
+                // }
 
                 Eigen::Matrix4f Model = shape->MakeTransScale();
                 
@@ -515,6 +528,10 @@ IGL_INLINE bool
                     }
                     shape->Draw(shaders[0], true);
                 } 
+                // if(!toHilight){
+                //     glStencilFunc(GL_ALWAYS, 1, 0xFF); // all fragments should pass the stencil test
+                //     glStencilMask(0xFF);
+                // }
             }
         }
     }
