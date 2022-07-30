@@ -289,6 +289,7 @@ namespace glfw
       std::vector<Shape> shapes;
       Shape shape_creation;
       float alpha = 0;
+      float fog_color[3] ={0.5,0.5,0.5}; 
 
       //for gui menu
       int layer_index = 0;
