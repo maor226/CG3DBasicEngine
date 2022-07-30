@@ -149,12 +149,7 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniform1i("POINTS_NUM", POINTS_NUM);
 	Eigen::Vector4f bez_points[POINTS_NUM];
 	Bezier * bez = get_cur_bez();
-	if(data_list[shapeIndx]->isTransfetent){
-		s->SetUniform1f("alpha", data_list[shapeIndx]->alpha);
-	}
-	else{
-		s->SetUniform1f("alpha", 1);
-	}
+	
 
 	if(bez != nullptr) {
 		for(int i = 0 ; i < POINTS_NUM ; i++) {
@@ -163,7 +158,14 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 		}
 	}
 	s->SetUniform4fv("bez_points", &(bez_points[0]), POINTS_NUM);
-
+    
+	if(data_list[shapeIndx]->isTransfetent){
+		s->SetUniform1f("alpha", data_list[shapeIndx]->alpha);
+	}
+	else{
+		s->SetUniform1f("alpha", 1);
+	}
+	
 	if(change_bez || (isPicked && data_list[shapeIndx]->type == Axis)){
 		drawBezier();
 		change_bez = false;
