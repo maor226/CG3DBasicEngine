@@ -14,7 +14,7 @@
 
 struct GLFWwindow;
 
-
+#define sten_drawinfo 4
 
 class Renderer 
 {

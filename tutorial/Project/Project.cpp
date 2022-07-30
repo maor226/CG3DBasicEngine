@@ -214,8 +214,9 @@ bool Project::Picking(unsigned char data[4], int newViewportIndx) {
 	//cout << (int)data[0] << (int)data[1] << (int)data[2] <<(int)data[3] << endl;
 	for(Shape & s: shapes) {
 		if(s.shapeIdx == shape_index) {
-			*s.picked = !(*s.picked);
+			updateShapePiked(s);
 			flag = true;
+			break;
 		}
 	}
 	if(flag)

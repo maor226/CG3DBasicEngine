@@ -11,8 +11,10 @@
 #define M_PI 3.1415926535897932384626433832795
 #endif
 
+
 Renderer::Renderer(float angle, float relationWH, float near, float far)
 {
+
     callback_init = nullptr;
     callback_pre_draw = nullptr;
     callback_post_draw = nullptr;
@@ -44,6 +46,8 @@ Renderer::Renderer(float angle, float relationWH, float near, float far)
     currentViewport = 0;
     isPicked = false;
 }
+
+
 
 void Renderer::Clear(float r, float g, float b, float a,unsigned int flags)
 {
@@ -170,6 +174,7 @@ void Renderer::SetScene(igl::opengl::glfw::Viewer* viewer)
 	scn = viewer;
 }
 
+
 void Renderer::UpdatePosition(double xpos, double ypos)
 {
 	xrel = xold - xpos;
@@ -177,6 +182,7 @@ void Renderer::UpdatePosition(double xpos, double ypos)
 	xold = xpos;
 	yold = ypos;
 }
+
 
 void Renderer::TranslateCamera(Eigen::Vector3f amt)
 {
@@ -232,8 +238,8 @@ void Renderer::AddDraw(int viewportIndx, int cameraIndx, int shaderIndx, int buf
 }
 
 // void Renderer::UpdateDrawCamera(int infoIndx, int new_camera) {
-//     drawInfos[infoIndx]->cameraIndx = new_camera;
-//}
+
+// }
 
 void Renderer::CopyDraw(int infoIndx, int property, int indx)
 {
@@ -429,6 +435,7 @@ void Renderer::MouseProccessing(int button, int mode, int viewportIndx)
 		else
 			scn->MouseProccessing(button, xrel, yrel, CalcMoveCoeff(mode & 7, viewports[viewportIndx].w()), cameras[0]->MakeTransd(), viewportIndx);
     }
+
 }
 
 float Renderer::CalcMoveCoeff(int cameraIndx, int width)
@@ -517,19 +524,19 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
 
     //editor
     new_draw_info = new DrawInfo(0, 0, 1, 0,
-                                                1 | depthTest | clearDepth ,next_property_id);
+                                                1 | depthTest | clearDepth |stencilTest | passStencil | clearStencil ,next_property_id);
     next_property_id <<= 1;
     drawInfos.emplace_back(new_draw_info);
 
     //bez curves
     new_draw_info = new DrawInfo(1, 1, 1, 0,
-                                                depthTest | clearDepth ,next_property_id);
+                                                depthTest | clearDepth |stencilTest | passStencil | clearStencil ,next_property_id);
     next_property_id <<= 1;
     drawInfos.emplace_back(new_draw_info);
 
     //animate
     new_draw_info = new DrawInfo(2, 2, 1, 0,
-                                                depthTest | clearDepth ,next_property_id);
+                                                depthTest | clearDepth |stencilTest | passStencil | clearStencil ,next_property_id);
     next_property_id <<= 1;
     drawInfos.emplace_back(new_draw_info);
 
@@ -565,5 +572,3 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
         };
     }
 }
-
-
