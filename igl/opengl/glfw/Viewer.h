@@ -337,11 +337,12 @@ namespace glfw
       void AddBezierShape();
       void updateShapePiked(Shape & s){
         if(*s.picked){
-				  data_list[s.shapeIdx]->RemoveViewport(sten_viewport);
-			}
-			else
-				data_list[s.shapeIdx]->AddViewport(sten_viewport);
-			*s.picked = !(*s.picked);
+          data_list[s.shapeIdx]->RemoveViewport(sten_viewport);
+        }
+        else {
+          data_list[s.shapeIdx]->AddViewport(sten_viewport);
+        }
+        *s.picked = !(*s.picked);
       }
       void AddShape1() {
     int parent = -1;
