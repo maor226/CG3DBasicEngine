@@ -274,8 +274,7 @@ Renderer::~Renderer()
 }
 
 
-bool Renderer::Picking(int x, int y) // false
-{
+bool Renderer::Picking(int x, int y){
     Eigen::Vector4d pos;
 
     unsigned char data[4];
@@ -284,7 +283,7 @@ bool Renderer::Picking(int x, int y) // false
 
     glGetIntegerv(GL_VIEWPORT, viewport); //reading viewport parameters
 
-    cout << (int)viewport[0] << " " << (int)viewport[1] << " " << (int)viewport[2] << " " << (int)viewport[3] << endl;
+    //cout << (int)viewport[0] << " " << (int)viewport[1] << " " << (int)viewport[2] << " " << (int)viewport[3] << endl;
     glReadPixels(x, viewport[1] + viewport[3] - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
     int i = 0;
@@ -388,7 +387,7 @@ void Renderer::MoveCamera(int cameraIndx, int type, float amt)
             cameras[cameraIndx]->MyRotate(Eigen::Vector3d(1, 0, 0), amt);
             break;
         case yRotate:
-            cameras[cameraIndx]->RotateInSystem(Eigen::Vector3d(0, 1, 0), amt);
+            cameras[cameraIndx]->MyRotate(Eigen::Vector3d(0, 1, 0), amt);
             break;
         case zRotate:
             cameras[cameraIndx]->MyRotate(Eigen::Vector3d(0, 0, 1), amt);
@@ -505,19 +504,14 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
     viewports.emplace_back(0, 0, xval/2, yval/2);
 
     AddCamera(Eigen::Vector3d(0, 0, 10), CAMERA_ANGLE,(float)xval/(float)yval/2.0f, NEAR, FAR);
-    AddCamera(Eigen::Vector3d(0, 0, 10), CAMERA_ANGLE,(float)xval/(float)yval/2.0f,NEAR,FAR);
-
+    // pos is vec (0, 0, 10) rotated 30 degrees around y axis
+    AddCamera(Eigen::Vector3d(5, 0, 8.6603), CAMERA_ANGLE, (float)xval/(float)yval ,NEAR ,FAR);
+    MoveCamera(2, yRotate, -70);
     //for stencil and picking and shit
     DrawInfo* new_draw_info = new DrawInfo(0, 0, 0, 0,
                                                 1 | inAction | depthTest | stencilTest | passStencil | blackClear |
                                                 clearStencil | clearDepth | onPicking ,
                                                 next_property_id);
-    next_property_id <<= 1;
-    drawInfos.emplace_back(new_draw_info);
-
-    //animate
-    new_draw_info = new DrawInfo(2, 2, 1, 0,
-                                                depthTest | clearDepth ,next_property_id);
     next_property_id <<= 1;
     drawInfos.emplace_back(new_draw_info);
 
@@ -529,6 +523,12 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
 
     //bez curves
     new_draw_info = new DrawInfo(1, 1, 1, 0,
+                                                depthTest | clearDepth ,next_property_id);
+    next_property_id <<= 1;
+    drawInfos.emplace_back(new_draw_info);
+
+    //animate
+    new_draw_info = new DrawInfo(2, 2, 1, 0,
                                                 depthTest | clearDepth ,next_property_id);
     next_property_id <<= 1;
     drawInfos.emplace_back(new_draw_info);
