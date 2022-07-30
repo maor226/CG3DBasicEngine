@@ -26,10 +26,9 @@ int main(int argc,char *argv[])
     rndr->Init(scn,x,y,1,menu); // adding scene and viewports to the renderer
 	//rndr->draw; // info 3 change camera to 1
 
-	#define edit_viewport 1
 	disp.SetRenderer(rndr);
 	rndr->AddViewport(0,DISPLAY_HEIGHT/2,DISPLAY_WIDTH /2 , DISPLAY_HEIGHT/2); // added viewport 3
-	rndr->CopyDraw(edit_viewport, rndr->viewport, sten_viewport); //added display info 4
+	rndr->CopyDraw(edit_drawinfo, rndr->viewport, sten_viewport); //added display info 4
 	rndr->ClearDrawFlag(sten_drawinfo, rndr->toClear);
 	rndr->SetDrawFlag(sten_drawinfo, rndr->blend | rndr->inAction2 | rndr->scissorTest);
 	rndr->AddDraw(sten_viewport, 0, 1, 0, rndr->stencil2 | rndr->stencilTest | rndr->depthTest | rndr->scaleAbit | rndr->onPicking);

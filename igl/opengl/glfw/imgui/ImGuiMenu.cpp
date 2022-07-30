@@ -216,7 +216,8 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         viewer->Activate();
     }
     ImGui::PopStyleColor();
-
+    float w = ImGui::GetContentRegionAvailWidth();
+    float p = ImGui::GetStyle().FramePadding.x;
     if(ImGui::SliderFloat("delay", &viewer->delayVal ,0.f, 1.f)){
        viewer->ChangePickedShapeDelay();
     }
@@ -354,11 +355,10 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     float p = ImGui::GetStyle().FramePadding.x;
     if (ImGui::Button("Add##Camera", ImVec2((w-p), 0)))
     {
-       // viewer->open_dialog_hide_layer();
+        viewer->animation_camera_active = true;
     }
-    if (ImGui::Button("Change Camera##Camera", ImVec2((w-p), 0)))
-    {
-      
+    if (ImGui::Button("Switch##Camera", ImVec2((w-p), 0))) {
+        viewer->switch_cameras = true;
     }
   }
 
@@ -411,9 +411,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     }
   }
 
-  float w = ImGui::GetContentRegionAvailWidth();
-  float p = ImGui::GetStyle().FramePadding.x;
-    if(ImGui::CollapsingHeader("Bezier", ImGuiTreeNodeFlags_None)) {
+  if(ImGui::CollapsingHeader("Bezier", ImGuiTreeNodeFlags_None)) {
     if (ImGui::Button("Add Shape", ImVec2((w-p), 0))){
             viewer->AddBezierShape();
     }

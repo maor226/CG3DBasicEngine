@@ -287,9 +287,11 @@ namespace glfw
       int single_picked_shape_idx = -1; 
       int shape_index = 0;
       std::vector<Shape> shapes;
-      Shape default_bez;
+      Shape default_bez; //used for shape creation
       float alpha = 0;
       Bezier camera_bezier;
+      bool animation_camera_active = false;
+      bool switch_camers = false;
 
       //for gui menu
       int layer_index = 0;

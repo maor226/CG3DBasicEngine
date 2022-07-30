@@ -15,6 +15,9 @@
 struct GLFWwindow;
 
 #define sten_drawinfo 4
+#define edit_camera 0
+#define edit_viewport 0
+#define edit_drawinfo 1
 
 class Renderer 
 {
@@ -128,6 +131,8 @@ public:
 
     float UpdatePosition(float xpos, float ypos);
 
+    void Renderer::TranslateCamera(int idx, Eigen::Vector3d amt, bool prerotation);
+
     void UpdatePress(float xpos, float ypos);
 
     void AddCamera(const Eigen::Vector3d &pos, float fov, float relationWH, float zNear, float zFar,
@@ -176,6 +181,8 @@ public:
     bool CheckViewport(int x, int y, int viewportIndx);
 
     bool UpdateViewport(int viewport);
+
+    void changeCamera(int infoIdx, int cameraIdx);
 
     inline int GetViewportsSize() { return (int)viewports.size(); }
 

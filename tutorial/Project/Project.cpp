@@ -232,6 +232,26 @@ void Project::reset_animation() {
 	}
 }
 
+Eigen::Vector3d Project::zoomIn(double x, double y) {
+	int start_dist = 10, start_width = 800, start_height = 400;
+	double ratio = 1; //edit_camera_dist/start_dist;
+
+	//normalise x, y
+	x = (x - start_width/2)/(start_width/16); // width
+	y = -(y - start_height/2)/(start_height/8);  // height
+
+	double zoom_amount = edit_camera_dist/2;
+	move_zoom = ratio * Eigen::Vector3d(x, y, 0) + Eigen::Vector3d(0, 0, -zoom_amount);
+
+	return move_zoom;
+}
+
+Eigen::Vector3d Project::zoomOut() {
+	Eigen::Vector3d temp = -move_zoom;
+	move_zoom = Eigen::Vector3d(0,0,0);
+	return temp;
+}
+
 void Project::Animate() {
 	 //todo make global
 	//bez_points[0][1] += 0.1;

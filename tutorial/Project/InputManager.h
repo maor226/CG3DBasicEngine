@@ -6,7 +6,6 @@
 
 using namespace std;
 
-
 	void glfw_mouse_callback(GLFWwindow* window,int button, int action, int mods)
 	{
 		Renderer* rndr = (Renderer*)glfwGetWindowUserPointer(window);
@@ -56,8 +55,8 @@ using namespace std;
 		else
 		{
 			rndr->MoveCamera(0, rndr->zTranslate, (float)yoffset);
+			scn->edit_camera_dist += yoffset;
 		}
-		
 	}
 	
 	void glfw_cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
@@ -70,7 +69,7 @@ using namespace std;
 		
 		if (rndr->CheckViewport((int)xpos, (int)ypos, 0))
 		{
-			
+
 			if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
 			{
 				rndr->MouseProccessing(GLFW_MOUSE_BUTTON_RIGHT);
@@ -108,8 +107,23 @@ using namespace std;
 		//rndr->FreeShapes(2);
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
+			Eigen::Vector3d mov;
 			switch (key)
 			{
+			case GLFW_KEY_Z:
+				if(scn->zoomed_in) {
+					mov = scn->zoomOut();
+				}
+				else {
+					double x,y;
+					glfwGetCursorPos(window, &x, &y);
+					if(!rndr->CheckViewport((int)x, (int)y, edit_viewport))
+						break;
+					mov = scn->zoomIn(x, y);
+				}
+				rndr->TranslateCamera(edit_camera, mov, false);
+				scn->zoomed_in = !scn->zoomed_in;			
+				break;
 			case GLFW_KEY_ESCAPE:
 				glfwSetWindowShouldClose(window, GLFW_TRUE);
 				break;
@@ -131,12 +145,12 @@ using namespace std;
 				rndr->MoveCamera(0, scn->xRotate, -0.05f);
 				break;
 			case GLFW_KEY_LEFT:
-				rndr->MoveCamera(0, scn->yRotate, 0.05f);
+				rndr->MoveCamera(0, scn->xTranslate, -0.25f);
 				break;
 			case GLFW_KEY_RIGHT:
 				//scn->shapeTransformation(scn->xGlobalRotate,-5.f);
 				//cout<< "down: "<<endl;
-				rndr->MoveCamera(0, scn->yRotate, -0.05f);
+				rndr->MoveCamera(0, scn->xTranslate, 0.25f);
 				break;
 			case GLFW_KEY_U:
 				rndr->MoveCamera(0, scn->yTranslate, 0.25f);
@@ -154,9 +168,11 @@ using namespace std;
 			
 			case GLFW_KEY_B:
 				rndr->MoveCamera(0, scn->zTranslate, 0.5f);
+				scn->edit_camera_dist += 0.5f;
 				break;
 			case GLFW_KEY_F:
 				rndr->MoveCamera(0, scn->zTranslate, -0.5f);
+				scn->edit_camera_dist -= 0.5f;
 				break;
 			case GLFW_KEY_1:
 				std::cout << "picked 1\n";

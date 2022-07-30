@@ -183,6 +183,11 @@ void Renderer::UpdatePosition(double xpos, double ypos)
 	yold = ypos;
 }
 
+void Renderer::TranslateCamera(int idx, Eigen::Vector3d amt, bool prerotation)
+{
+	cameras[idx]->MyTranslate(amt.cast<double>(), prerotation);
+}
+
 
 void Renderer::TranslateCamera(Eigen::Vector3f amt)
 {
@@ -218,7 +223,7 @@ void Renderer::AddCamera(const Eigen::Vector3d& pos, float fov, float relationWH
 {
     if (infoIndx > 0 && infoIndx < drawInfos.size())
     {
-        drawInfos[infoIndx]->SetCamera(cameras.size());
+        //drawInfos[infoIndx]->SetCamera(cameras.size());
     }
     cameras.push_back(new igl::opengl::Camera(fov, relationWH, zNear, zFar));
     cameras.back()->MyTranslate(pos, false);
@@ -375,6 +380,9 @@ IGL_INLINE void Renderer::post_resize(GLFWwindow* window, int w, int h)
 		}
 	}
 
+void Renderer::changeCamera(int infoIdx, int cameraIdx) {
+    drawInfos[infoIdx]->cameraIndx = cameraIdx;
+}
 
 void Renderer::MoveCamera(int cameraIndx, int type, float amt)
 {
