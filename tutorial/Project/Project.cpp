@@ -129,7 +129,7 @@ Bezier * Project::get_cur_bez() {
 	if(single_picked)
 		bez = &shapes[single_picked_shape_idx].bez;
 	else if(!pick) {
-		bez = &shape_creation.bez;
+		bez = &default_bez.bez;
 	}
 	return bez;
 }
@@ -241,9 +241,9 @@ void Project::Animate() {
 	}
 
 	for(int i = 0 ; i < shapes.size() ; i++) {
-		Shape * b = &shapes[i];
-		Eigen::Vector3d vel = b->bez.step_animate();
-		data_list[b->shapeIdx]->MyTranslate(vel,1);
+		Shape & b = shapes[i];
+		Eigen::Vector3d vel = b.bez.step_animate();
+		data_list[b.shapeIdx]->MyTranslate(vel,1);
 	}
 }
 

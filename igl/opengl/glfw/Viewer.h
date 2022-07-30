@@ -287,8 +287,9 @@ namespace glfw
       int single_picked_shape_idx = -1; 
       int shape_index = 0;
       std::vector<Shape> shapes;
-      Shape shape_creation;
+      Shape default_bez;
       float alpha = 0;
+      Bezier camera_bezier;
 
       //for gui menu
       int layer_index = 0;
@@ -299,7 +300,7 @@ namespace glfw
       vector<string> cube_material_names;
       vector<string> shape_names;
       float delayVal = 0.f;
-
+      bool move_camera = false;
 
       enum axis { xAxis, yAxis, zAxis };
       enum transformations { xTranslate, yTranslate, zTranslate, xRotate, yRotate, zRotate, xScale, yScale, zScale,scaleAll,reset };
@@ -380,9 +381,14 @@ namespace glfw
 
   //update cur picked shape
   changePickedShape();
-}
+  }
 
-      void open_dialog_load_cube_texture();
+  void update_camera_bezier() {
+    if(!isActive)
+      camera_bezier = default_bez.bez;
+  }
+
+    void open_dialog_load_cube_texture();
       //check if single picked and if so update picked_shape_idx
     void changePickedShape();
     void ChangePickedShapeDelay();
@@ -477,7 +483,7 @@ public:
     int selected_data_index;
     int next_data_id;
     int next_shader_id; // for flags to mack sure all shaders are initlize with data
-	bool isActive;
+	  bool isActive;
     unsigned int staticScene;
 
     Shader* overlay_shader;
