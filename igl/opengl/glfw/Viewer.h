@@ -263,11 +263,11 @@ public:
 	Shape(int _shapeIdx, int _layer) {
     shapeIdx = _shapeIdx;
     materialIdx = 2; //grass
-    layer = _layer;
+    layer = _layer != -1 ? _layer : 0;
     picked = new bool(true);
     isMiror = new bool(false);
     delay = 0.f;
-    bez = Bezier();
+    bez;
 	}
 };
 
