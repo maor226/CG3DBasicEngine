@@ -346,12 +346,16 @@ namespace glfw
       void AddShape1() {
     int parent = -1;
     unsigned int mode = TRIANGLES; 
-    int viewport = 0;
+    int edit_viewport = 0;
+    int animate_viewport = 2;
     //data()->type = type;
 	data()->mode = mode;
 	data()->shaderID = 1;
-	data()->viewports = 1 << viewport;
+  
+  data()->viewports = (1 << edit_viewport);
   data()->AddViewport(sten_viewport);
+  data()->AddViewport(animate_viewport);
+
 	/*//data()->is_visible = 0x1;*/
 	data()->show_lines = 0;
 	data()->show_overlay = 0;
