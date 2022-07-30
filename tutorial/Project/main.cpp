@@ -16,12 +16,8 @@ int main(int argc,char *argv[])
 	y.push_back(DISPLAY_HEIGHT);
     Display disp = Display(DISPLAY_WIDTH, DISPLAY_HEIGHT, "OPENGL");
     igl::opengl::glfw::imgui::ImGuiMenu* menu = new igl::opengl::glfw::imgui::ImGuiMenu();
-    Renderer* rndr = new Renderer(CAMERA_ANGLE, (float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT/2.0f, NEAR, FAR);
+    Renderer* rndr = new Renderer(CAMERA_ANGLE, (float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT, NEAR, FAR);
 
-	rndr->AddCamera(Eigen::Vector3d(0, 0, 10), CAMERA_ANGLE,(float)DISPLAY_WIDTH/(float)DISPLAY_HEIGHT/2.0f,NEAR,FAR);
-
-	//rndr->AddDraw(1,1,1,0,273);
-	//rndr->AddDraw(1, 1, 1)
 	Project *scn = new Project();  //initializing scene
 
 	//rndr->AddViewport()
@@ -31,13 +27,13 @@ int main(int argc,char *argv[])
 	//rndr->draw; // info 3 change camera to 1
 
 	disp.SetRenderer(rndr);
-	rndr->AddViewport(0,0,DISPLAY_WIDTH /2 , DISPLAY_HEIGHT);
-	rndr->CopyDraw(1,rndr->viewport,2);
-	rndr->ClearDrawFlag(3, rndr->toClear);
-	rndr->SetDrawFlag(3, rndr->blend | rndr->inAction2 | rndr->scissorTest);
-	rndr->AddDraw(2, 0, 4, 0, rndr->stencil2 | rndr->stencilTest | rndr->depthTest | rndr->scaleAbit | rndr->onPicking);
+	rndr->AddViewport(0,DISPLAY_HEIGHT/2,DISPLAY_WIDTH /2 , DISPLAY_HEIGHT/2); // added viewport 3
+	rndr->CopyDraw(1,rndr->viewport, sten_viewport); //added display info 4
+	rndr->ClearDrawFlag(sten_drawinfo, rndr->toClear);
+	rndr->SetDrawFlag(sten_drawinfo, rndr->blend | rndr->inAction2 | rndr->scissorTest);
+	rndr->AddDraw(sten_viewport, 0, 4, 0, rndr->stencil2 | rndr->stencilTest | rndr->depthTest | rndr->scaleAbit | rndr->onPicking);
 
-	rndr->AddViewport(0,0,DISPLAY_WIDTH /2 , DISPLAY_HEIGHT);
+	rndr->AddViewport(0,0,DISPLAY_WIDTH /2 , DISPLAY_HEIGHT); //
 	rndr->CopyDraw(2,rndr->viewport,3);
 
 

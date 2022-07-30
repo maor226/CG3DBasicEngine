@@ -41,7 +41,7 @@
 
 #define SCREEN_WIDTH 50.0
 #define SCREEN_HEIGHT SCREEN_WIDTH
-#define sten_viewport 2
+#define sten_viewport 3
 
 using namespace std;
 
@@ -351,7 +351,7 @@ namespace glfw
     //data()->type = type;
 	data()->mode = mode;
 	data()->shaderID = 1;
-  
+
   data()->viewports = (1 << edit_viewport);
   data()->AddViewport(sten_viewport);
   data()->AddViewport(animate_viewport);

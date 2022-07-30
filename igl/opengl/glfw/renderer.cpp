@@ -408,7 +408,7 @@ void Renderer::MoveCamera(int cameraIndx, int type, float amt)
 
 bool Renderer::CheckViewport(int x, int y, int viewportIndx)
 {
-    return (viewports[viewportIndx].x() < x && viewports[viewportIndx].y() < y && viewports[viewportIndx].z() + viewports[viewportIndx].x() > x && viewports[viewportIndx].w() + viewports[viewportIndx].y() > y);
+    return (viewports[viewportIndx].x() < x && viewports[viewportIndx].y() > y && viewports[viewportIndx].z() + viewports[viewportIndx].x() > x && viewports[viewportIndx].y() - viewports[viewportIndx].w() < y);
 }
 
 bool Renderer::UpdateViewport(int viewport)
