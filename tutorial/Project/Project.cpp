@@ -51,7 +51,8 @@ void Project::Init()
 	AddCubeMaterial(cubeTexIDs+1,cubeSlots+1, 1);
 	AddCubeMaterial(cubeTexIDs+2,cubeSlots+2, 1);
 
-	AddShape(Cube, -2, TRIANGLES);
+	int cube_idx = AddShape(Cube, -2, TRIANGLES);
+	data_list[cube_idx]->AddViewport(2);
 	SetCubeShapeMaterial(0, 0);
 	SetShapeShader(0, 4);
 	selected_data_index = 0;
@@ -212,10 +213,12 @@ bool Project::Picking(unsigned char data[4], int newViewportIndx) {
 	int shape_index = data[0] - 1;
 	bool flag = false;
         // find shape associated with shape index
+	//cout << (int)data[0] << (int)data[1] << (int)data[2] <<(int)data[3] << endl;
 	for(Shape & s: shapes) {
 		if(s.shapeIdx == shape_index) {
-			*s.picked = !(*s.picked);
+			updateShapePiked(s);
 			flag = true;
+			break;
 		}
 	}
 	if(flag)
@@ -269,6 +272,7 @@ int Project::IsPicked(float x, float y){
 	if(b == nullptr || isActive) {
 		return -1;
 	}
+
 
 	x = (x-1200)/100;
 	y=(y-400)/-100;
