@@ -362,24 +362,24 @@ namespace glfw
 	data()->show_overlay = 0;
 	data()->hide = false;
 
-
 	this->parents.emplace_back(parent);
-    int shapeIdx = (int)(data_list.size() - (size_t)1);
-    SetShapeShader(shapeIdx,3);
+  int shapeIdx = (int)(data_list.size() - (size_t)1);
+  SetShapeShader(shapeIdx,3);
 	SetShapeMaterial(shapeIdx,2);
 
-    //make new shape the only picked shape
-    for(int i = 0 ; i < shapes.size() ; i++) {
-      if(*(shapes[i].picked)){
-        updateShapePiked(shapes[i]);
-      }
+  //make new shape the only picked shape
+  for(int i = 0 ; i < shapes.size() ; i++) {
+    if(*(shapes[i].picked)){
+      updateShapePiked(shapes[i]);
     }
+  }
 
-    shapes.push_back(Shape(shapeIdx, layer_index));
-    picked_shapes.push_back(shapes[shapes.size() - 1].picked);
+  //push new shape
+  shapes.push_back(Shape(shapeIdx, layer_index));
+  picked_shapes.push_back(shapes[shapes.size() - 1].picked);
 
-    //update cur picked shape
-    changePickedShape();
+  //update cur picked shape
+  changePickedShape();
 }
 
       void open_dialog_load_cube_texture();

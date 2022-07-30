@@ -524,19 +524,19 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
 
     //editor
     new_draw_info = new DrawInfo(0, 0, 1, 0,
-                                                1 | depthTest | clearDepth ,next_property_id);
+                                                1 | depthTest | clearDepth |stencilTest | passStencil | clearStencil ,next_property_id);
     next_property_id <<= 1;
     drawInfos.emplace_back(new_draw_info);
 
     //bez curves
     new_draw_info = new DrawInfo(1, 1, 1, 0,
-                                                depthTest | clearDepth ,next_property_id);
+                                                depthTest | clearDepth |stencilTest | passStencil | clearStencil ,next_property_id);
     next_property_id <<= 1;
     drawInfos.emplace_back(new_draw_info);
 
     //animate
     new_draw_info = new DrawInfo(2, 2, 1, 0,
-                                                depthTest | clearDepth ,next_property_id);
+                                                depthTest | clearDepth |stencilTest | passStencil | clearStencil ,next_property_id);
     next_property_id <<= 1;
     drawInfos.emplace_back(new_draw_info);
 
