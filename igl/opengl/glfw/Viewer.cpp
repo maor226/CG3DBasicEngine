@@ -70,7 +70,7 @@ namespace glfw
     next_shader_id(1),
 	isActive(false),
     show_layer(),
-    shape_creation(-1, -1)
+    default_bez(-1, -1)
   {
     show_layer.push_back(new bool(true));
     data_list.front() = new ViewerData();
@@ -78,6 +78,7 @@ namespace glfw
     staticScene = 0;
     overlay_point_shader = nullptr;
     overlay_shader = nullptr;
+    camera_bezier = default_bez.bez;
 
 
     // Temporary variables initialization
@@ -592,7 +593,7 @@ void Viewer::AddShapeFromBezier(Bezier bez, int parent, unsigned int mode, int v
 }
 void Viewer::AddBezierShape(){
     if(!pick)
-        AddShapeFromBezier(shape_creation.bez);
+        AddShapeFromBezier(default_bez.bez);
 }
 
 void Viewer::changePickedLayer() {
@@ -625,7 +626,7 @@ void Viewer::changePickedShape() {
         delayVal = s.delay;
     }
     else if(!pick) {
-        Shape & s = shape_creation;
+        Shape & s = default_bez;
         layer_index = material_idx = -1;
         delayVal = 0;
     }

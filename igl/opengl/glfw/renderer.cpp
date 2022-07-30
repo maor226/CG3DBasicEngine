@@ -516,6 +516,7 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
     // pos is vec (0, 0, 10) rotated 30 degrees around y axis
     AddCamera(Eigen::Vector3d(5, 0, 8.6603), CAMERA_ANGLE, (float)xval/(float)yval ,NEAR ,FAR);
     MoveCamera(2, yRotate, -70);
+    cameras[animate_camera_idx]->MyTranslate(Eigen::Vector3d(-4, 0, 0), 0);
     //for stencil and picking and shit
     DrawInfo* new_draw_info = new DrawInfo(0, 0, 0, 0,
                                                 1 | inAction | depthTest | stencilTest | passStencil | blackClear |

@@ -95,9 +95,26 @@ public:
 	void* callback_key_down_data;
 	void* callback_key_up_data;
 
+#define animate_camera_idx 2
 // Callbacks
 //	 double Picking(double x, double y);
-	 inline void Animate() { scn->Animate(); };
+	 inline void Animate() { 
+        if(scn->move_camera){
+            Bezier & b = scn->camera_bezier;
+            Eigen::Vector3d v;
+            if(scn->isActive) {
+                v = b.step_animate();
+                b.animate_pos += v;
+                v *= 2;
+            }
+            else {
+                v = -b.animate_pos;
+                b.reset_animation();
+            }
+            cameras[animate_camera_idx]->MyTranslate(v,0);
+        }
+        scn->Animate(); 
+    };
 	IGL_INLINE bool key_pressed(unsigned int unicode_key, int modifier);
 	IGL_INLINE void resize(GLFWwindow* window,int w, int h); // explicitly set window size
 	IGL_INLINE void post_resize(GLFWwindow* window, int w, int h); // external resize due to user interaction
@@ -180,7 +197,6 @@ public:
     inline bool IsPicked() { return isPicked; }
     inline bool IsMany() const { return isMany; }
     void Init(igl::opengl::glfw::Viewer *scene, std::list<int> xViewport, std::list<int> yViewport, int pickingBits,igl::opengl::glfw::imgui::ImGuiMenu *_menu);
-
 
 private:
     // Stores all the viewing options
