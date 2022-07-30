@@ -51,7 +51,8 @@ void Project::Init()
 	AddCubeMaterial(cubeTexIDs+1,cubeSlots+1, 1);
 	AddCubeMaterial(cubeTexIDs+2,cubeSlots+2, 1);
 
-	AddShape(Cube, -2, TRIANGLES);
+	int cube_idx = AddShape(Cube, -2, TRIANGLES);
+	data_list[cube_idx]->AddViewport(2);
 	SetCubeShapeMaterial(0, 0);
 	SetShapeShader(0, 4);
 	selected_data_index = 0;
@@ -268,6 +269,7 @@ int Project::IsPicked(float x, float y){
 	if(b == nullptr || isActive) {
 		return -1;
 	}
+
 
 	x = (x-1200)/100;
 	y=(y-400)/-100;
