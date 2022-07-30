@@ -446,6 +446,7 @@ IGL_INLINE bool
 
 
         Eigen::Matrix4f Normal;
+        
 
         if (!(staticScene & (1<<viewportIndx)))
             Normal = MakeTransScale();
@@ -472,7 +473,6 @@ IGL_INLINE bool
 
                 Eigen::Matrix4f Model = shape->MakeTransScale();
                 
-
                 if (!shape->IsStatic())
                 {
 
@@ -486,6 +486,9 @@ IGL_INLINE bool
                     if(shape->isTransfetent){
                         glEnable(GL_BLEND);
 	                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+                    }
+                    else {
+                        
                     }
                     Update(Proj, View, Model, shape->GetShader(),i);
                     // Draw fill

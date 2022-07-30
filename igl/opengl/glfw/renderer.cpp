@@ -102,8 +102,10 @@ IGL_INLINE void Renderer::draw_by_info(int info_index){
     else
         glDisable(GL_STENCIL_TEST);
 
-    if (info->flags & depthTest)
+    if (info->flags & depthTest){
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_LESS); //for rendering from the farest to the neerest     
+    }
     else
         glDisable(GL_DEPTH_TEST);
 

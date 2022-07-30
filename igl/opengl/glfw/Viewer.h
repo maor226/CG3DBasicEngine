@@ -289,6 +289,7 @@ namespace glfw
       std::vector<Shape> shapes;
       Shape default_bez;
       float alpha = 0;
+      float fog_color[3] ={0.5,0.5,0.5}; 
       Bezier camera_bezier;
 
       //for gui menu
