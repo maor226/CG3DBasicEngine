@@ -306,6 +306,8 @@ namespace glfw
       float delayVal = 0.f;
       bool move_camera = false;
       bool edit_lock = false;
+      bool splitScreenToggle = true;
+	    bool splitScreenMode = true;
 
       bool can_edit() { return (!isActive && !edit_lock); }
 
@@ -469,7 +471,9 @@ namespace glfw
 	Eigen::Matrix4d CalcParentsTrans(int indx);
 	inline bool SetAnimation() { return isActive = !isActive; }
     inline  bool  IsActive() const { return isActive; }
-    inline void Activate() { isActive = true; }
+    inline void Activate() { 
+      isActive = true; 
+    }
     inline void Deactivate() { isActive = false; }
     int AddShader(const std::string& fileName);
 public:

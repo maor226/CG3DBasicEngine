@@ -187,6 +187,10 @@ void Renderer::UpdatePosition(double xpos, double ypos)
 
 void Renderer::TranslateCamera(int idx, Eigen::Vector3d amt, bool prerotation)
 {
+    if(idx == edit_camera || idx == animate_camera) {
+        reserve_c[idx / 2]->MyTranslate(amt.cast<double>(), prerotation); //solves both cases
+    }
+
 	cameras[idx]->MyTranslate(amt.cast<double>(), prerotation);
 }
 
@@ -386,39 +390,49 @@ void Renderer::changeCamera(int infoIdx, int cameraIdx) {
     drawInfos[infoIdx]->cameraIndx = cameraIdx;
 }
 
-void Renderer::MoveCamera(int cameraIndx, int type, float amt)
-{
+void Renderer::MoveCamera(igl::opengl::Camera * c, int type, float amt) {
     switch (type)
     {
         case xTranslate:
-            cameras[cameraIndx]->MyTranslate( Eigen::Vector3d(amt, 0, 0),1); //MakeTransNoScale was here
+            c->MyTranslate( Eigen::Vector3d(amt, 0, 0),1); //MakeTransNoScale was here
             break;
         case yTranslate:
-            cameras[cameraIndx]->MyTranslate( Eigen::Vector3d(0, amt, 0),1); //MakeTransNoScale was here
+            c->MyTranslate( Eigen::Vector3d(0, amt, 0),1); //MakeTransNoScale was here
             break;
         case zTranslate:
-            cameras[cameraIndx]->MyTranslate(Eigen::Vector3d(0, 0, amt),1); //MakeTransNoScale was here
+            c->MyTranslate(Eigen::Vector3d(0, 0, amt),1); //MakeTransNoScale was here
             break;
         case xRotate:
-            cameras[cameraIndx]->MyRotate(Eigen::Vector3d(1, 0, 0), amt);
+            c->MyRotate(Eigen::Vector3d(1, 0, 0), amt);
             break;
         case yRotate:
-            cameras[cameraIndx]->MyRotate(Eigen::Vector3d(0, 1, 0), amt);
+            c->MyRotate(Eigen::Vector3d(0, 1, 0), amt);
             break;
         case zRotate:
-            cameras[cameraIndx]->MyRotate(Eigen::Vector3d(0, 0, 1), amt);
+            c->MyRotate(Eigen::Vector3d(0, 0, 1), amt);
             break;
         case scaleAll:
-            cameras[cameraIndx]->MyScale( Eigen::Vector3d(amt, amt,  amt));
+            c->MyScale( Eigen::Vector3d(amt, amt,  amt));
             break;
         default:
             break;
     }
 }
 
+void Renderer::MoveCamera(int cameraIndx, int type, float amt)
+{
+    if(cameraIndx == edit_camera || cameraIndx == animate_camera) {
+        MoveCamera(reserve_c[cameraIndx/animate_camera], type, amt); //solves both cases
+    }
+    MoveCamera(cameras[cameraIndx], type, amt);
+}
+
 bool Renderer::CheckViewport(int x, int y, int viewportIndx)
 {
-    return (viewports[viewportIndx].x() < x && viewports[viewportIndx].y() > y && viewports[viewportIndx].z() + viewports[viewportIndx].x() > x && viewports[viewportIndx].y() - viewports[viewportIndx].w() < y);
+    if(scn->splitScreenMode)
+        return (viewports[viewportIndx].x() < x && viewports[viewportIndx].w() > y && viewports[viewportIndx].z() + viewports[viewportIndx].x() > x && viewports[viewportIndx].w() - viewports[viewportIndx].y() < y);
+    else
+        return (viewports[viewportIndx].x() < x && viewports[viewportIndx].w() > y && viewports[viewportIndx].z() + viewports[viewportIndx].x() > x && viewports[viewportIndx].y() < y);
 }
 
 bool Renderer::UpdateViewport(int viewport)
@@ -500,7 +514,6 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
 {
     scn = scene;
     menu = _menu;
-    MoveCamera(0, zTranslate, 10);
     Eigen::Vector4i viewport;
     glGetIntegerv(GL_VIEWPORT, viewport.data());
     buffers.push_back(new igl::opengl::DrawBuffer());
@@ -520,11 +533,23 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
     viewports.emplace_back(xval/2, 0, xval/2, yval);
     viewports.emplace_back(0, 0, xval/2, yval/2);
 
+    //set up reserve for split screen
+    reserve_v.emplace_back(0, 0, xval/2, yval); //main viewport
+    reserve_v.emplace_back(viewports[1]); // bez viewport just so the vectors will be same length
+    reserve_v.emplace_back(0, 0, 0, 0); //animate viewport
+    reserve_v.emplace_back(0, 0, xval/2, yval); //stencil viewport
+    reserve_v.emplace_back(0, 0, xval/2, yval); //stencil viewport
+
+    reserve_c.push_back(new igl::opengl::Camera(CAMERA_ANGLE, (float)xval/(float)yval/2.0f, NEAR, FAR));
+    MoveCamera(0, zTranslate, 10);
+    reserve_c.push_back(new igl::opengl::Camera(CAMERA_ANGLE, (float)xval/(float)yval/2.0f, NEAR, FAR));
+
     AddCamera(Eigen::Vector3d(0, 0, 10), CAMERA_ANGLE,(float)xval/(float)yval/2.0f, NEAR, FAR);
     // pos is vec (0, 0, 10) rotated 30 degrees around y axis
-    AddCamera(Eigen::Vector3d(5, 0, 8.6603), CAMERA_ANGLE, (float)xval/(float)yval ,NEAR ,FAR);
-    MoveCamera(2, yRotate, -70);
-    cameras[animate_camera_idx]->MyTranslate(Eigen::Vector3d(-4, 0, 0), 0);
+    AddCamera(Eigen::Vector3d(0, 0, 0), CAMERA_ANGLE, (float)xval/(float)yval ,NEAR ,FAR);
+    TranslateCamera(animate_camera, Eigen::Vector3d(5, 0, 8.6603), false);
+    MoveCamera(animate_camera, yRotate, -70);
+    TranslateCamera(animate_camera,Eigen::Vector3d(-4, 0, 0), 0);
 
     switch_camera = animate_camera_idx;
     //for stencil and picking and shit

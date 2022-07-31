@@ -110,10 +110,37 @@ void switchMainCamera() {
 }
 
 vector<bool> save_state;
+vector<Eigen::Vector4i> reserve_v;
+vector<igl::opengl::Camera *> reserve_c;
+
+void MoveCamera(igl::opengl::Camera * c, int type, float amt);
+
+void switch_viewport_r(int i) {
+    auto temp = viewports[i];
+    viewports[i] = reserve_v[i];
+    reserve_v[i] = temp;    
+}
+
+void switch_camera_r(int idx, int r_idx) {
+    auto temp = cameras[idx];
+    cameras[idx] = reserve_c[r_idx];
+    reserve_c[r_idx] = temp;    
+}
 
 // Callbacks
 //	 double Picking(double x, double y);
 	 inline void Animate() {
+        if(scn->splitScreenToggle) {
+            for(int i = 0 ; i < reserve_v.size() ; i++) {
+                switch_viewport_r(i);
+            }
+            switch_camera_r(edit_camera, 0);
+            switch_camera_r(animate_camera, 1);
+
+            scn->splitScreenToggle = false;
+            scn->splitScreenMode = !scn->splitScreenMode;
+        }
+
         if(scn->switch_cameras){
             if(switch_camera == animate_camera) {
                 for(int i = 0 ; i < scn->picked_shapes.size() ; i++) {
@@ -153,7 +180,7 @@ vector<bool> save_state;
                 v = -b.animate_pos;
                 b.reset_animation();
             }
-            cameras[animate_camera_idx]->MyTranslate(v,0);
+            TranslateCamera(animate_camera, v, 0);
         }
 
         scn->Animate(); 

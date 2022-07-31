@@ -784,7 +784,10 @@ void Viewer::ChangePickedShapeDelay(){
 
         if (button == 1)
         {
-            WhenTranslate(scnMat * cameraMat, -xrel / SCREEN_WIDTH, yrel / SCREEN_HEIGHT);
+            if(splitScreenMode)
+                WhenTranslate(scnMat * cameraMat, -xrel / (SCREEN_WIDTH), yrel / (SCREEN_HEIGHT));
+            else
+                WhenTranslate(scnMat * cameraMat, -xrel / (SCREEN_WIDTH*2), yrel / (SCREEN_HEIGHT*2));
         }
         else
         {
