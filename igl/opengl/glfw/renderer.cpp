@@ -185,6 +185,11 @@ void Renderer::UpdatePosition(double xpos, double ypos)
 	yold = ypos;
 }
 
+void Renderer::TranslateCamera(int idx, Eigen::Vector3d amt, bool prerotation)
+{
+	cameras[idx]->MyTranslate(amt.cast<double>(), prerotation);
+}
+
 
 void Renderer::TranslateCamera(Eigen::Vector3f amt)
 {
@@ -220,7 +225,7 @@ void Renderer::AddCamera(const Eigen::Vector3d& pos, float fov, float relationWH
 {
     if (infoIndx > 0 && infoIndx < drawInfos.size())
     {
-        drawInfos[infoIndx]->SetCamera(cameras.size());
+        //drawInfos[infoIndx]->SetCamera(cameras.size());
     }
     cameras.push_back(new igl::opengl::Camera(fov, relationWH, zNear, zFar));
     cameras.back()->MyTranslate(pos, false);
@@ -377,6 +382,9 @@ IGL_INLINE void Renderer::post_resize(GLFWwindow* window, int w, int h)
 		}
 	}
 
+void Renderer::changeCamera(int infoIdx, int cameraIdx) {
+    drawInfos[infoIdx]->cameraIndx = cameraIdx;
+}
 
 void Renderer::MoveCamera(int cameraIndx, int type, float amt)
 {
@@ -517,6 +525,8 @@ IGL_INLINE void Renderer::Init(igl::opengl::glfw::Viewer* scene, std::list<int>x
     AddCamera(Eigen::Vector3d(5, 0, 8.6603), CAMERA_ANGLE, (float)xval/(float)yval ,NEAR ,FAR);
     MoveCamera(2, yRotate, -70);
     cameras[animate_camera_idx]->MyTranslate(Eigen::Vector3d(-4, 0, 0), 0);
+
+    switch_camera = animate_camera_idx;
     //for stencil and picking and shit
     DrawInfo* new_draw_info = new DrawInfo(0, 0, 0, 0,
                                                 1 | inAction | depthTest | stencilTest | passStencil | blackClear |

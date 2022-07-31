@@ -15,7 +15,11 @@ private:
 
 public:
 	int pickedPoint=-1;
-	bool isPicked = false; 
+	bool isPicked = false;
+	bool zoomed_in = false;
+	Eigen::Vector3d move_zoom;
+	double edit_camera_dist = 10;
+
 	Project();
 //	Project(float angle,float relationWH,float near, float far);
 	void Init();
@@ -31,6 +35,8 @@ public:
 	void drawBezier();
 	void drawSection(int section, Bezier * b);
 	bool Picking(unsigned char data[4], int newViewportIndx);
+	Eigen::Vector3d zoomIn(double x, double y);
+	Eigen::Vector3d zoomOut();
 
 	~Project(void);
 };

@@ -226,7 +226,7 @@ bool Project::Picking(unsigned char data[4], int newViewportIndx) {
 	//cout << (int)data[0] << (int)data[1] << (int)data[2] <<(int)data[3] << endl;
 	for(Shape & s: shapes) {
 		if(s.shapeIdx == shape_index) {
-			updateShapePiked(s);
+			updateShapePicked(s);
 			flag = true;
 			break;
 		}
@@ -242,6 +242,26 @@ void Project::reset_animation() {
 		data_list[s.shapeIdx]->MyTranslate(Eigen::Vector3d(0, 0, 0) - s.bez.animate_pos, 1);
 		s.bez.reset_animation();
 	}
+}
+
+Eigen::Vector3d Project::zoomIn(double x, double y) {
+	int start_dist = 10, start_width = 800, start_height = 400;
+	double ratio = 1; //edit_camera_dist/start_dist;
+
+	//normalise x, y
+	x = (x - start_width/2)/(start_width/16); // width
+	y = -(y - start_height/2)/(start_height/8);  // height
+
+	double zoom_amount = edit_camera_dist/2;
+	move_zoom = ratio * Eigen::Vector3d(x, y, 0) + Eigen::Vector3d(0, 0, -zoom_amount);
+
+	return move_zoom;
+}
+
+Eigen::Vector3d Project::zoomOut() {
+	Eigen::Vector3d temp = -move_zoom;
+	move_zoom = Eigen::Vector3d(0,0,0);
+	return temp;
 }
 
 void Project::Animate() {
@@ -279,7 +299,7 @@ Project::~Project(void)
 int Project::IsPicked(float x, float y){
 	// if not single shape dont check points
 	Bezier * b = get_cur_bez();
-	if(b == nullptr || isActive) {
+	if(b == nullptr || isActive || edit_lock) {
 		return -1;
 	}
 

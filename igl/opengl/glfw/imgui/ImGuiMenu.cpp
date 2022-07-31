@@ -216,7 +216,8 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         viewer->Activate();
     }
     ImGui::PopStyleColor();
-
+    float w = ImGui::GetContentRegionAvailWidth();
+    float p = ImGui::GetStyle().FramePadding.x;
     if(ImGui::SliderFloat("delay", &viewer->delayVal ,0.f, 1.f)){
        viewer->ChangePickedShapeDelay();
     }
@@ -358,25 +359,28 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
           makeMiror((viewer->shapes[i].shapeIdx),viewer)
         }
       }
-      
     }
     if(ImGui::ListBox("##Background", &viewer->background_idx, viewer->cube_material_names)) {
       
     }
   }
-  //metirial 
+
   if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_None))
   {
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
-    if (ImGui::Button("Add##Camera", ImVec2((w-p), 0)))
-    {
-       // viewer->open_dialog_hide_layer();
+    if(viewer->animation_camera_active) {
+      if (ImGui::Button("Switch##Camera", ImVec2((w-p), 0))) {
+          if(!viewer->isActive)
+            viewer->switch_cameras = true;
+      }
     }
-    if (ImGui::Button("Change Camera##Camera", ImVec2((w-p), 0)))
-    {
-      
-    }
+    else if (ImGui::Button("Add##Camera", ImVec2((w-p), 0))) 
+      {
+        if(!viewer->isActive)
+          viewer->animation_camera_active = true;
+      }
+
   }
 
   // Mesh
@@ -428,14 +432,12 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     }
   }
 
-  float w = ImGui::GetContentRegionAvailWidth();
-  float p = ImGui::GetStyle().FramePadding.x;
-    if(ImGui::CollapsingHeader("Bezier", ImGuiTreeNodeFlags_None)) {
+  if(ImGui::CollapsingHeader("Bezier", ImGuiTreeNodeFlags_None)) {
     if (ImGui::Button("Add Shape", ImVec2((w-p), 0))){
             viewer->AddBezierShape();
     }
     if (ImGui::Checkbox("move camera", &viewer->move_camera)) {
-      if(viewer->isActive)
+      if(viewer->isActive )
         viewer->move_camera = !viewer->move_camera;
     }
     if (ImGui::Button("update camera", ImVec2((w-p), 0))){
