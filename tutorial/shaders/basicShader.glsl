@@ -65,16 +65,18 @@ void main()
     sum += texture2D(sampler1, vec2(tc.x - 2.0*blur*hstep, tc.y - 2.0*blur*vstep)) * 0.1216216216;
     sum += texture2D(sampler1, vec2(tc.x - 1.0*blur*hstep, tc.y - 1.0*blur*vstep)) * 0.1945945946;
     
-    sum += texture2D(sampler1, vec2(tc.x, tc.y)) * 0.2270270270;
+    sum += Color * 0.2270270270;
     
     sum += texture2D(sampler1, vec2(tc.x + 1.0*blur*hstep, tc.y + 1.0*blur*vstep)) * 0.1945945946;
     sum += texture2D(sampler1, vec2(tc.x + 2.0*blur*hstep, tc.y + 2.0*blur*vstep)) * 0.1216216216;
     sum += texture2D(sampler1, vec2(tc.x + 3.0*blur*hstep, tc.y + 3.0*blur*vstep)) * 0.0540540541;
     sum += texture2D(sampler1, vec2(tc.x + 4.0*blur*hstep, tc.y + 4.0*blur*vstep)) * 0.0162162162;
 
-    Color = Color * sum;
+    Color = sum;
 	}
+	//transferent 
 	Color.a = Color.a*alpha;
+	
 	// fog : 
 	if(isFog!=0)
 		Color = mix(vec4(fog_color.xyz, Color.a*alpha),Color,fogFactor);
