@@ -214,7 +214,7 @@ bool Project::Picking(unsigned char data[4], int newViewportIndx) {
 	//cout << (int)data[0] << (int)data[1] << (int)data[2] <<(int)data[3] << endl;
 	for(Shape & s: shapes) {
 		if(s.shapeIdx == shape_index) {
-			updateShapePiked(s);
+			updateShapePicked(s);
 			flag = true;
 			break;
 		}
@@ -287,7 +287,7 @@ Project::~Project(void)
 int Project::IsPicked(float x, float y){
 	// if not single shape dont check points
 	Bezier * b = get_cur_bez();
-	if(b == nullptr || isActive) {
+	if(b == nullptr || isActive || edit_lock) {
 		return -1;
 	}
 

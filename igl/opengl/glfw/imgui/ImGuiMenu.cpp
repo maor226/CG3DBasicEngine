@@ -342,24 +342,28 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
           makeMiror((viewer->shapes[i].shapeIdx),viewer)
         }
       }
-      
     }
     if(ImGui::ListBox("##Background", &viewer->background_idx, viewer->cube_material_names)) {
       
     }
   }
-  //metirial 
+
   if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_None))
   {
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
-    if (ImGui::Button("Add##Camera", ImVec2((w-p), 0)))
-    {
-        viewer->animation_camera_active = true;
+    if(viewer->animation_camera_active) {
+      if (ImGui::Button("Switch##Camera", ImVec2((w-p), 0))) {
+          if(!viewer->isActive)
+            viewer->switch_cameras = true;
+      }
     }
-    if (ImGui::Button("Switch##Camera", ImVec2((w-p), 0))) {
-        viewer->switch_cameras = true;
-    }
+    else if (ImGui::Button("Add##Camera", ImVec2((w-p), 0))) 
+      {
+        if(!viewer->isActive)
+          viewer->animation_camera_active = true;
+      }
+
   }
 
   // Mesh
@@ -416,7 +420,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
             viewer->AddBezierShape();
     }
     if (ImGui::Checkbox("move camera", &viewer->move_camera)) {
-      if(viewer->isActive)
+      if(viewer->isActive )
         viewer->move_camera = !viewer->move_camera;
     }
     if (ImGui::Button("update camera", ImVec2((w-p), 0))){
