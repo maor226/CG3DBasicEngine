@@ -51,6 +51,9 @@ public:
   bool isTransfetent = false;
   bool isCube=false;
   float alpha = 1;
+  bool is_blur =  0;
+  float blur_radius = 1.f;
+  float blur_resolution = 100.f;
   ViewerData();
     IGL_INLINE void Draw(Shader* shader, bool cond);
     IGL_INLINE void SetShader(const int id) { shaderID = id; }
