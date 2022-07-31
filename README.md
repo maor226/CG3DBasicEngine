@@ -63,7 +63,7 @@ For compiling:
 1. the background is a cube map of the sky by defoult.
 2. the user can change the Background by selecting one of the option list in the menu, and cick on change button.
 
-### Transferent :
+### Transperent :
 1. each object can be tugle to be transferent by picking a single shape and click on the trasferent chack-box.
 2. the tranferent object has the alpha value (as part of the blending function) that means how many tranferent the object are.(0 is fully transferent, 1 is not trasferent)
 
@@ -84,10 +84,23 @@ For compiling:
 * *the farrest from the camera , the tick the fog is.
 
 ## Bonus feature : 
-* make a sape frome bezier line [nomber 1 in bezier use]
+* make a shape frome bezier line [nomber 1 in bezier use]
 * [blur object] by a blur matrix with change radius and resolution 
+* mirror objects - can put mirror material
 * [global fog effect] compute by the depht of the shape , the farrest is the fogiest. 
 
+## general hardships
+*the cameras were hard to implement
+*we had trouble working with stencil effects([for highlighting the shape]), draw infos([multiple cameras]), viewports([split screen]) and such
+
+
+
+
+[multiple cameras]:#the-camera-menu-
+
+[split screen]:[multiple cameras]
+
+[for highlighting the shape]:#feature-of-the-scene-editor-project-
 
 [Final project in computer graphic course]:https://github.com/maor226/CG3DBasicEngine/
 
@@ -95,6 +108,6 @@ For compiling:
 
 [blur object]:#blur-effect-
 
-[nomber 1 in bezier use]:#bezier-curve-uses
+[number 1 in bezier use]:#bezier-curve-uses
 
 [as mantion on the bezier part]:#bezier-curve-uses
