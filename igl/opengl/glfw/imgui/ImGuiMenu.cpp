@@ -312,8 +312,8 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
   }
   if (ImGui::CollapsingHeader("Blur", ImGuiTreeNodeFlags_None))
   {
-    int i =viewer->single_picked_shape_idx;
-    if(i!=-1){
+    if(viewer->single_picked_shape_idx!=-1){
+      int i =viewer->shapes[viewer->single_picked_shape_idx].shapeIdx;
       if(ImGui::Checkbox("Tugle Blur ##Materials", &(viewer->data_list[i]->is_blur)));
       if(ImGui::SliderFloat("Radius", &viewer->data_list[i]->blur_radius ,0.f, 10.f));
       if(ImGui::SliderFloat("Resolution", &viewer->data_list[i]->blur_resolution ,0.f, 200.f));
