@@ -57,12 +57,34 @@ For compiling:
 
 ### Transferent :
 1. each object can be tugle to be transferent by picking a single shape and click on the trasferent chack-box.
-2. the tranferent object has the alpha value that means how many tranferent the object are.(0 is fully transferent, 1 is not trasferent)
-
+2. the tranferent object has the alpha value (as part of the blending function) that means how many tranferent the object are.(0 is fully transferent, 1 is not trasferent)
 
 ### Animation :
 1. move the shape: after selecting a single shape the user can edit the shape bezuer function by moving the red dots.
 2. while clicking on space key , or on start on the menu, the animation start.
-3. on the defoult bezier (while not selctig shape) , the user can edit the bezier and change the camera bezier movement in the animation by clicing the update button on the bezier menu.([es mantion on the bezier part]:(bezier curve uses))
-4. the camera movment in the animation an tugle on\off by dement in the bezier manu.([es mantion on the bezier part]:(bezier curve uses))
+3. on the defoult bezier (while not selctig shape) , the user can edit the bezier and change the camera bezier movement in the animation by clicing the update button on the bezier menu.( [as mantion on the bezier part])
+4. the camera movment in the animation an tugle on\off by dement in the bezier manu.( [as mantion on the bezier part])
 
+### Blur effect :
+1. after picking a singl shape , in the blur menu , the user can tuggle the blur effect and make the selected shape blured.
+2. the blur function contains to controled parameter 'radius' and 'resolution' , that has scroll that change their value on the selected shape.
+
+### Fog:
+1. on the bottom of the menu , their is a fog toggle , at toggle on, all the object in screan will has a fog effect.
+2. object effected by fog mean that : 
+...* the shape will be blured with a fog color (grayies). 
+...* the farrest from the camera , the tick the fog is.
+
+## Bonus feature : 
+* make a sape frome bezier line [nomber 1 in bezier use]
+* [blur object] by a blur matrix with change radius and resolution 
+* [global fog effect] compute by the depht of the shape , the farrest is the fogiest. 
+
+
+[global fog effect]:#fog
+
+[blur object]:#blur-effect-
+
+[nomber 1 in bezier use]:#bezier-curve-uses
+
+[as mantion on the bezier part]:#bezier-curve-uses
