@@ -208,7 +208,12 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     }
     else
       ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(50,168,105,255));
-    if(ImGui::Button(b_name, ImVec2(-1, 0)))
+    
+    float w = ImGui::GetContentRegionAvailWidth();
+    float p = ImGui::GetStyle().FramePadding.x;
+
+    int length = viewer->isActive ? 200 : -1;
+    if(ImGui::Button(b_name, ImVec2(length, 0)))
     {
       if (viewer->IsActive())
         viewer->Deactivate();
@@ -216,8 +221,12 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         viewer->Activate();
     }
     ImGui::PopStyleColor();
-    float w = ImGui::GetContentRegionAvailWidth();
-    float p = ImGui::GetStyle().FramePadding.x;
+
+    if(viewer->isActive) {
+      ImGui::End();
+      return;
+    }
+
     if(ImGui::SliderFloat("delay", &viewer->delayVal ,0.f, 1.f)){
        viewer->ChangePickedShapeDelay();
     }
@@ -368,17 +377,25 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
   {
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
-    if(viewer->animation_camera_active) {
-      if (ImGui::Button("Switch##Camera", ImVec2((w-p), 0))) {
+    if(!switch_camera_mode && !viewer->isActive)
+      if(ImGui::Button("Split Screen##Camera", ImVec2((w-p), 0))) {
+        viewer->splitScreenToggle = true;
+      }
+    if(!viewer->splitScreenMode) {
+      if(viewer->animation_camera_active) {
+        if (ImGui::Button("Switch##Camera", ImVec2((w-p), 0))) {
+            if(!viewer->isActive) {
+              viewer->switch_cameras = true;
+              switch_camera_mode = !switch_camera_mode;
+            }
+        }
+      }
+      else if (ImGui::Button("Add##Camera", ImVec2((w-p), 0))) 
+        {
           if(!viewer->isActive)
-            viewer->switch_cameras = true;
-      }
+            viewer->animation_camera_active = true;
+        }
     }
-    else if (ImGui::Button("Add##Camera", ImVec2((w-p), 0))) 
-      {
-        if(!viewer->isActive)
-          viewer->animation_camera_active = true;
-      }
 
   }
 
@@ -387,7 +404,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
   {
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
-    if (ImGui::Button("Load##Mesh", ImVec2((w-p)/2.f, 0)))
+    if (ImGui::Button("Load##Mesh", ImVec2((w-p), 0)))
     {
         int savedIndx = viewer->selected_data_index;
        // viewer->selected_data_index = viewer->parents.size();
@@ -407,11 +424,6 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
           viewer->data()->mode = viewer->TRIANGLES;
           viewer->selected_data_index = savedIndx;
       }
-    }
-    ImGui::SameLine(0, p);
-    if (ImGui::Button("Save##Mesh", ImVec2((w-p)/2.f, 0)))
-    {
-      viewer->open_dialog_save_mesh();
     }
 
     if (ImGui::CollapsingHeader("Select Shapes##Mesh", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -443,7 +455,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
             viewer->update_camera_bezier();
     }
   }
-  if(ImGui::Checkbox("Tugle Fog", &(viewer->isFog))) {}
+  if(ImGui::Checkbox("Toggle Fog", &(viewer->isFog))) {}
 
   ImGui::End();
 }

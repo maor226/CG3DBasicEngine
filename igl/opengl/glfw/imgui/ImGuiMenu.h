@@ -43,6 +43,7 @@ private:
   std::vector<std::string> cameras;
   Camera * animation_camera;
   vector<double> camera_delay;
+  bool switch_camera_mode = false;
 
 protected:
   // Hidpi scaling to be used for text rendering.
