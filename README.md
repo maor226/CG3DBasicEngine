@@ -89,16 +89,15 @@ For compiling:
 * mirror objects - can put mirror material
 * [global fog effect] compute by the depht of the shape , the farrest is the fogiest. 
 
-## general hardships
-*the cameras were hard to implement
-*we had trouble working with stencil effects([for highlighting the shape]), draw infos([multiple cameras]), viewports([split screen]) and such
+## general hardships :
+* the cameras were hard to implement
+* we had trouble working with stencil effects([for highlighting the shape]), draw infos([multiple cameras]), viewports([split screen][multiple cameras]) and such
 
 
 
 
 [multiple cameras]:#the-camera-menu-
 
-[split screen]:[multiple cameras]
 
 [for highlighting the shape]:#feature-of-the-scene-editor-project-
 
