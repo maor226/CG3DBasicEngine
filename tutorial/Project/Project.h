@@ -11,6 +11,7 @@ class Project : public igl::opengl::glfw::Viewer
 private:
  	void reset_animation();
 	Bezier * get_cur_bez();
+	int bez_shader_id = -1;
 
 public:
 	int pickedPoint=-1;

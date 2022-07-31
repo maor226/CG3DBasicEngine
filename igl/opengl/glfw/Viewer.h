@@ -263,11 +263,11 @@ public:
 	Shape(int _shapeIdx, int _layer) {
     shapeIdx = _shapeIdx;
     materialIdx = 2; //grass
-    layer = _layer;
+    layer = _layer != -1 ? _layer : 0;
     picked = new bool(true);
     isMiror = new bool(false);
     delay = 0.f;
-    bez = Bezier();
+    bez;
 	}
 };
 
@@ -289,7 +289,9 @@ namespace glfw
       std::vector<Shape> shapes;
       Shape default_bez; //used for shape creation
       float alpha = 0;
+      float fog_color[3] ={0.5,0.5,0.5}; 
       Bezier camera_bezier;
+      bool isFog = false;
       bool animation_camera_active = false;
       bool switch_cameras = false;
 

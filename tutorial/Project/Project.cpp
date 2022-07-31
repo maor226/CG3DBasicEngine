@@ -27,7 +27,7 @@ void Project::Init()
 	
 	AddShader("shaders/pickingShader");
 
-	AddShader("shaders/bezierShader");
+	bez_shader_id = AddShader("shaders/bezierShader");
 	AddShader("shaders/basicShaderTex");
 	AddShader("shaders/basicShader");
 	AddShader("shaders/cubemapShader");
@@ -148,22 +148,34 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniformMat4f("Model", Model);
 	s->SetUniform4f("coeffs",1,1,1,1);
 	s->SetUniform1i("POINTS_NUM", POINTS_NUM);
+	s->SetUniform4f("fog_color",fog_color[0],fog_color[1],fog_color[2],0.0f);
+	s->SetUniform1i("isFog",isFog? 1:0);
+	bool blur_flag =data_list[shapeIndx]->is_blur;
+	s->SetUniform1i("is_blur",blur_flag? 1:0);
+	s->SetUniform1f("radius", blur_flag? data_list[shapeIndx]->blur_radius : 0.0f);
+	s->SetUniform1f("resolution", blur_flag? data_list[shapeIndx]->blur_resolution : 0.0f);
 	Eigen::Vector4f bez_points[POINTS_NUM];
 	Bezier * bez = get_cur_bez();
+	
+
+	if(bez_shader_id == shaderIndx && bez != nullptr) {
+		for(int i = 0 ; i < POINTS_NUM ; i++) {
+			Eigen::Vector2d cur = bez->bez_points[i];
+			bez_points[i] = Eigen::Vector4f((float)cur[0],(float)cur[1], 0, 0);
+		}
+		s->SetUniform4fv("bez_points", &(bez_points[0]), POINTS_NUM);
+	}
+	
+    
 	if(data_list[shapeIndx]->isTransfetent){
 		s->SetUniform1f("alpha", data_list[shapeIndx]->alpha);
 	}
 	else{
 		s->SetUniform1f("alpha", 1);
 	}
-
-	if(bez != nullptr) {
-		for(int i = 0 ; i < POINTS_NUM ; i++) {
-			Eigen::Vector2d cur = bez->bez_points[i];
-			bez_points[i] = Eigen::Vector4f((float)cur[0],(float)cur[1], 0, 0);
-		}
-	}
-	s->SetUniform4fv("bez_points", &(bez_points[0]), POINTS_NUM);
+		s->SetUniform1f("near", 1.0f);
+		s->SetUniform1f("far", 120.0f);
+		
 
 	if(change_bez || (isPicked && data_list[shapeIndx]->type == Axis)){
 		drawBezier();

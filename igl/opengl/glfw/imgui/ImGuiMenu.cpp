@@ -278,33 +278,50 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     if (ImGui::Button("Change##Materials", ImVec2((w-p), 0))) {
       viewer->ChangePickedShapeMaterial();
     }
-    if (ImGui::Button("Make Miror ##Materials", ImVec2((w-p), 0))) {
+    if (ImGui::Button("Tugle Miror ##Materials", ImVec2((w-p), 0))) {
         for (int i = 0; i < viewer->shapes.size(); i++)
         {
           if(*(viewer->shapes[i].picked)){
+            if(!*(viewer->shapes[i].isMiror)){
             *(viewer->shapes[i].isMiror) = true;
             makeMiror((viewer->shapes[i].shapeIdx),viewer);
-          }
-        }
-        
-    }
-    if (ImGui::Button("Make Unmiror ##Materials", ImVec2((w-p), 0))) {
-        for (int i = 0; i < viewer->shapes.size(); i++)
-        {
-          if(*(viewer->shapes[i].picked)){
+            }else{
             *(viewer->shapes[i].isMiror) = false;
             viewer->SetShapeShader(viewer->shapes[i].shapeIdx,3);
             viewer->SetShapeMaterial(viewer->shapes[i].shapeIdx,viewer->shapes[i].materialIdx);
+            }
           }
         }
         
     }
+    
+    // if (ImGui::Button("Make Unmiror ##Materials", ImVec2((w-p), 0))) {
+    //     for (int i = 0; i < viewer->shapes.size(); i++)
+    //     {
+    //       if(*(viewer->shapes[i].picked)){
+    //         *(viewer->shapes[i].isMiror) = false;
+    //         viewer->SetShapeShader(viewer->shapes[i].shapeIdx,3);
+    //         viewer->SetShapeMaterial(viewer->shapes[i].shapeIdx,viewer->shapes[i].materialIdx);
+    //       }
+    //     }
+    // }
    
     if(ImGui::ListBox("##Materials", &viewer->material_idx, viewer->material_names)) {
 
     }
 
   }
+  if (ImGui::CollapsingHeader("Blur", ImGuiTreeNodeFlags_None))
+  {
+    if(viewer->single_picked_shape_idx!=-1){
+      int i =viewer->shapes[viewer->single_picked_shape_idx].shapeIdx;
+      if(ImGui::Checkbox("Tugle Blur ##Materials", &(viewer->data_list[i]->is_blur)));
+      if(ImGui::SliderFloat("Radius", &viewer->data_list[i]->blur_radius ,0.f, 10.f));
+      if(ImGui::SliderFloat("Resolution", &viewer->data_list[i]->blur_resolution ,0.f, 200.f));
+      }
+  }
+  
+  
   if (ImGui::CollapsingHeader("Transparent", ImGuiTreeNodeFlags_None))
   {
     float w = ImGui::GetContentRegionAvailWidth();
@@ -427,6 +444,8 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
             viewer->update_camera_bezier();
     }
   }
+  if(ImGui::Checkbox("Tugle Fog", &(viewer->isFog)));
+
   ImGui::End();
 }
 
