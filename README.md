@@ -1,3 +1,11 @@
+# [Final project in computer graphic course]:
+## Presenting : 
+* bar stoyer : 211760756
+* meir maor biton : 206000556
+* naomi koren : 211378971
+
+
+
 # EngineForAnimationCourse
 Graphic Engine based on Libigl
 
@@ -72,14 +80,16 @@ For compiling:
 ### Fog:
 1. on the bottom of the menu , their is a fog toggle , at toggle on, all the object in screan will has a fog effect.
 2. object effected by fog mean that : 
-...* the shape will be blured with a fog color (grayies). 
-...* the farrest from the camera , the tick the fog is.
+* *the shape will be blured with a fog color (grayies). 
+* *the farrest from the camera , the tick the fog is.
 
 ## Bonus feature : 
 * make a sape frome bezier line [nomber 1 in bezier use]
 * [blur object] by a blur matrix with change radius and resolution 
 * [global fog effect] compute by the depht of the shape , the farrest is the fogiest. 
 
+
+[Final project in computer graphic course]:https://github.com/maor226/CG3DBasicEngine/
 
 [global fog effect]:#fog
 
