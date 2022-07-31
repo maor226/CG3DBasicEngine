@@ -291,6 +291,7 @@ namespace glfw
       float alpha = 0;
       float fog_color[3] ={0.5,0.5,0.5}; 
       Bezier camera_bezier;
+      bool isFog = false;
 
       //for gui menu
       int layer_index = 0;

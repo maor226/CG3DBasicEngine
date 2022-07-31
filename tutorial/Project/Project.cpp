@@ -149,6 +149,11 @@ void Project::Update(const Eigen::Matrix4f& Proj, const Eigen::Matrix4f& View, c
 	s->SetUniform4f("coeffs",1,1,1,1);
 	s->SetUniform1i("POINTS_NUM", POINTS_NUM);
 	s->SetUniform4f("fog_color",fog_color[0],fog_color[1],fog_color[2],0.0f);
+	s->SetUniform1i("isFog",isFog? 1:0);
+	bool blur_flag =data_list[shape_index]->is_blur;
+	s->SetUniform1i("is_blur",blur_flag? 1:0);
+	s->SetUniform1f("radius", blur_flag? data_list[shape_index]->blur_radius : 0.0f);
+	s->SetUniform1f("resolution", blur_flag? data_list[shape_index]->blur_resolution : 0.0f);
 	Eigen::Vector4f bez_points[POINTS_NUM];
 	Bezier * bez = get_cur_bez();
 	
