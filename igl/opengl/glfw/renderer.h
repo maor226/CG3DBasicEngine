@@ -127,14 +127,13 @@ vector<bool> save_state;
                 scn->edit_lock = true;
             }
             else {
+                scn->edit_lock = false;
                 // return picked state
                 for(int i = 0 ; i < save_state.size() ; i++) {
                     if(save_state[i])
                         scn->updateShapePicked(scn->shapes[i]);
                 }
                 save_state = vector<bool>();
-
-                scn->edit_lock = false;
             }
 
             switchMainCamera();

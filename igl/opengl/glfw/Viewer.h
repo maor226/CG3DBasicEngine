@@ -344,6 +344,8 @@ namespace glfw
       void open_dialog_load_texture();
       void AddBezierShape();
       void updateShapePicked(Shape & s){
+        if(!can_edit())
+          return;
         if(*s.picked){
           data_list[s.shapeIdx]->RemoveViewport(sten_viewport);
         }

@@ -315,9 +315,9 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
   {
     if(viewer->single_picked_shape_idx!=-1){
       int i =viewer->shapes[viewer->single_picked_shape_idx].shapeIdx;
-      if(ImGui::Checkbox("Tugle Blur ##Materials", &(viewer->data_list[i]->is_blur)));
-      if(ImGui::SliderFloat("Radius", &viewer->data_list[i]->blur_radius ,0.f, 10.f));
-      if(ImGui::SliderFloat("Resolution", &viewer->data_list[i]->blur_resolution ,0.f, 200.f));
+      if(ImGui::Checkbox("Toggle Blur ##Materials", &(viewer->data_list[i]->is_blur))) {}
+      if(ImGui::SliderFloat("Radius", &viewer->data_list[i]->blur_radius ,0.f, 10.f)) {}
+      if(ImGui::SliderFloat("Resolution", &viewer->data_list[i]->blur_resolution ,0.f, 200.f)) {}
       }
   }
   
@@ -326,7 +326,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
   {
     float w = ImGui::GetContentRegionAvailWidth();
     float p = ImGui::GetStyle().FramePadding.x;
-    if (ImGui::Button("tagle transperent ##Tranperent", ImVec2((w-p), 0))) {
+    if (ImGui::Button("toggle transperent ##Tranperent", ImVec2((w-p), 0))) {
       if(viewer->single_picked_shape_idx!=-1){
         viewer->data_list[viewer->shapes[viewer->single_picked_shape_idx].shapeIdx]->isTransfetent = !viewer->data_list[viewer->shapes[viewer->single_picked_shape_idx].shapeIdx]->isTransfetent;
         viewer->data_list[viewer->shapes[viewer->single_picked_shape_idx].shapeIdx]->alpha = viewer->alpha;
@@ -337,7 +337,6 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         viewer->data_list[viewer->shapes[viewer->single_picked_shape_idx].shapeIdx]->alpha = viewer->alpha;
       }
     }
-    
   }
    if (ImGui::CollapsingHeader("Background", ImGuiTreeNodeFlags_None))
   {
@@ -444,7 +443,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
             viewer->update_camera_bezier();
     }
   }
-  if(ImGui::Checkbox("Tugle Fog", &(viewer->isFog)));
+  if(ImGui::Checkbox("Tugle Fog", &(viewer->isFog))) {}
 
   ImGui::End();
 }
