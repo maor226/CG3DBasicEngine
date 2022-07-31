@@ -40,6 +40,9 @@ class ImGuiMenu //: public igl::opengl::glfw::ViewerPlugin
 {
 private:
   std::vector<std::string> layers;
+  std::vector<std::string> cameras;
+  Camera * animation_camera;
+  vector<double> camera_delay;
 
 protected:
   // Hidpi scaling to be used for text rendering.

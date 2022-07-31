@@ -15,6 +15,12 @@
 struct GLFWwindow;
 
 #define sten_drawinfo 4
+#define edit_camera 0
+#define edit_viewport 0
+#define edit_drawinfo 1
+#define animate_camera 2
+#define stencil_draw_info 3
+#define cur_camera (2 - switch_camera)
 
 class Renderer 
 {
@@ -96,9 +102,33 @@ public:
 	void* callback_key_up_data;
 
 #define animate_camera_idx 2
+
+void switchMainCamera() {
+    int temp = drawInfos[edit_drawinfo]->cameraIndx;
+    drawInfos[edit_drawinfo]->cameraIndx = switch_camera;
+    switch_camera = temp;
+}
+
 // Callbacks
 //	 double Picking(double x, double y);
-	 inline void Animate() { 
+	 inline void Animate() {
+        if(scn->switch_cameras){
+            if(switch_camera == animate_camera) {
+                for(int i = 0 ; i < scn->picked_shapes.size() ; i++) {
+                    if(*scn->picked_shapes[i])
+                        scn->updateShapePicked(scn->shapes[i]);
+                }
+                scn->edit_lock = true;
+            }
+            else {
+                scn->edit_lock = false;
+            }
+
+            switchMainCamera();
+
+            scn->switch_cameras = false;
+        } 
+
         if(scn->move_camera){
             Bezier & b = scn->camera_bezier;
             Eigen::Vector3d v;
@@ -113,6 +143,7 @@ public:
             }
             cameras[animate_camera_idx]->MyTranslate(v,0);
         }
+        
         scn->Animate(); 
     };
 	IGL_INLINE bool key_pressed(unsigned int unicode_key, int modifier);
@@ -127,6 +158,8 @@ public:
 	void TranslateCamera(Eigen::Vector3f amt);
 
     float UpdatePosition(float xpos, float ypos);
+
+    void Renderer::TranslateCamera(int idx, Eigen::Vector3d amt, bool prerotation);
 
     void UpdatePress(float xpos, float ypos);
 
@@ -177,6 +210,8 @@ public:
 
     bool UpdateViewport(int viewport);
 
+    void changeCamera(int infoIdx, int cameraIdx);
+
     inline int GetViewportsSize() { return (int)viewports.size(); }
 
     float CalcMoveCoeff(int cameraIndx, int width);
@@ -223,6 +258,8 @@ private:
 	double doubleVariable;
 	igl::opengl::glfw::imgui::ImGuiMenu* menu;
 	double z;
+
+    int switch_camera;
 
     void draw_by_info(int info_index = 1);
 

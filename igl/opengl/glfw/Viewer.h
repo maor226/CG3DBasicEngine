@@ -287,10 +287,12 @@ namespace glfw
       int single_picked_shape_idx = -1; 
       int shape_index = 0;
       std::vector<Shape> shapes;
-      Shape default_bez;
+      Shape default_bez; //used for shape creation
       float alpha = 0;
       float fog_color[3] ={0.5,0.5,0.5}; 
       Bezier camera_bezier;
+      bool animation_camera_active = false;
+      bool switch_cameras = false;
 
       //for gui menu
       int layer_index = 0;
@@ -302,6 +304,9 @@ namespace glfw
       vector<string> shape_names;
       float delayVal = 0.f;
       bool move_camera = false;
+      bool edit_lock = false;
+
+      bool can_edit() { return (!isActive && !edit_lock); }
 
       enum axis { xAxis, yAxis, zAxis };
       enum transformations { xTranslate, yTranslate, zTranslate, xRotate, yRotate, zRotate, xScale, yScale, zScale,scaleAll,reset };
@@ -337,7 +342,7 @@ namespace glfw
       void ChangePickedShapeMaterial();
       void open_dialog_load_texture();
       void AddBezierShape();
-      void updateShapePiked(Shape & s){
+      void updateShapePicked(Shape & s){
         if(*s.picked){
           data_list[s.shapeIdx]->RemoveViewport(sten_viewport);
         }
@@ -372,7 +377,7 @@ namespace glfw
   //make new shape the only picked shape
   for(int i = 0 ; i < shapes.size() ; i++) {
     if(*(shapes[i].picked)){
-      updateShapePiked(shapes[i]);
+      updateShapePicked(shapes[i]);
     }
   }
 
@@ -385,7 +390,7 @@ namespace glfw
   }
 
   void update_camera_bezier() {
-    if(!isActive)
+    if(can_edit())
       camera_bezier = default_bez.bez;
   }
 

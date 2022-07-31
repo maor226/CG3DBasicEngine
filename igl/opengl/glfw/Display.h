@@ -2,7 +2,7 @@
 #include <string>
 #include <GLFW/glfw3.h>
 //#include "igl/opengl/glfw/renderer.h"
-#include "igl/opengl/glfw/Viewer.h"
+
 #define EXIT_FAILURE 1
 struct GLFWwindow;
 
