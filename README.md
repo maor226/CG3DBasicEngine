@@ -29,7 +29,8 @@ user can pick one or more object on the screen, by clicking them. object that ar
 2. the user view are spliting to to erea, the left one is the shcene editor , and the right one is the bezier editor.
 3. the user can add camera to view in the shapes, and see them by the animation view , by clicking on the manu camera , and then click on add.
 3. the user can switch betwin the camera after he add one more camera by opening the camera menue and click switch. in the animation camera and at animation , the user can't edit the schene.
-4. the user can simply split schreen to watch the edit and the animation camera  in the same time by opening the camera manu and clicking on the split schreen button.
+4. the user can simply split schreen to watch the edit and the animation camera  in the same time by opening the camera menu and clicking on the split schreen button.
+5. the user can zoom in the edit shcreen by click on the key z on the keyboard after he set the cursor on the disier place to zoom in.
 
 ### object layers
 1. each object is assigned to a layer
