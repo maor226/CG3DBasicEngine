@@ -34,13 +34,13 @@ For compiling:
 4. the user can simply split schreen to watch the edit and the animation camera  in the same time by opening the camera menu and clicking on the split schreen button.
 5. the user can zoom in the edit shcreen by click on the key z on the keyboard after he set the cursor on the disier place to zoom in.
 
-### object layers
+### object layers:
 1. each object is assigned to a layer
 2. current layer can be changed using the layers list and will be changed to the current shape layer upon picking a single shape.
 3. new objects will be created on current layer (shapes created by bezier will be created on layer 1 if no layer is picked)
 4. layers can be hidden to hide all shapes assigned to the layer by using the checkbox with the layer's number.
 
-### bezier curve uses
+### bezier curve uses:
 1. the default bezier can be used to design objects based on bezier surfaces using the button "Add Shape" in the bezier menu.
 2. the animation camera (can be seen in split screen and by pressing switch) can be toggled to move according to a bezier curve (move camera in bezier menu).
 3. the bezier curve can be updated to the current default bezier state by using "update camera"
@@ -54,4 +54,15 @@ For compiling:
 ### Background :
 1. the background is a cube map of the sky by defoult.
 2. the user can change the Background by selecting one of the option list in the menu, and cick on change button.
+
+### Transferent :
+1. each object can be tugle to be transferent by picking a single shape and click on the trasferent chack-box.
+2. the tranferent object has the alpha value that means how many tranferent the object are.(0 is fully transferent, 1 is not trasferent)
+
+
+### Animation :
+1. move the shape: after selecting a single shape the user can edit the shape bezuer function by moving the red dots.
+2. while clicking on space key , or on start on the menu, the animation start.
+3. on the defoult bezier (while not selctig shape) , the user can edit the bezier and change the camera bezier movement in the animation by clicing the update button on the bezier menu.([es mantion on the bezier part]:(bezier curve uses))
+4. the camera movment in the animation an tugle on\off by dement in the bezier manu.([es mantion on the bezier part]:(bezier curve uses))
 
