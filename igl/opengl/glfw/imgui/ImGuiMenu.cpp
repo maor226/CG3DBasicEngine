@@ -282,7 +282,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
         for (int i = 0; i < viewer->shapes.size(); i++)
         {
           if(*(viewer->shapes[i].picked)){
-            if(*(viewer->shapes[i].isMiror)){
+            if(!*(viewer->shapes[i].isMiror)){
             *(viewer->shapes[i].isMiror) = true;
             makeMiror((viewer->shapes[i].shapeIdx),viewer);
             }else{
