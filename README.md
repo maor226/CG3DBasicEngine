@@ -10,18 +10,20 @@ For compiling:
 
 
 ## feature of the scene editor project :
+
 * the scene can only be edited while the scene is not on animation mod.
-objects can be modified only if a single shape is picked.
+* objects can be modified only if a single shape is picked.
 * the default bezier := the bezier curve shown to the user when no shape is selected.
 * if only one shape is selected its current bezier curve will be shown
 * no bezier curve will be shown while multi picking.
+* user can pick one or more object on the screen, by clicking them. object that are sellected will have a black highlight. 
+
 
 ### object move
 1. each object has a unique bezier curve to follow (as shown in class) while animate 
 2. the object's bezier curve can be modified by using the bezier curve editor on the right screen while the object is the only picked shape.
-3. each object has a delay factor to wait until starting animation can be changed by the slider delay in the man menu
+3. each object has a delay factor to wait until starting animation can be changed by the slider delay in the man menuץ
 
-user can pick one or more object on the screen, by clicking them. object that are sellected will have a black highlight. 
 
 
 ### the camera menu :
@@ -42,3 +44,14 @@ user can pick one or more object on the screen, by clicking them. object that ar
 1. the default bezier can be used to design objects based on bezier surfaces using the button "Add Shape" in the bezier menu.
 2. the animation camera (can be seen in split screen and by pressing switch) can be toggled to move according to a bezier curve (move camera in bezier menu).
 3. the bezier curve can be updated to the current default bezier state by using "update camera"
+
+
+### the metirial menu:
+1. the user can load .png file to make a new metirial to the presented objects, by clicking on the "Add" button on the Metirials menu.
+2. the user can change a shape metirial , by clicking and selecting the disiered shape,select the disier metirial from the list and clickin on the "Change" button on the metirials menu.
+3. the user also can give a Object mirror effect by selecting the disiered object and clikking on "Tugle Mirror", second click will remove the effect.
+
+### Background :
+1. the background is a cube map of the sky by defoult.
+2. the user can change the Background by selecting one of the option list in the menu, and cick on change button.
+
