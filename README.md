@@ -9,7 +9,17 @@ For compiling:
 5. Copy configuration.txt from tutorial/sandBox to build/tutorial/sandBox sandBox as a startup project and compile the project (it could take few mineutes);   
 
 
-## fiture of the shcene edithor project :
+## feature of the scene editor project :
+* the scene can only be edited while the scene is not on animation mod.
+objects can be modified only if a single shape is picked.
+* the default bezier := the bezier curve shown to the user when no shape is selected.
+* if only one shape is selected its current bezier curve will be shown
+* no bezier curve will be shown while multi picking.
+
+### object move
+1. each object has a unique bezier curve to follow (as shown in class) while animate 
+2. the object's bezier curve can be modified by using the bezier curve editor on the right screen while the object is the only picked shape.
+3. each object has a delay factor to wait until starting animation can be changed by the slider delay in the man menu
 
 user can pick one or more object on the screen, by clicking them. object that are sellected will have a black highlight. 
 
@@ -19,23 +29,15 @@ user can pick one or more object on the screen, by clicking them. object that ar
 2. the user view are spliting to to erea, the left one is the shcene editor , and the right one is the bezier editor.
 3. the user can add camera to view in the shapes, and see them by the animation view , by clicking on the manu camera , and then click on add.
 3. the user can switch betwin the camera after he add one more camera by opening the camera menue and click switch. in the animation camera and at animation , the user can't edit the schene.
-4. the user can simply split schreen to watch the edit and the animation camera  in the same time by opening the camera menu and clicking on the split schreen button.
-5. the user can zoom in the edit shcreen by click on the key z on the keyboard after he set the cursor on the disier place to zoom in.
+4. the user can simply split schreen to watch the edit and the animation camera  in the same time by opening the camera manu and clicking on the split schreen button.
 
+### object layers
+1. each object is assigned to a layer
+2. current layer can be changed using the layers list and will be changed to the current shape layer upon picking a single shape.
+3. new objects will be created on current layer (shapes created by bezier will be created on layer 1 if no layer is picked)
+4. layers can be hidden to hide all shapes assigned to the layer by using the checkbox with the layer's number.
 
-### the metirial menu:
-1. the user can load .png file to make a new metirial to the presented objects, by clicking on the "Add" button on the Metirials menu.
-2. the user can change a shape metirial , by clicking and selecting the disiered shape,select the disier metirial from the list and clickin on the "Change" button on the metirials menu.
-3. the user also can give a Object mirror effect by selecting the disiered object and clikking on "Tugle Mirror", second click will remove the effect.
-
-### layers :
-1. each shape has their layer, as difault the layer is layer 1.
-2. user can change the shape layer by: clicking the disier shape, picking the disier layer from the leyer selected tub, and click on the change button.
-3. user can add new layer by clicking on the add button on the layers manu.
-4. the user can hide / unhide layers:  on the hide/unhide list their is a list off all the layer, selectind ther box mean the layer is shown to on the shcreen , un check a box mean the object on that layer will not e present to the user (hide) .
-
-
-### Background :
-1. the background is a cube map of the sky by defoult.
-2. the user can change the Background by selecting one of the option list in the menu, and cick on change button.
-
+### bezier curve uses
+1. the default bezier can be used to design objects based on bezier surfaces using the button "Add Shape" in the bezier menu.
+2. the animation camera (can be seen in split screen and by pressing switch) can be toggled to move according to a bezier curve (move camera in bezier menu).
+3. the bezier curve can be updated to the current default bezier state by using "update camera"
