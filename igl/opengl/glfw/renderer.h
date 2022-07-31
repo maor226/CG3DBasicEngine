@@ -109,18 +109,31 @@ void switchMainCamera() {
     switch_camera = temp;
 }
 
+vector<bool> save_state;
+
 // Callbacks
 //	 double Picking(double x, double y);
 	 inline void Animate() {
         if(scn->switch_cameras){
             if(switch_camera == animate_camera) {
                 for(int i = 0 ; i < scn->picked_shapes.size() ; i++) {
-                    if(*scn->picked_shapes[i])
+                    bool f = false;
+                    if(*scn->picked_shapes[i]) {
                         scn->updateShapePicked(scn->shapes[i]);
+                        f = true;
+                    }
+                    save_state.push_back(f);
                 }
                 scn->edit_lock = true;
             }
             else {
+                // return picked state
+                for(int i = 0 ; i < save_state.size() ; i++) {
+                    if(save_state[i])
+                        scn->updateShapePicked(scn->shapes[i]);
+                }
+                save_state = vector<bool>();
+
                 scn->edit_lock = false;
             }
 
@@ -143,7 +156,7 @@ void switchMainCamera() {
             }
             cameras[animate_camera_idx]->MyTranslate(v,0);
         }
-        
+
         scn->Animate(); 
     };
 	IGL_INLINE bool key_pressed(unsigned int unicode_key, int modifier);
